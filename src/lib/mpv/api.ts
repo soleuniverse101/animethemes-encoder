@@ -1,11 +1,10 @@
-import { getAllWebviewWindows } from "@tauri-apps/api/webviewWindow";
 import {
+  command as _command,
+  destroy as _destroy,
   getProperty as _getProperty,
   setProperty as _setProperty,
-  command as _command,
   type MpvFormat,
-  type MpvFormatToType,
-  destroy as _destroy,
+  type MpvFormatToType
 } from "tauri-plugin-libmpv-api";
 
 class MPVWindowContext {
@@ -15,20 +14,14 @@ class MPVWindowContext {
     this.label = label;
   }
 
-  getProperty<T extends MpvFormat>(
-    name: string,
-    format: T,
-  ): Promise<MpvFormatToType[T] | null> {
+  getProperty<T extends MpvFormat>(name: string, format: T): Promise<MpvFormatToType[T] | null> {
     return _getProperty(name, format, this.label);
   }
   setProperty(name: string, value: string | boolean | number): Promise<void> {
     return _setProperty(name, value, this.label);
   }
 
-  async command(
-    name: string,
-    args?: (string | boolean | number)[],
-  ): Promise<void> {
+  async command(name: string, args?: (string | boolean | number)[]): Promise<void> {
     return _command(name, args, this.label);
   }
 

@@ -1,6 +1,5 @@
 <script lang="ts">
   import MPV from "$lib/components/MPV.svelte";
-  import MPVTimeline from "$lib/components/MPVTimeline.svelte";
   import { MPVControls } from "$lib/mpv/controls";
   import { open } from "@tauri-apps/plugin-dialog";
   import hotkeys from "hotkeys-js";
@@ -49,15 +48,8 @@
 
 <main class="flex h-full w-full flex-col items-center">
   <div class="flex grow flex-col items-center">
-    <button
-      bind:this={importButton}
-      onclick={
-        importFile
-      }
-      tabindex="-1">Upload source file</button
-    >
+    <button bind:this={importButton} onclick={importFile} tabindex="-1">Upload source file</button>
     <MPV label={mpvControls.label}></MPV>
     <p>Time pos : {""}</p>
   </div>
-  <MPVTimeline controls={mpvControls} />
 </main>

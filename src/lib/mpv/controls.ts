@@ -24,19 +24,14 @@ export class MPVControls {
 
   async loadFile(path: string) {
     if (!path.trim().endsWith(".webm")) {
-      throw new Error(
-        `Unsupported video format (${FileUtils.extension(path)})`,
-      );
+      throw new Error(`Unsupported video format (${FileUtils.extension(path)})`);
     }
 
     await command("loadfile", [path]);
   }
 
   async playPause() {
-    setProperty(
-      "pause",
-      (await getProperty("pause", "string")) == "yes" ? "no" : "yes",
-    );
+    setProperty("pause", (await getProperty("pause", "string")) == "yes" ? "no" : "yes");
   }
 
   async nextFrame() {

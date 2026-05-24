@@ -2,17 +2,14 @@
   import { destroy } from "$lib/mpv/api";
   import { Positions, Sizes } from "$lib/utils/dpi";
   import type { UnlistenFn } from "@tauri-apps/api/event";
-  import {
-    getCurrentWebviewWindow,
-    WebviewWindow,
-  } from "@tauri-apps/api/webviewWindow";
+  import { getCurrentWebviewWindow, WebviewWindow } from "@tauri-apps/api/webviewWindow";
   import { onDestroy, onMount } from "svelte";
   import {
     init,
     observeProperties,
     type MpvConfig,
     type MpvObservableProperty,
-    type MpvPropertyData,
+    type MpvPropertyData
   } from "tauri-plugin-libmpv-api";
 
   interface Props {
@@ -23,7 +20,7 @@
   const { label }: Props = $props();
 
   const OBSERVED_PROPERTIES = [
-    ["time-pos/full", "string", "none"],
+    ["time-pos/full", "string", "none"]
   ] as const satisfies MpvObservableProperty[];
 
   type ObservedPropertiesList = typeof OBSERVED_PROPERTIES;
@@ -33,15 +30,13 @@
     readonly [Name, unknown] | readonly [Name, unknown, "none", ...unknown[]]
   >;
   type ObservedProperties = {
-    [PropertyName in ObservedPropertyName]: MpvPropertyData<
-      ObservedPropertyFromName<PropertyName>
-    >;
+    [PropertyName in ObservedPropertyName]: MpvPropertyData<ObservedPropertyFromName<PropertyName>>;
   };
   const properties: ObservedProperties = { "time-pos/full": null };
 
   const mpvConfig: MpvConfig = {
     initialOptions: { "keep-open": "yes", pause: "yes" },
-    observedProperties: OBSERVED_PROPERTIES,
+    observedProperties: OBSERVED_PROPERTIES
   };
 
   const main = getCurrentWebviewWindow();
@@ -61,24 +56,15 @@
         decorations: false,
         shadow: false,
         resizable: false,
-        focusable: false,
+        focusable: false
       });
 
     mpv.once("tauri://webview-created", async () => {
-      // const rawHandle = await invoke("get_webview_window_handle", {
-      //   label,
-      // });
-      // if (typeof rawHandle != "number") {
-      //   throw Error("Handle retrieval failed");
-      // }
-
-      // if (!mpvConfig.initialOptions) mpvConfig.initialOptions = {};
-      // mpvConfig.initialOptions.wid = rawHandle;
       await init(mpvConfig, "mpv");
 
       unlistenProperties = await observeProperties(
         OBSERVED_PROPERTIES,
-        ({ name, data }) => (properties[name] = data),
+        ({ name, data }) => (properties[name] = data)
       );
     });
     mpv.once("tauri://error", console.error);
@@ -110,12 +96,12 @@
       Positions.add(
         await main.innerPosition(),
         Positions.fromBoundingRect(mpvRect),
-        await main.scaleFactor(),
-      ),
+        await main.scaleFactor()
+      )
     );
   }
 </script>
 
 <svelte:window onresize={alignPlayer} />
 
-<div bind:this={mpvDiv} class="w-[640px] h-[360px] bg-gray-400"></div>
+<div bind:this={mpvDiv} class="h-[360px] w-[640px] bg-gray-400"></div>
