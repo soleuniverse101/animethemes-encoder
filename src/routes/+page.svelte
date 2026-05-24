@@ -51,13 +51,13 @@
   <div class="flex grow flex-col items-center">
     <button
       bind:this={importButton}
-      onclick={() => {
-        importButton.blur();
-        importFile();
-      }}
+      onclick={
+        importFile
+      }
       tabindex="-1">Upload source file</button
     >
     <MPV label={mpvControls.label}></MPV>
     <p>Time pos : {""}</p>
   </div>
+  <MPVTimeline controls={mpvControls} />
 </main>
