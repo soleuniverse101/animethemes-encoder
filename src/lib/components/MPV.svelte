@@ -1,42 +1,27 @@
 <script lang="ts">
-  import { destroy } from "$lib/mpv/api";
+  import { destroy, getProperty } from "$lib/mpv/api";
+  import {
+    OBSERVABLE_PROPERTIES_FORMAT,
+    type MPVListener,
+    type ObservedProperties
+  } from "$lib/mpv/listener";
   import { Positions, Sizes } from "$lib/utils/dpi";
-  import type { UnlistenFn } from "@tauri-apps/api/event";
+  import { type UnlistenFn } from "@tauri-apps/api/event";
   import { getCurrentWebviewWindow, WebviewWindow } from "@tauri-apps/api/webviewWindow";
   import { onDestroy, onMount } from "svelte";
-  import {
-    init,
-    observeProperties,
-    type MpvConfig,
-    type MpvObservableProperty,
-    type MpvPropertyData
-  } from "tauri-plugin-libmpv-api";
+  import { init, observeProperties, type MpvConfig } from "tauri-plugin-libmpv-api";
 
   interface Props {
     label: string;
+    listener: MPVListener;
   }
 
   // If label needs to change, parent has to destroy the component then recreate it ({#key} can maybe do that)
-  const { label }: Props = $props();
-
-  const OBSERVED_PROPERTIES = [
-    ["time-pos/full", "string", "none"]
-  ] as const satisfies MpvObservableProperty[];
-
-  type ObservedPropertiesList = typeof OBSERVED_PROPERTIES;
-  type ObservedPropertyName = ObservedPropertiesList[number][0];
-  type ObservedPropertyFromName<Name extends ObservedPropertyName> = Extract<
-    ObservedPropertiesList[number],
-    readonly [Name, unknown] | readonly [Name, unknown, "none", ...unknown[]]
-  >;
-  type ObservedProperties = {
-    [PropertyName in ObservedPropertyName]: MpvPropertyData<ObservedPropertyFromName<PropertyName>>;
-  };
-  const properties: ObservedProperties = { "time-pos/full": null };
+  const { label, listener }: Props = $props();
 
   const mpvConfig: MpvConfig = {
     initialOptions: { "keep-open": "yes", pause: "yes" },
-    observedProperties: OBSERVED_PROPERTIES
+    observedProperties: listener.observedProperties
   };
 
   const main = getCurrentWebviewWindow();
@@ -44,7 +29,7 @@
 
   let mpvDiv: HTMLDivElement;
 
-  let unlistenProperties: UnlistenFn;
+  let unlistens: UnlistenFn[] = [];
   onMount(async () => {
     mpv =
       // (await WebviewWindow.getByLabel(label)) ??
@@ -59,28 +44,46 @@
         focusable: false
       });
 
-    mpv.once("tauri://webview-created", async () => {
-      await init(mpvConfig, "mpv");
+    unlistens.push(
+      await mpv.once("tauri://webview-created", async () => {
+        await init(mpvConfig, "mpv");
 
-      unlistenProperties = await observeProperties(
-        OBSERVED_PROPERTIES,
-        ({ name, data }) => (properties[name] = data)
-      );
-    });
-    mpv.once("tauri://error", console.error);
+        unlistens.push(
+          await observeProperties<ObservedProperties>(
+            listener.observedProperties,
+            ({ name, data }) => listener.update(name, data),
+            label
+          )
+        );
 
-    main.onMoved(() => movePlayer());
-    mpv.onFocusChanged(({ payload: focused }) => {
-      if (focused) {
-        const parent = main.setFocus();
-      }
-    });
+        for (const [name, format] of listener.observedProperties) {
+          try {
+            listener.update(name, await getProperty(name, format));
+          } catch (e) {
+            if (OBSERVABLE_PROPERTIES_FORMAT.nullable[name]) {
+              listener.update(name, null);
+            } else {
+              console.warn(`Failed to retrieve non-nullable property '${name}' at startup`);
+            }
+          }
+        }
+      }),
+      await mpv.once("tauri://error", console.error),
+
+      await main.onMoved(() => movePlayer()),
+      await mpv.onFocusChanged(({ payload: focused }) => {
+        if (focused) {
+          const parent = main.setFocus();
+        }
+      })
+    );
 
     await alignPlayer();
   });
   onDestroy(async () => {
-    if (unlistenProperties) {
-      unlistenProperties();
+    let unlisten: UnlistenFn | undefined;
+    while ((unlisten = unlistens.pop())) {
+      unlisten();
     }
     await destroy();
     await mpv.close();

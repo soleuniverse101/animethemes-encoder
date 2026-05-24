@@ -1,8 +1,9 @@
 import { FileUtils } from "$lib/utils/file";
 import { command, getProperty, MPV_WINDOW_LABEL, setProperty } from "./api";
+import type { MPVListenerView } from "./listener";
 
 export namespace MPVControls {
-  export type Command = Exclude<keyof MPVControls, "label">;
+  export type Command = Exclude<keyof MPVControls, "label" | "listenerView">;
 
   // First comparing C to any triggers an iteration over all possible types,
   // without it the whole type (not each of its union members) is directly compared to []
@@ -17,9 +18,11 @@ export namespace MPVControls {
 
 export class MPVControls {
   readonly label: string;
+  readonly listenerView: MPVListenerView;
 
-  constructor(label: string = MPV_WINDOW_LABEL) {
+  constructor(label: string = MPV_WINDOW_LABEL, listenerView: MPVListenerView) {
     this.label = label;
+    this.listenerView = listenerView;
   }
 
   async loadFile(path: string) {
