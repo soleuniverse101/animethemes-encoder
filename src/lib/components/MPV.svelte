@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { destroy, getProperty } from "$lib/mpv/api";
+  import { destroy, getProperty, init, observeProperties } from "$lib/mpv/api";
   import {
     OBSERVABLE_PROPERTIES_FORMAT,
     type MPVListener,
@@ -9,7 +9,7 @@
   import { type UnlistenFn } from "@tauri-apps/api/event";
   import { getCurrentWebviewWindow, WebviewWindow } from "@tauri-apps/api/webviewWindow";
   import { onDestroy, onMount } from "svelte";
-  import { init, observeProperties, type MpvConfig } from "tauri-plugin-libmpv-api";
+  import { type MpvConfig } from "tauri-plugin-libmpv-api";
 
   interface Props {
     label: string;
@@ -46,13 +46,12 @@
 
     unlistens.push(
       await mpv.once("tauri://webview-created", async () => {
-        await init(mpvConfig, "mpv");
+        await init(mpvConfig);
 
         unlistens.push(
           await observeProperties<ObservedProperties>(
             listener.observedProperties,
-            ({ name, data }) => listener.update(name, data),
-            label
+            ({ name, data }) => listener.update(name, data)
           )
         );
 
