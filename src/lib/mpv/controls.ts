@@ -1,9 +1,9 @@
 import { FileUtils } from "$lib/utils/file";
-import { command, getProperty, MPV_WINDOW_LABEL, setProperty } from "./api";
+import type { MPVWindowContext } from "./api";
 import type { MPVListenerView } from "./listener";
 
 export namespace MPVControls {
-  export type Command = Exclude<keyof MPVControls, "label" | "listenerView">;
+  export type Command = Exclude<keyof MPVControls, "label" | "listenerView" | "context">;
 
   // First comparing C to any triggers an iteration over all possible types,
   // without it the whole type (not each of its union members) is directly compared to []
@@ -19,10 +19,12 @@ export namespace MPVControls {
 export class MPVControls {
   readonly label: string;
   readonly listenerView: MPVListenerView;
+  readonly context: MPVWindowContext;
 
-  constructor(label: string = MPV_WINDOW_LABEL, listenerView: MPVListenerView) {
+  constructor(label: string, listenerView: MPVListenerView, context: MPVWindowContext) {
     this.label = label;
     this.listenerView = listenerView;
+    this.context = context;
   }
 
   async loadFile(path: string) {
@@ -30,17 +32,20 @@ export class MPVControls {
       throw new Error(`Unsupported video format (${FileUtils.extension(path)})`);
     }
 
-    await command("loadfile", [path]);
+    await this.context.command("loadfile", [path]);
   }
 
   async playPause() {
-    setProperty("pause", (await getProperty("pause", "string")) == "yes" ? "no" : "yes");
+    this.context.setProperty(
+      "pause",
+      (await this.context.getProperty("pause", "string")) == "yes" ? "no" : "yes"
+    );
   }
 
   async nextFrame() {
-    await command("frame-step");
+    await this.context.command("frame-step");
   }
   async previousFrame() {
-    await command("frame-back-step");
+    await this.context.command("frame-back-step");
   }
 }

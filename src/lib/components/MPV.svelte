@@ -1,107 +1,35 @@
 <script lang="ts">
-  import { destroy, getProperty, init, observeProperties } from "$lib/mpv/api";
-  import {
-    OBSERVABLE_PROPERTIES_FORMAT,
-    type MPVListener,
-    type ObservedProperties
-  } from "$lib/mpv/listener";
+  import type { MPVWindowControls } from "$lib/mpv/window";
   import { Positions, Sizes } from "$lib/utils/dpi";
   import { type UnlistenFn } from "@tauri-apps/api/event";
-  import { getCurrentWebviewWindow, WebviewWindow } from "@tauri-apps/api/webviewWindow";
   import { onDestroy, onMount } from "svelte";
-  import { type MpvConfig } from "tauri-plugin-libmpv-api";
 
   interface Props {
-    label: string;
-    listener: MPVListener;
+    mpvWindowControls: MPVWindowControls;
   }
 
   // If label needs to change, parent has to destroy the component then recreate it ({#key} can maybe do that)
-  const { label, listener }: Props = $props();
-
-  const mpvConfig: MpvConfig = {
-    initialOptions: { "keep-open": "yes", pause: "yes" },
-    observedProperties: listener.observedProperties
-  };
-
-  const main = getCurrentWebviewWindow();
-  let mpv: WebviewWindow;
+  const { mpvWindowControls }: Props = $props();
 
   let mpvDiv: HTMLDivElement;
-
-  let unlistens: UnlistenFn[] = [];
-  onMount(async () => {
-    mpv =
-      // (await WebviewWindow.getByLabel(label)) ??
-      new WebviewWindow(label, {
-        parent: main,
-        url: "/mpv",
-
-        transparent: true,
-        decorations: false,
-        shadow: false,
-        resizable: false,
-        focusable: false
-      });
-
-    unlistens.push(
-      await mpv.once("tauri://webview-created", async () => {
-        await init(mpvConfig);
-
-        unlistens.push(
-          await observeProperties<ObservedProperties>(
-            listener.observedProperties,
-            ({ name, data }) => listener.update(name, data)
-          )
-        );
-
-        for (const [name, format] of listener.observedProperties) {
-          try {
-            listener.update(name, await getProperty(name, format));
-          } catch (e) {
-            if (OBSERVABLE_PROPERTIES_FORMAT.nullable[name]) {
-              listener.update(name, null);
-            } else {
-              console.warn(`Failed to retrieve non-nullable property '${name}' at startup`);
-            }
-          }
-        }
-      }),
-      await mpv.once("tauri://error", console.error),
-
-      await main.onMoved(() => movePlayer()),
-      await mpv.onFocusChanged(({ payload: focused }) => {
-        if (focused) {
-          const parent = main.setFocus();
-        }
-      })
-    );
-
-    await alignPlayer();
-  });
-  onDestroy(async () => {
-    let unlisten: UnlistenFn | undefined;
-    while ((unlisten = unlistens.pop())) {
-      unlisten();
-    }
-    await destroy();
-    await mpv.close();
-  });
 
   async function alignPlayer() {
     const mpvRect = mpvDiv.getBoundingClientRect();
     await movePlayer(mpvRect);
-    await mpv.setSize(Sizes.fromBoundingRect(mpvRect));
+    await mpvWindowControls.setSize(Sizes.fromBoundingRect(mpvRect));
   }
   async function movePlayer(mpvRect = mpvDiv.getBoundingClientRect()) {
-    await mpv.setPosition(
-      Positions.add(
-        await main.innerPosition(),
-        Positions.fromBoundingRect(mpvRect),
-        await main.scaleFactor()
-      )
-    );
+    await mpvWindowControls.setPosition(Positions.fromBoundingRect(mpvRect));
   }
+
+  onMount(() => alignPlayer());
+
+  let unlisten: UnlistenFn;
+  $effect(() => {
+    unlisten = mpvWindowControls.subscribeTo.move(() => alignPlayer(), mpvWindowControls.label);
+  });
+
+  onDestroy(() => unlisten());
 </script>
 
 <svelte:window onresize={alignPlayer} />

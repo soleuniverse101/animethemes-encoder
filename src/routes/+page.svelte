@@ -2,13 +2,15 @@
   import MPV from "$lib/components/MPV.svelte";
   import MPVTimeline from "$lib/components/MPVTimeline.svelte";
   import { MPVControls } from "$lib/mpv/controls";
-  import { MPVListener } from "$lib/mpv/listener";
+  import { MPVWindowManager } from "$lib/mpv/window";
+  import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
   import { open } from "@tauri-apps/plugin-dialog";
   import hotkeys from "hotkeys-js";
   import { onDestroy } from "svelte";
 
-  const mpvListener = new MPVListener(["time-pos/full", "pause"]);
-  const mpvControls = new MPVControls(undefined, mpvListener.getView());
+  const mpvWindowManager = new MPVWindowManager(getCurrentWebviewWindow());
+  // TODO replace await by hydration
+  const mpvWindow = await mpvWindowManager.getOrCreateWindow(undefined, ["pause"]);
 
   const controlsShortcuts = {
     space: "playPause",
@@ -22,7 +24,7 @@
 
   for (const [keys, command] of Object.entries(controlsShortcuts)) {
     hotkeys(keys, () => {
-      mpvControls[command]();
+      mpvWindow.mpvControls[command]();
     });
     shortcutsList.push(keys);
   }
@@ -33,10 +35,11 @@
     shortcutsList.push(keys);
   }
 
-  onDestroy(() => {
+  onDestroy(async () => {
     for (const shortcut of shortcutsList) {
       hotkeys.unbind(shortcut);
     }
+    await mpvWindowManager.destroy();
   });
 
   async function importFile() {
@@ -44,15 +47,15 @@
     if (file == null) {
       throw new Error(`File not found (${file})`);
     }
-    await mpvControls.loadFile(file);
+    await mpvWindow.mpvControls.loadFile(file);
   }
 </script>
 
 <main class="flex h-full w-full flex-col items-center">
   <div class="flex grow flex-col items-center">
     <button onclick={importFile}>Upload source file</button>
-    <MPV label={mpvControls.label} listener={mpvListener} />
+    <MPV mpvWindowControls={mpvWindow.controls} />
     <p>Time pos :</p>
   </div>
-  <MPVTimeline controls={mpvControls} />
+  <MPVTimeline controls={mpvWindow.mpvControls} />
 </main>

@@ -13,7 +13,7 @@ import {
   type MpvObservableProperty
 } from "tauri-plugin-libmpv-api";
 
-class MPVWindowContext {
+export class MPVWindowContext {
   readonly label: string;
 
   constructor(label: string) {
@@ -45,13 +45,3 @@ class MPVWindowContext {
     return _observeProperties(properties, callback, this.label);
   }
 }
-
-export const MPV_WINDOW_LABEL = "mpv";
-const context = new MPVWindowContext(MPV_WINDOW_LABEL);
-
-export const init = context.init.bind(context);
-export const destroy = context.destroy.bind(context);
-export const getProperty = context.getProperty.bind(context);
-export const setProperty = context.setProperty.bind(context);
-export const command = context.command.bind(context);
-export const observeProperties = context.observeProperties.bind(context);

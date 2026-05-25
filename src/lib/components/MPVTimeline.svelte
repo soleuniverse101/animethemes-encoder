@@ -6,13 +6,10 @@
     controls: MPVControls;
   }
 
-  // If label needs to change, parent has to destroy the component then recreate it ({#key} can maybe do that)
   const { controls }: Props = $props();
-  const {
-    listenerView: { propertyStore }
-  } = controls;
+  const { propertyStore } = $derived(controls.listenerView);
 
-  let pause = propertyStore("pause");
+  let pause = $derived(propertyStore("pause"));
 </script>
 
 <div class="flex h-16 w-full flex-col justify-center pt-2">

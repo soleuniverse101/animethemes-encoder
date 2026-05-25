@@ -3,7 +3,8 @@ import type { MpvObservableProperty, MpvPropertyData } from "tauri-plugin-libmpv
 
 const OBSERVABLE_PROPERTIES = [
   ["time-pos/full", "int64", "none"] as const,
-  ["pause", "string"] as const
+  ["pause", "string"] as const,
+  ["mpv-version", "string"] as const
 ] satisfies MpvObservableProperty[];
 
 export type ObservedProperties = typeof OBSERVABLE_PROPERTIES;
@@ -45,12 +46,7 @@ export class MPVListener {
 
   constructor(observedProperties: ObservedProperties.Name[]) {
     for (const prop of observedProperties) {
-      (
-        this.stores as Record<
-          ObservedProperties.Name,
-          Writable<ObservedProperties.DataFromName<ObservedProperties.Name>>
-        >
-      )[prop] = writable();
+      this.stores[prop] = writable<any>();
     }
     this.observedProperties = OBSERVABLE_PROPERTIES.filter(([name]) => name in this.stores);
   }
@@ -65,7 +61,12 @@ export class MPVListener {
 
   getView(): MPVListenerView {
     return {
-      propertyStore: (name) => readonly(this.stores[name])
+      propertyStore: (name) => {
+        if (name in this.stores) {
+          return readonly(this.stores[name]);
+        }
+        throw new Error(`Property '${name}' is not observed`);
+      }
     };
   }
 }
