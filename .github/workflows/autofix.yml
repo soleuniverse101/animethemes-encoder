@@ -1,0 +1,25 @@
+name: autofix.ci
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+permissions:
+  contents: read
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: "pnpm"
+      - run: pnpm ci
+      # Note that a Rust toolchain is installed by default on Github Actions runners.
+
+      - run: pnpm format
+
+      - uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a
