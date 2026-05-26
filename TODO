@@ -1,7 +1,20 @@
 Check https://github.com/ikatson/rqbit to download directly in app
 
 Directly embed mpv GPU output into WebView through a texture, check : https://github.com/tauri-apps/wry/blob/dev/examples/wgpu.rs
+maybe use ai to do that
 
 Read Tauri docs (important: security)
 
 remove raw-window-handle if issue disappeared
+
+why do we need destroy permission to listen on a close (check out https://github.com/tauri-apps/tauri/issues/2996)
+
+should permissions in capabilities/default be scoped ? (after reading security docs)
+
+if issue with top level async (experimental for now), switch to await block
+
+apply prettier jsdoc stash once https://github.com/fardad-dev/prettier-plugin-jsdoc/pull/262 is included in a version release (chore: format JSDoc/TSDoc with Prettier)
+
+https://github.com/simonhaenisch/prettier-plugin-organize-imports/issues/39
+
+check stash for mpv wid
