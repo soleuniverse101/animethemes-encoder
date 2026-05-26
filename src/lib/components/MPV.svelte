@@ -8,7 +8,6 @@
     mpvWindowControls: MPVWindowControls;
   }
 
-  // If label needs to change, parent has to destroy the component then recreate it ({#key} can maybe do that)
   let { mpvWindowControls }: Props = $props();
 
   let mpvDiv: HTMLDivElement;
@@ -25,6 +24,7 @@
   onMount(() => alignPlayer());
 
   let unlisten: UnlistenFn;
+  // Using $effect because $derived doesn't compute the value until it's read
   $effect(() => {
     unlisten = mpvWindowControls.subscribeTo.move(() => alignPlayer(), mpvWindowControls.label);
   });
