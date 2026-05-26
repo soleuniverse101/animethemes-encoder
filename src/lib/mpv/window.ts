@@ -14,24 +14,24 @@ const DEFAULT_MPV_CONFIG: MpvConfig = {
 
 export class MPVWindowManager {
   private readonly parent: WebviewWindow;
-  private readonly windows: Record<string, MPVWindow> = {};
+  private readonly windows: Map<string, MPVWindow> = new Map();
+  private readonly windowsUnlistens: Map<string, UnlistenFn[]> = new Map();
 
   private readonly parentMoveUnlisten: Promise<UnlistenFn>;
 
   constructor(parent: WebviewWindow) {
     this.parent = parent;
     this.parentMoveUnlisten = this.parent.onMoved(() =>
-      Object.values(this.windows).forEach((window) => window.events.move.notify())
+      this.windows.values().forEach((window) => window.events.move.notify())
     );
   }
 
   async getOrCreateWindow(
-    label = "mpv",
+    label: string,
     observedProperties: ObservedProperties.Name[] = []
   ): Promise<MPVWindow> {
-    if (label in this.windows) {
-      const window = this.windows[label];
-
+    const window = this.windows.get(label);
+    if (window) {
       const observedNames = window.mpvListener.observedProperties.map(([name]) => name);
       const unobservedProperties = observedProperties.filter(
         (name) => !observedNames.includes(name)
@@ -99,84 +99,104 @@ export class MPVWindowManager {
       observedProperties: mpvListener.observedProperties
     });
 
-    const unlistens: UnlistenFn[] = [];
-
-    let mpvWindow = new MPVWindow();
-    const missingVariables = {
+    const mpvWindow = new MPVWindow({
       label,
       window,
       parent: this.parent,
       mpvContext,
-      unlistens,
-      mpvListener,
-      controls: {
-        label,
-        setPosition: async (position) =>
-          window.setPosition(
-            Positions.add(
-              await this.parent.innerPosition(),
-              position,
-              await this.parent.scaleFactor()
-            )
-          ),
-        setSize: (size) => window.setSize(size),
-        subscribeTo: {
-          move: mpvWindow.events.move.subscribe
-        }
-      },
-      mpvControls: new MPVControls(label, mpvListener.getView(), mpvContext)
-    } satisfies Omit<MPVWindow, "forcePropertiesUpdate" | "events">;
-    Object.entries(missingVariables).forEach(([name, value]) => ((mpvWindow as any)[name] = value));
+      mpvListener
+    });
 
+    const unlistens: UnlistenFn[] = [];
     unlistens.push(
       // TODO make child window unfocusable
       await window.onFocusChanged(({ payload: focused }) => {
         if (focused) {
-          const parent = mpvWindow.parent.setFocus();
+          mpvWindow.parent.setFocus();
         }
       }),
       // TODO remove generics
       await mpvContext.observeProperties<ObservedProperties>(
         mpvListener.observedProperties,
-        ({ name, data }) => mpvListener.update(name, data)
+        ({ name, data }) => mpvWindow.mpvListener.update(name, data)
       )
     );
     await mpvWindow.forcePropertiesUpdate();
 
-    this.windows[label] = mpvWindow;
+    this.windowsUnlistens.set(label, unlistens);
+    this.windows.set(label, mpvWindow);
     return mpvWindow;
   }
 
   async destroy() {
+    this.windowsUnlistens.values().forEach(unlistenAll);
+    (await this.parentMoveUnlisten)();
+  }
+
+  async destroyWindows() {
     // Destroys all windows concurrently
-    await Promise.all([
-      this.parentMoveUnlisten,
-      ...Object.values(this.windows).map((window) => this.destroyWindow(window))
-    ]);
+    await Promise.all(Object.values(this.windows).map((window) => this.destroyWindow(window)));
   }
 
   async destroyWindow(window: MPVWindow) {
-    unlistenAll(window.unlistens);
+    this.windows.delete(window.label);
+    const unlistens = this.windowsUnlistens.get(window.label)!;
+    this.windowsUnlistens.delete(window.label);
+    unlistenAll(unlistens);
+
     await window.mpvContext.destroy();
     await window.window.close();
-    delete this.windows[window.label];
   }
 }
 
 export class MPVWindow {
-  readonly label!: string;
-  readonly window!: WebviewWindow;
-  readonly parent!: WebviewWindow;
-  readonly mpvContext!: MPVWindowContext;
-  readonly unlistens!: UnlistenFn[];
+  readonly label: string;
+  readonly window: WebviewWindow;
+  readonly parent: WebviewWindow;
+  readonly mpvContext: MPVWindowContext;
 
-  readonly mpvListener!: MPVListener;
-  readonly controls!: MPVWindowControls;
+  readonly mpvListener: MPVListener;
+  readonly controls: MPVWindowControls;
   readonly events = {
     move: createEventDispatcher()
   };
 
-  readonly mpvControls!: MPVControls;
+  readonly mpvControls: MPVControls;
+
+  /**
+   * DO NOT USE THIS. {@link MPVWindow}s must be created through a {@link MPVWindowManager}
+   */
+  constructor({
+    label,
+    window,
+    parent,
+    mpvContext,
+    mpvListener
+  }: {
+    -readonly [Property in keyof Omit<
+      MPVWindow,
+      "controls" | "events" | "mpvControls" | "forcePropertiesUpdate"
+    >]: MPVWindow[Property];
+  }) {
+    this.label = label;
+    this.window = window;
+    this.parent = parent;
+    this.mpvContext = mpvContext;
+    this.mpvListener = mpvListener;
+    this.controls = {
+      label,
+      setPosition: async function (position) {
+        window.setPosition(
+          Positions.add(await parent.innerPosition(), position, await parent.scaleFactor())
+        );
+      },
+      setSize: (size) => window.setSize(size),
+      subscribeTo: {
+        move: this.events.move.subscribe
+      }
+    };
+    this.mpvControls = new MPVControls(label, this.mpvListener.getView(), mpvContext);
+  }
 
   /** Sends {@link mpvListener} all current property values (even if they're null) */
   async forcePropertiesUpdate() {

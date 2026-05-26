@@ -9,7 +9,7 @@
   }
 
   // If label needs to change, parent has to destroy the component then recreate it ({#key} can maybe do that)
-  const { mpvWindowControls }: Props = $props();
+  let { mpvWindowControls }: Props = $props();
 
   let mpvDiv: HTMLDivElement;
 
