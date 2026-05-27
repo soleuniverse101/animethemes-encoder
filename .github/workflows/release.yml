@@ -19,3 +19,5 @@ jobs:
 
       - name: Create Release PR
         uses: changesets/action@v1
+        with:
+          version: pnpm ci:version
