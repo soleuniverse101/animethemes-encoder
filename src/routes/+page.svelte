@@ -1,6 +1,6 @@
 <script lang="ts">
   import { registerShortcuts } from "$lib/app/shortcuts";
-  import MPVView from "$lib/components/MPVView.svelte";
+  import MPVView from "$lib/components/mpv/MPVView.svelte";
   import { onDestroy } from "svelte";
 
   const unlisten = registerShortcuts();
