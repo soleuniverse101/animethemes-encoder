@@ -1,12 +1,9 @@
 name: Prepare environment
-description: Setup Node.js & pnpm
+description: Setup Node.js & pnpm. Don't forget to checkout the repository before calling
 
 runs:
   using: "composite"
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v6
-
     - name: Setup Node.js 24
       uses: actions/setup-node@v6
       with:
