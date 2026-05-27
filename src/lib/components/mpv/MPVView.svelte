@@ -6,7 +6,7 @@
   import { open } from "@tauri-apps/plugin-dialog";
   import { onDestroy, onMount } from "svelte";
   import MPV from "./MPV.svelte";
-  import MPVTimeline from "./MPVTimeline.svelte";
+  import MPVPlaybackControls from "./MPVPlaybackControls.svelte";
 
   const main = getCurrentWebviewWindow();
   let mpvWindowManager: MPVWindowManager;
@@ -15,7 +15,11 @@
 
   onMount(async () => {
     mpvWindowManager = new MPVWindowManager(main);
-    mpvWindow = await mpvWindowManager.getOrCreateWindow("mpv", ["pause"]);
+    mpvWindow = await mpvWindowManager.getOrCreateWindow("mpv", [
+      "pause",
+      "time-pos/full",
+      "duration"
+    ]);
 
     registerHandler("mpvView", {
       importFile: async () => {
@@ -49,6 +53,6 @@
       <MPV mpvWindowControls={mpvWindow.controls} />
       <p>Time pos :</p>
     </div>
-    <MPVTimeline controls={mpvWindow.mpvControls} />
+    <MPVPlaybackControls controls={mpvWindow.mpvControls} />
   {/if}
 </div>
