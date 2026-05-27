@@ -11,17 +11,8 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Setup node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-      - run: pnpm ci
-      # Note that a Rust toolchain is installed by default on Github Actions runners.
+      - name: Prepare environment
+        uses: ./.github/actions/prepare-env
 
       - name: Create Release PR
         uses: changesets/action@v1

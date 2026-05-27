@@ -9,17 +9,14 @@ permissions:
 
 jobs:
   autofix:
+    name: Prettier formatting & autofix.ci
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Prepare environment
+        uses: ./.github/actions/prepare-env
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-      - uses: pnpm/action-setup@v6
-      - run: pnpm ci
-      # Note that a Rust toolchain is installed by default on Github Actions runners.
+      - name: Format
+        run: pnpm format
 
-      - run: pnpm format
-
-      - uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a
+      - name: Update push/PR
+        uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a
