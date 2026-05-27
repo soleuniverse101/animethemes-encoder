@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { MouseEventHandler } from "svelte/elements";
+
   type Props =
     | {
         active: true;
@@ -10,17 +12,29 @@
       };
 
   let { active, progress = $bindable() }: Props = $props();
+
+  let click = $state(false);
+
+  let sliderRect: DOMRectReadOnly = $state() as DOMRectReadOnly;
+  const onmousemove: MouseEventHandler<Document> = (event) => {
+    if (click) {
+      progress = (event.clientX - sliderRect.x) / sliderRect.width;
+    }
+  };
 </script>
 
-<div class="group relative h-1 w-full">
+<svelte:document {onmousemove} onmouseup={() => (click = false)} />
+
+<div class="relative h-10 w-full">
   {#if active}
-    <input
-      type="range"
-      min="0"
-      max="1"
-      step="any"
-      class="absolute h-full w-full"
-      bind:value={progress}
-    />
+    <div class="peer peer absolute bottom-0 h-1/2 w-full"></div>
+    <div
+      role="slider"
+      class="absolute bottom-0 h-2 w-full bg-[rgb(230,225,240)] transition-[height] ease-linear select-none peer-hover:h-full hover:h-full"
+      bind:contentRect={sliderRect}
+      onmousedown={() => (click = true)}
+    >
+      <div class="h-full bg-[#319488] transition-[width]" style:width={progress * 100 + "%"}></div>
+    </div>
   {/if}
 </div>

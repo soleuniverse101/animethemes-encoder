@@ -21,7 +21,7 @@
   });
 </script>
 
-<div class="flex h-16 w-full flex-col justify-center pt-2">
+<div class="flex w-full flex-col justify-center pt-2">
   <MPVTimeline
     active={progress != null}
     bind:progress={() => progress ?? NaN, (p) => controls.setPosition(p * $duration!)}
@@ -34,7 +34,7 @@
       <Icon {icon} class="h-full" />
     </button>
   {/snippet}
-  <div class="flex grow flex-col justify-center">
+  <div class="flex h-14 grow flex-col justify-center">
     <div class="flex items-center justify-center gap-2 text-[rgb(159,147,184)] transition">
       {@render button("previousFrame", "fa6-solid:backward-step")}
       {@render button("playPause", $pause == "yes" ? "fa6-solid:play" : "fa6-solid:pause")}
