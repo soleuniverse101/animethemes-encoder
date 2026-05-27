@@ -19,6 +19,11 @@ jobs:
 
       - name: Prepare environment
         uses: ./.github/actions/prepare-env
+      - name: Install cargo-bump from crates.io
+        uses: baptiste0928/cargo-install@v3
+        with:
+          crate: cargo-bump
+          version: "1.1.0"
 
       - name: Create Release PR
         uses: changesets/action@v1

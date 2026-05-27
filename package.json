@@ -14,7 +14,6 @@
     "tauri": "tauri",
     "lint": "prettier --check .",
     "format": "prettier --write . && cargo fmt --manifest-path src-tauri/Cargo.toml",
-    "preci:version": "cargo install cargo-bump@^1.1.0",
     "ci:version": "changeset version && node scripts/cargo-version.js"
   },
   "license": "MIT",
