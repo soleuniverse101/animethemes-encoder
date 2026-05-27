@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "author": "soleuniverse",
   "description": "A helper tool to streamline the encoding process of AnimeThemes.moe",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite dev",
@@ -23,6 +24,7 @@
     "tauri-plugin-libmpv-api": "^0.3.2"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.0",
     "@iconify/svelte": "^5.2.1",
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "^2.60.1",
