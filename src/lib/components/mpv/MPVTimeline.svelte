@@ -27,6 +27,11 @@
   const updatePosition = async (clickX: number) => {
     await controls.setPosition(((clickX - sliderRect.x) / sliderRect.width) * $duration);
   };
+
+  const posFormatter = new Intl.DurationFormat(undefined, {
+    style: "long"
+  });
+  let roundedTimePos = $derived(Math.round($timePos));
 </script>
 
 <svelte:document
@@ -52,7 +57,6 @@
   {#if progress != null}
     <div class="peer absolute bottom-0 h-1/2 w-full"></div>
     <div
-      role="slider"
       class="peer/timeline absolute bottom-0 h-2 w-full bg-[rgb(230,225,240)] transition-[height] ease-linear select-none peer-hover:h-full hover:h-full"
       bind:contentRect={sliderRect}
       onmousedown={async ({ button, clientX }) => {
@@ -61,6 +65,12 @@
           sliding = true;
         }
       }}
+      role="slider"
+      tabindex="0"
+      aria-valuemin="0"
+      aria-valuemax={$duration}
+      aria-valuenow={roundedTimePos}
+      aria-valuetext={posFormatter.format(Temporal.Duration.from({ seconds: roundedTimePos }))}
     >
       <div class="h-full bg-[#319488] transition-[width]" style:width={progress * 100 + "%"}></div>
     </div>
