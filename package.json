@@ -1,6 +1,6 @@
 {
   "name": "animethemes-encoder",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "soleuniverse",
   "description": "A helper tool to streamline the encoding process of AnimeThemes.moe",
   "private": true,
