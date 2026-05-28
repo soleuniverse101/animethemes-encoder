@@ -83,7 +83,10 @@ export class MPVWindowManager {
         });
 
         windowUnlistens.push(
-          window.once("tauri://webview-created", () => res(window)),
+          window.once("tauri://webview-created", async () => {
+            await window.setIgnoreCursorEvents(true);
+            res(window);
+          }),
           window.once("tauri://error", ({ payload: error }) =>
             rej(`Failed to create MPVWindow with label ${label} :\n${error}`)
           )
@@ -109,12 +112,6 @@ export class MPVWindowManager {
 
     const unlistens: UnlistenFn[] = [];
     unlistens.push(
-      // TODO make child window unfocusable
-      await window.onFocusChanged(({ payload: focused }) => {
-        if (focused) {
-          mpvWindow.parent.setFocus();
-        }
-      }),
       // TODO remove generics
       await mpvContext.observeProperties<ObservedProperties>(
         mpvListener.observedProperties,
