@@ -38,7 +38,9 @@
         forwardSeek: async (duration) => await mpvWindow?.mpvControls.forwardSeek(duration),
         backwardSeek: async (duration) => await mpvWindow?.mpvControls.backwardSeek(duration),
         nextFrame: async () => await mpvWindow?.mpvControls.nextFrame(),
-        previousFrame: async () => await mpvWindow?.mpvControls.previousFrame()
+        previousFrame: async () => await mpvWindow?.mpvControls.previousFrame(),
+        setLoopA: async (position) => await mpvWindow?.mpvControls.setLoopA(position),
+        setLoopB: async (position) => await mpvWindow?.mpvControls.setLoopB(position)
       }
     });
   });

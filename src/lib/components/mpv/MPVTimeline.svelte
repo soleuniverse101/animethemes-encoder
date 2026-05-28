@@ -38,13 +38,13 @@
   onmouseup={() => (sliding = false)}
 />
 
-{#snippet loopMarker(type: "left" | "right", progress: number)}
+{#snippet loopMarker(type: "a" | "b", progress: number)}
   <div
     class="pointer-events-none absolute bottom-1 h-8 w-3 translate-y-1/2 border-4 border-[rgb(159,147,184)] transition-all peer-hover:bottom-1/2 peer-hover:h-16 peer-hover/timeline:bottom-1/2 peer-hover/timeline:h-16"
-    class:-translate-x-1={type == "left"}
-    class:-translate-x-2={type == "right"}
+    class:-translate-x-1={type == "a"}
+    class:-translate-x-2={type == "b"}
     style:left={`${progress * 100}%`}
-    style={`border-${type == "left" ? "right" : "left"}: none`}
+    style={`border-${type == "a" ? "right" : "left"}: none`}
   ></div>
 {/snippet}
 
@@ -70,10 +70,10 @@
       class="pointer-events-none absolute top-1/2 -translate-y-1/4 opacity-0 transition peer-hover:-translate-y-1/2 peer-hover:opacity-90 peer-hover/timeline:-translate-y-1/2 peer-hover/timeline:opacity-90"
     />
     {#if $loopA}
-      {@render loopMarker("left", $loopA)}
+      {@render loopMarker("a", $loopA)}
     {/if}
     {#if $loopB}
-      {@render loopMarker("right", $loopB)}
+      {@render loopMarker("b", $loopB)}
     {/if}
   {/if}
 </div>
