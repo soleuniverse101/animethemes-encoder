@@ -163,9 +163,7 @@ export class MPVWindow {
 
   readonly mpvControls: MPVControls;
 
-  /**
-   * DO NOT USE THIS. {@link MPVWindow}s must be created through a {@link MPVWindowManager}
-   */
+  /** DO NOT USE THIS. {@link MPVWindow}s must be created through a {@link MPVWindowManager} */
   constructor({
     label,
     window,

@@ -3,7 +3,9 @@ import { LogicalPosition, LogicalSize, PhysicalPosition, Position } from "@tauri
 export namespace Positions {
   /**
    * Adds two positions.
-   * @returns a {@link PhysicalPosition} if one or both are physical, {@link LogicalPosition} if both are logical. Note that physical positions are rounded using {@method round}.
+   *
+   * @returns A {@link PhysicalPosition} if one or both are physical, {@link LogicalPosition} if both
+   *   are logical. Note that physical positions are rounded using {@method round}.
    */
   export function add(
     pos1: PhysicalPosition | LogicalPosition | Position,

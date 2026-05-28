@@ -51,9 +51,7 @@ export class MPVControls {
       (await this.context.getProperty("pause", "string")) == "yes" ? "no" : "yes"
     );
   }
-  /**
-   * @param position timecode in seconds
-   */
+  /** @param position Timecode in seconds. */
   async setPosition(position: number) {
     await this.context.command("seek", [position, "absolute"]);
   }

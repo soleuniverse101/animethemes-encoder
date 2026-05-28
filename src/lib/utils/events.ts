@@ -30,11 +30,13 @@ type EventSubscriber<Args extends unknown[] = []> = (
 
 export type EventDispatcher<Args extends unknown[] = []> = {
   /**
-   * Registers {@link callback} as a subscriber to the associated event. An optional {@link id} can be specified to assure a single subscriber exists for a given context. Only one subscriber can be registered for a given {@link id}, the others will be unregistered
+   * Registers {@link callback} as a subscriber to the associated event. An optional {@link id} can be
+   * specified to assure a single subscriber exists for a given context. Only one subscriber can be
+   * registered for a given {@link id}, the others will be unregistered.
    *
    * @param callback
-   * @param id optional
-   * @returns a callback to unsubscribe to this event
+   * @param id Optional.
+   * @returns A callback to unsubscribe to this event.
    */
   subscribe: EventSubscriber<Args>;
   notify: Callback<Args>;

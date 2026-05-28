@@ -33,6 +33,8 @@
     "@tailwindcss/vite": "^4.3.0",
     "@tauri-apps/cli": "^2.11.2",
     "prettier": "^3.8.3",
+    "prettier-plugin-jsdoc": "^1.8.0",
+    "prettier-plugin-merge": "^0.10.1",
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-svelte": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.7.4",

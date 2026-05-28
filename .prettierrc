@@ -5,16 +5,13 @@
   "printWidth": 100,
   "plugins": [
     "prettier-plugin-svelte",
+    "prettier-plugin-organize-imports",
     "prettier-plugin-tailwindcss",
-    "prettier-plugin-organize-imports"
+    "prettier-plugin-jsdoc",
+    "prettier-plugin-merge"
   ],
   "tailwindStylesheet": "./src/routes/layout.css",
-  "overrides": [
-    {
-      "files": "*.svelte",
-      "options": {
-        "parser": "svelte"
-      }
-    }
-  ]
+
+  "tsdoc": true,
+  "jsdocDescriptionWithDot": true
 }

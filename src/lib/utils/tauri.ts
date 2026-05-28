@@ -1,7 +1,9 @@
 import type { UnlistenFn } from "@tauri-apps/api/event";
 
 /**
- * Because unlisten should only be called once, but also for performance purposes, this function empties the passed list
+ * Because unlisten should only be called once, but also for performance purposes, this function
+ * empties the passed list.
+ *
  * @param unlistens
  */
 export function unlistenAll<U extends UnlistenFn | Promise<UnlistenFn>>(
