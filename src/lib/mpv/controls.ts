@@ -1,3 +1,4 @@
+import { assertNonNull } from "$lib/utils/assert";
 import { FileUtils } from "$lib/utils/file";
 import type { MPVWindowContext } from "./api";
 import type { MPVListenerView } from "./listener";
@@ -68,5 +69,18 @@ export class MPVControls {
   }
   async previousFrame() {
     await this.context.command("frame-back-step");
+  }
+
+  async setLoopA(position?: number) {
+    await this.context.setProperty(
+      "ab-loop-a",
+      position ?? assertNonNull(await this.context.getProperty("time-pos/full", "double"))
+    );
+  }
+  async setLoopB(position?: number) {
+    await this.context.setProperty(
+      "ab-loop-b",
+      position ?? assertNonNull(await this.context.getProperty("time-pos/full", "double"))
+    );
   }
 }

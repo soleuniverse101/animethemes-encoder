@@ -8,26 +8,12 @@
   }
 
   const { controls }: Props = $props();
-  const { propertyStore } = $derived(controls.listenerView);
 
-  let pause = $derived(propertyStore("pause"));
-  let timePos = $derived(propertyStore("time-pos/full"));
-  let duration = $derived(propertyStore("duration"));
-  let progress = $derived.by(() => {
-    if ($timePos != null && $duration != null) {
-      return $timePos / $duration;
-    }
-    return null;
-  });
+  const pause = $derived(controls.listenerView.propertyStore("pause"));
 </script>
 
 <div class="flex w-full flex-col justify-center pt-2">
-  <MPVTimeline
-    active={progress != null}
-    bind:progress={() => progress ?? NaN, (p) => controls.setPosition(p * $duration!)}
-    timePos={$timePos ?? NaN}
-    duration={$duration ?? NaN}
-  />
+  <MPVTimeline {controls} />
   {#snippet button(action: MPVControls.ParameterlessCommand, icon: string, tooltip: string)}
     <button
       onclick={() => controls[action]()}
@@ -39,6 +25,7 @@
   {/snippet}
   <div class="flex h-14 grow flex-col justify-center">
     <div class="flex items-center justify-center gap-2 text-[rgb(159,147,184)] transition">
+      {@render button("setLoopA", "mdi:contain-start", "Set Loop Start (Shift+Alt+Left)")}
       {@render button(
         "previousFrame",
         "fluent:previous-frame-24-filled",
@@ -52,6 +39,7 @@
       )}
       {@render button("forwardSeek", "fa6-solid:forward", "Forward 5 Seconds (Right)")}
       {@render button("nextFrame", "fluent:next-frame-24-filled", "Next Frame (Shift+Right)")}
+      {@render button("setLoopB", "mdi:contain-end", "Set Loop End (Shift+Alt+Right)")}
     </div>
   </div>
 </div>

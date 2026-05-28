@@ -2,10 +2,12 @@ import { readonly, writable, type Readable, type Writable } from "svelte/store";
 import type { MpvObservableProperty, MpvPropertyData } from "tauri-plugin-libmpv-api";
 
 const OBSERVABLE_PROPERTIES = [
-  ["time-pos/full", "double", "none"] as const,
+  ["mpv-version", "string"] as const,
   ["duration", "double", "none"] as const,
+  ["time-pos/full", "double", "none"] as const,
   ["pause", "string"] as const,
-  ["mpv-version", "string"] as const
+  ["ab-loop-a", "double", "none"] as const,
+  ["ab-loop-b", "double", "none"] as const
 ] satisfies MpvObservableProperty[];
 
 export type ObservedProperties = typeof OBSERVABLE_PROPERTIES;

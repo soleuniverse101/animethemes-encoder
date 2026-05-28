@@ -16,9 +16,11 @@
   onMount(async () => {
     mpvWindowManager = new MPVWindowManager(main);
     mpvWindow = await mpvWindowManager.getOrCreateWindow("mpv", [
-      "pause",
+      "duration",
       "time-pos/full",
-      "duration"
+      "pause",
+      "ab-loop-a",
+      "ab-loop-b"
     ]);
 
     registerHandler("mpvView", {

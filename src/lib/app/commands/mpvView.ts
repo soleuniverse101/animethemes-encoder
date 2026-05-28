@@ -8,6 +8,8 @@ export type MPVViewHandler = {
     backwardSeek: (duration?: number) => Promise<void>;
     nextFrame: () => Promise<void>;
     previousFrame: () => Promise<void>;
+    setLoopA: (position?: number) => Promise<void>;
+    setLoopB: (position?: number) => Promise<void>;
   };
 };
 

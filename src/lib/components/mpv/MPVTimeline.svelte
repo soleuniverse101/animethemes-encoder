@@ -1,55 +1,79 @@
 <script lang="ts">
-  import type { MouseEventHandler } from "svelte/elements";
-  import TimeDisplay from "./TimeDisplay.svelte";
+  import type { MPVControls } from "$lib/mpv/controls";
+  import { derived } from "svelte/store";
+  import TimePosDisplay from "./TimePosDisplay.svelte";
 
-  type Props =
-    | {
-        active: true;
-        progress: number;
-        timePos: number;
-        duration: number;
-      }
-    | {
-        active: false;
-        progress: typeof NaN;
-        timePos: typeof NaN;
-        duration: typeof NaN;
-      };
+  interface Props {
+    controls: MPVControls;
+  }
 
-  let { active, progress = $bindable(), timePos, duration }: Props = $props();
+  const { controls }: Props = $props();
+  const { propertyStore } = $derived(controls.listenerView);
 
-  let click = $state(false);
+  let timePos = $derived(derived(propertyStore("time-pos/full"), (v) => v ?? NaN));
+  let duration = $derived(derived(propertyStore("duration"), (v) => v ?? NaN));
+  let progress = $derived.by(() => {
+    if (!Number.isNaN($timePos) && !Number.isNaN($duration)) {
+      return $timePos / $duration;
+    }
+    return null;
+  });
+  let loopA = $derived(derived(propertyStore("ab-loop-a"), (t) => (t ?? NaN) / $duration));
+  let loopB = $derived(derived(propertyStore("ab-loop-b"), (t) => (t ?? NaN) / $duration));
+
+  let sliding = $state(false);
 
   let sliderRect: DOMRectReadOnly = $state() as DOMRectReadOnly;
-  const trigger: MouseEventHandler<Document> = (event) => {
-    if (click) {
-      progress = (event.clientX - sliderRect.x) / sliderRect.width;
-    }
+  const updatePosition = async (clickX: number) => {
+    await controls.setPosition(((clickX - sliderRect.x) / sliderRect.width) * $duration);
   };
 </script>
 
-<svelte:document onmousemove={trigger} onmouseup={() => (click = false)} />
+<svelte:document
+  onmousemove={({ clientX }) => {
+    if (sliding) {
+      updatePosition(clientX);
+    }
+  }}
+  onmouseup={() => (sliding = false)}
+/>
+
+{#snippet loopMarker(type: "left" | "right", progress: number)}
+  <div
+    class="pointer-events-none absolute bottom-1 h-8 w-3 translate-y-1/2 border-4 border-[rgb(159,147,184)] transition-all peer-hover:bottom-1/2 peer-hover:h-16 peer-hover/timeline:bottom-1/2 peer-hover/timeline:h-16"
+    class:-translate-x-1={type == "left"}
+    class:-translate-x-2={type == "right"}
+    style:left={`${progress * 100}%`}
+    style={`border-${type == "left" ? "right" : "left"}: none`}
+  ></div>
+{/snippet}
 
 <div class="relative h-10 w-full">
-  {#if active}
+  {#if progress != null}
     <div class="peer absolute bottom-0 h-1/2 w-full"></div>
     <div
       role="slider"
       class="peer/timeline absolute bottom-0 h-2 w-full bg-[rgb(230,225,240)] transition-[height] ease-linear select-none peer-hover:h-full hover:h-full"
       bind:contentRect={sliderRect}
-      onmousedown={(event) => {
-        if (event.button == 0) {
-          progress = (event.clientX - sliderRect.x) / sliderRect.width;
-          click = true;
+      onmousedown={async ({ button, clientX }) => {
+        if (button == 0) {
+          updatePosition(clientX);
+          sliding = true;
         }
       }}
     >
       <div class="h-full bg-[#319488] transition-[width]" style:width={progress * 100 + "%"}></div>
     </div>
-    <TimeDisplay
-      {timePos}
-      {duration}
-      class="pointer-events-none absolute top-1/2 z-10 -translate-y-1/4  opacity-0 transition peer-hover:-translate-y-1/2 peer-hover:opacity-90 peer-hover/timeline:-translate-y-1/2 peer-hover/timeline:opacity-90"
+    <TimePosDisplay
+      timePos={$timePos}
+      duration={$duration}
+      class="pointer-events-none absolute top-1/2 -translate-y-1/4 opacity-0 transition peer-hover:-translate-y-1/2 peer-hover:opacity-90 peer-hover/timeline:-translate-y-1/2 peer-hover/timeline:opacity-90"
     />
+    {#if $loopA}
+      {@render loopMarker("left", $loopA)}
+    {/if}
+    {#if $loopB}
+      {@render loopMarker("right", $loopB)}
+    {/if}
   {/if}
 </div>
