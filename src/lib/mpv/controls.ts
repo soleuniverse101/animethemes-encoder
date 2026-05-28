@@ -5,11 +5,20 @@ import type { MPVListenerView } from "./listener";
 export namespace MPVControls {
   export type Command = Exclude<keyof MPVControls, "label" | "listenerView" | "context">;
 
+  // thanks ChatGPT
+  type IsAllOptional<T extends readonly any[]> = T extends []
+    ? true
+    : T extends [infer F, ...infer R]
+      ? undefined extends F
+        ? IsAllOptional<R>
+        : false
+      : never;
+
   // First comparing C to any triggers an iteration over all possible types,
   // without it the whole type (not each of its union members) is directly compared to []
   // reference : https://www.typescriptlang.org/docs/handbook/2/conditional-types.html#distributive-conditional-types
   type _ParameterlessCommand<C extends Command = Command> = C extends any
-    ? Parameters<MPVControls[C]> extends []
+    ? IsAllOptional<Parameters<MPVControls[C]>> extends true
       ? C
       : never
     : never;
@@ -48,6 +57,12 @@ export class MPVControls {
     await this.context.command("seek", [position, "absolute"]);
   }
 
+  async forwardSeek(duration: number = 5) {
+    await this.context.command("seek", [duration, "exact"]);
+  }
+  async backwardSeek(duration: number = 5) {
+    await this.context.command("seek", [-duration, "exact"]);
+  }
   async nextFrame() {
     await this.context.command("frame-step");
   }

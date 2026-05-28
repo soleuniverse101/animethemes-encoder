@@ -26,9 +26,10 @@
     active={progress != null}
     bind:progress={() => progress ?? NaN, (p) => controls.setPosition(p * $duration!)}
   />
-  {#snippet button(action: MPVControls.ParameterlessCommand, icon: string)}
+  {#snippet button(action: MPVControls.ParameterlessCommand, icon: string, tooltip: string)}
     <button
       onclick={() => controls[action]()}
+      title={tooltip}
       class="flex aspect-square h-8 items-center justify-center rounded-full bg-none p-2 transition hover:bg-[rgb(230,225,240)]"
     >
       <Icon {icon} class="h-full" />
@@ -36,9 +37,19 @@
   {/snippet}
   <div class="flex h-14 grow flex-col justify-center">
     <div class="flex items-center justify-center gap-2 text-[rgb(159,147,184)] transition">
-      {@render button("previousFrame", "fa6-solid:backward-step")}
-      {@render button("playPause", $pause == "yes" ? "fa6-solid:play" : "fa6-solid:pause")}
-      {@render button("nextFrame", "fa6-solid:forward-step")}
+      {@render button(
+        "previousFrame",
+        "fluent:previous-frame-24-filled",
+        "Previous Frame (Shift+Left)"
+      )}
+      {@render button("backwardSeek", "fa6-solid:backward", "Backward 5 Seconds (Left)")}
+      {@render button(
+        "playPause",
+        $pause == "yes" ? "fa6-solid:play" : "fa6-solid:pause",
+        "Play/Pause (Space)"
+      )}
+      {@render button("forwardSeek", "fa6-solid:forward", "Forward 5 Seconds (Right)")}
+      {@render button("nextFrame", "fluent:next-frame-24-filled", "Next Frame (Shift+Right)")}
     </div>
   </div>
 </div>

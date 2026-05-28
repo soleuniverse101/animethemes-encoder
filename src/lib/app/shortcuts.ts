@@ -7,6 +7,8 @@ export function registerShortcuts(): UnlistenFn {
   const shortcutsList: string[] = [];
   const controlsShortcuts = {
     space: "playPause",
+    right: "forwardSeek",
+    left: "backwardSeek",
     "shift+right": "nextFrame",
     "shift+left": "previousFrame"
   } as const satisfies Record<string, MPVControls.ParameterlessCommand>;

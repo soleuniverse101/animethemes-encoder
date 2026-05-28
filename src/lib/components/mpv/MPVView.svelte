@@ -33,6 +33,8 @@
       },
       playback: {
         playPause: async () => await mpvWindow?.mpvControls.playPause(),
+        forwardSeek: async (duration) => await mpvWindow?.mpvControls.forwardSeek(duration),
+        backwardSeek: async (duration) => await mpvWindow?.mpvControls.backwardSeek(duration),
         nextFrame: async () => await mpvWindow?.mpvControls.nextFrame(),
         previousFrame: async () => await mpvWindow?.mpvControls.previousFrame()
       }
