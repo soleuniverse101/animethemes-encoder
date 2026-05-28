@@ -11,11 +11,11 @@
   const { propertyStore } = $derived(controls.listenerView);
 
   let pause = $derived(propertyStore("pause"));
-  let timepos = $derived(propertyStore("time-pos/full"));
+  let timePos = $derived(propertyStore("time-pos/full"));
   let duration = $derived(propertyStore("duration"));
   let progress = $derived.by(() => {
-    if ($timepos != null && $duration != null) {
-      return $timepos / $duration;
+    if ($timePos != null && $duration != null) {
+      return $timePos / $duration;
     }
     return null;
   });
@@ -25,6 +25,8 @@
   <MPVTimeline
     active={progress != null}
     bind:progress={() => progress ?? NaN, (p) => controls.setPosition(p * $duration!)}
+    timePos={$timePos ?? NaN}
+    duration={$duration ?? NaN}
   />
   {#snippet button(action: MPVControls.ParameterlessCommand, icon: string, tooltip: string)}
     <button
