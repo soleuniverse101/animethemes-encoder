@@ -53,12 +53,9 @@
   });
 </script>
 
-<div class="flex h-full w-full flex-col items-center">
+<div class="flex flex-col items-center">
   {#if mpvWindow}
-    <div class="flex grow flex-col items-center">
-      <MPV mpvWindowControls={mpvWindow.controls} />
-      <p>Time pos :</p>
-    </div>
+    <MPV mpvWindowControls={mpvWindow.controls} />
     <MPVPlaybackControls controls={mpvWindow.mpvControls} />
   {/if}
 </div>

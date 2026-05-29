@@ -21,6 +21,7 @@
     "@tauri-apps/api": "^2.11.0",
     "@tauri-apps/plugin-dialog": "~2.7.1",
     "@tauri-apps/plugin-opener": "^2.5.4",
+    "bits-ui": "^2.18.1",
     "hotkeys-js": "^4.0.4",
     "tauri-plugin-libmpv-api": "^0.3.2"
   },
