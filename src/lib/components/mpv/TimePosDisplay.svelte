@@ -14,7 +14,7 @@
   let dur = $derived(Temporal.Duration.from({ milliseconds: Math.round(duration * 1000) }));
 </script>
 
-<div class={_class + " flex items-center gap-1 p-2 align-middle font-mono"}>
+<div class={_class + " flex items-center gap-1 align-middle font-mono"}>
   <span>{formatter.format(pos)}</span>
   <span>/</span>
   <span>{formatter.format(dur)}</span>

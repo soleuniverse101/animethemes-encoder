@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { MPVControls } from "$lib/mpv/controls";
+  import { clamp } from "$lib/utils/math";
   import { derived } from "svelte/store";
   import TimePosDisplay from "./TimePosDisplay.svelte";
 
@@ -23,9 +24,10 @@
 
   let sliding = $state(false);
 
-  let sliderRect: DOMRectReadOnly = $state() as DOMRectReadOnly;
+  let slider: HTMLDivElement;
   const updatePosition = async (clickX: number) => {
-    await controls.setPosition(((clickX - sliderRect.x) / sliderRect.width) * $duration);
+    const rect = slider.getBoundingClientRect();
+    await controls.setPosition(clamp((clickX - rect.x) / rect.width, 0, 1) * $duration);
   };
 
   const posFormatter = new Intl.DurationFormat(undefined, {
@@ -45,7 +47,7 @@
 
 {#snippet loopMarker(type: "a" | "b", progress: number)}
   <div
-    class="pointer-events-none absolute bottom-1 h-8 w-3 translate-y-1/2 border-4 border-[rgb(159,147,184)] transition-all peer-hover:bottom-1/2 peer-hover:h-16 peer-hover/timeline:bottom-1/2 peer-hover/timeline:h-16"
+    class="pointer-events-none absolute h-full w-3 border-4 border-[rgb(159,147,184)]"
     class:-translate-x-1={type == "a"}
     class:-translate-x-2={type == "b"}
     style:left={`${progress * 100}%`}
@@ -53,12 +55,11 @@
   ></div>
 {/snippet}
 
-<div class="relative h-10 w-full">
+<div bind:this={slider} class="relative h-10 w-full flex flex-col justify-center">
   {#if progress != null}
-    <div class="peer absolute bottom-0 h-1/2 w-full"></div>
     <div
-      class="peer/timeline absolute bottom-0 h-2 w-full bg-[rgb(230,225,240)] transition-[height] ease-linear select-none peer-hover:h-full hover:h-full"
-      bind:contentRect={sliderRect}
+      class="h-4/5 w-full bg-[rgb(230,225,240)] select-none"
+      // bind:contentRect={sliderRect}
       onmousedown={async ({ button, clientX }) => {
         if (button == 0) {
           updatePosition(clientX);
@@ -77,7 +78,7 @@
     <TimePosDisplay
       timePos={$timePos}
       duration={$duration}
-      class="pointer-events-none absolute top-1/2 -translate-y-1/4 opacity-0 transition peer-hover:-translate-y-1/2 peer-hover:opacity-90 peer-hover/timeline:-translate-y-1/2 peer-hover/timeline:opacity-90"
+      class="pointer-events-none absolute right-2 opacity-40"
     />
     {#if $loopA}
       {@render loopMarker("a", $loopA)}
