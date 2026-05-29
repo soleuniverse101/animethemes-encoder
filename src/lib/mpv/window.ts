@@ -128,11 +128,8 @@ export class MPVWindowManager {
   async destroy() {
     this.windowsUnlistens.values().forEach(unlistenAll);
     (await this.parentMoveUnlisten)();
-  }
-
-  async destroyWindows() {
     // Destroys all windows concurrently
-    await Promise.all(Object.values(this.windows).map((window) => this.destroyWindow(window)));
+    await Promise.all(this.windows.values().map((window) => this.destroyWindow(window)));
   }
 
   async destroyWindow(window: MPVWindow) {
