@@ -1,5 +1,6 @@
 <script lang="ts">
   import { registerHandler } from "$lib/app/commands";
+  import { getJob } from "$lib/app/job";
   import { MPVWindowManager } from "$lib/mpv/window";
   import { FileUtils } from "$lib/utils/file";
   import { open } from "@tauri-apps/plugin-dialog";
@@ -20,6 +21,14 @@
     "ab-loop-b"
   ]);
 
+  const job = getJob();
+
+  let currentBoundIndex = $state(0);
+  let currentBound = $derived(job.bounds[currentBoundIndex]);
+  $effect(() => {
+    mpvWindow.mpvControls.setLoop(currentBound);
+  });
+
   registerHandler("mpvView", {
     importFile: async () => {
       const file = await open({ multiple: false, title: "Upload source file" });
@@ -29,20 +38,20 @@
         throw new Error(`Incorrect extension for video file (${file})`);
       }
       await mpvWindow.mpvControls.loadFile(file);
+      job.file = file;
     },
     playback: {
-      playPause: async () => await mpvWindow.mpvControls.playPause(),
-      forwardSeek: async (duration) => await mpvWindow.mpvControls.forwardSeek(duration),
-      backwardSeek: async (duration) => await mpvWindow.mpvControls.backwardSeek(duration),
-      nextFrame: async () => await mpvWindow.mpvControls.nextFrame(),
-      previousFrame: async () => await mpvWindow.mpvControls.previousFrame(),
-      setLoopA: async (position) => await mpvWindow.mpvControls.setLoopA(position),
-      setLoopB: async (position) => await mpvWindow.mpvControls.setLoopB(position)
+      setBoundaryA: async () => {
+        currentBound.a = await mpvWindow.mpvControls.setLoopAToCurrent();
+      },
+      setBoundaryB: async () => {
+        currentBound.b = await mpvWindow.mpvControls.setLoopBToCurrent();
+      }
     }
   });
 </script>
 
 <div class="flex flex-col items-center">
   <MPV mpvWindowControls={mpvWindow.controls} />
-  <MPVPlaybackControls controls={mpvWindow.mpvControls} />
+  <MPVPlaybackControls controls={mpvWindow.mpvControls} bind:currentBoundIndex />
 </div>

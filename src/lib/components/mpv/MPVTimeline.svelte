@@ -1,14 +1,16 @@
 <script lang="ts">
+  import { type Bounds } from "$lib/app/job";
   import type { MPVControls } from "$lib/mpv/controls";
-  import { clamp } from "$lib/utils/math";
+  import { clamp, Nullable } from "$lib/utils/math";
   import { derived } from "svelte/store";
   import TimePosDisplay from "./TimePosDisplay.svelte";
 
   interface Props {
     controls: MPVControls;
+    bounds: Bounds;
   }
 
-  const { controls }: Props = $props();
+  const { controls, bounds }: Props = $props();
   const { propertyStore } = $derived(controls.listenerView);
 
   let timePos = $derived(derived(propertyStore("time-pos/full"), (v) => v ?? NaN));
@@ -19,8 +21,9 @@
     }
     return null;
   });
-  let loopA = $derived(derived(propertyStore("ab-loop-a"), (t) => (t ?? NaN) / $duration));
-  let loopB = $derived(derived(propertyStore("ab-loop-b"), (t) => (t ?? NaN) / $duration));
+
+  let loopA = $derived(Nullable.div(bounds.a, $duration));
+  let loopB = $derived(Nullable.div(bounds.b, $duration));
 
   let sliding = $state(false);
 
@@ -80,11 +83,11 @@
       duration={$duration}
       class="pointer-events-none absolute right-2 opacity-40"
     />
-    {#if $loopA}
-      {@render loopMarker("a", $loopA)}
+    {#if loopA}
+      {@render loopMarker("a", loopA)}
     {/if}
-    {#if $loopB}
-      {@render loopMarker("b", $loopB)}
+    {#if loopB}
+      {@render loopMarker("b", loopB)}
     {/if}
   {/if}
 </div>

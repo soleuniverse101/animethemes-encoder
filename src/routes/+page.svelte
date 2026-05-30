@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createBlankJob, setJob } from "$lib/app/job";
   import { registerShortcuts } from "$lib/app/shortcuts";
   import MenuBar from "$lib/components/menu/bar/MenuBar.svelte";
   import MPVView from "$lib/components/mpv/MPVView.svelte";
@@ -9,6 +10,9 @@
 
   const main = getCurrentWebviewWindow();
   const mpvWindowManager = new MPVWindowManager(main);
+
+  const job = $state(createBlankJob());
+  setJob(job);
 
   const unlistens = [
     registerShortcuts(),

@@ -1,7 +1,9 @@
+import type { Bounds } from "$lib/app/job";
 import { assertNonNull } from "$lib/utils/assert";
 import { FileUtils } from "$lib/utils/file";
 import type { MPVWindowContext } from "./api";
 import type { MPVListenerView } from "./listener";
+import type { TimePosition } from "./types";
 
 export namespace MPVControls {
   export type Command = Exclude<keyof MPVControls, "label" | "listenerView" | "context">;
@@ -52,14 +54,14 @@ export class MPVControls {
     );
   }
   /** @param position Timecode in seconds. */
-  async setPosition(position: number) {
+  async setPosition(position: TimePosition) {
     await this.context.command("seek", [position, "absolute"]);
   }
 
-  async forwardSeek(duration: number = 5) {
+  async forwardSeek(duration = 5) {
     await this.context.command("seek", [duration, "exact"]);
   }
-  async backwardSeek(duration: number = 5) {
+  async backwardSeek(duration = 5) {
     await this.context.command("seek", [-duration, "exact"]);
   }
   async nextFrame() {
@@ -69,16 +71,24 @@ export class MPVControls {
     await this.context.command("frame-back-step");
   }
 
-  async setLoopA(position?: number) {
-    await this.context.setProperty(
-      "ab-loop-a",
-      position ?? assertNonNull(await this.context.getProperty("time-pos/full", "double"))
-    );
+  async setLoopA(position: TimePosition | null) {
+    await this.context.setProperty("ab-loop-a", position == null ? "no" : position);
   }
-  async setLoopB(position?: number) {
-    await this.context.setProperty(
-      "ab-loop-b",
-      position ?? assertNonNull(await this.context.getProperty("time-pos/full", "double"))
-    );
+  async setLoopAToCurrent() {
+    const position = assertNonNull(await this.context.getProperty("time-pos/full", "double"));
+    await this.context.setProperty("ab-loop-a", position);
+    return position;
+  }
+  async setLoopB(position: TimePosition | null) {
+    await this.context.setProperty("ab-loop-b", position == null ? "no" : position);
+  }
+  async setLoopBToCurrent() {
+    const position = assertNonNull(await this.context.getProperty("time-pos/full", "double"));
+    await this.context.setProperty("ab-loop-b", position);
+    return position;
+  }
+  async setLoop(bounds: Bounds) {
+    await this.setLoopA(bounds.a ?? null);
+    await this.setLoopB(bounds.b ?? null);
   }
 }

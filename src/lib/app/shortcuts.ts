@@ -11,8 +11,8 @@ export function registerShortcuts(): UnlistenFn {
     left: "backwardSeek",
     "shift+right": "nextFrame",
     "shift+left": "previousFrame",
-    "shift+alt+left": "setLoopA",
-    "shift+alt+right": "setLoopB"
+    "shift+alt+left": "setLoopAToCurrent",
+    "shift+alt+right": "setLoopBToCurrent"
   } as const satisfies Record<string, MPVControls.ParameterlessCommand>;
   const shortcuts = {
     "ctrl+o": () => commands("mpvView").importFile()
