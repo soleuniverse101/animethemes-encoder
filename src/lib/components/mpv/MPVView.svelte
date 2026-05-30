@@ -1,6 +1,7 @@
 <script lang="ts">
   import { registerMPVViewHandler, type MPVViewHandlerContext } from "$lib/app/commands/mpvView";
   import { getJob } from "$lib/app/job.svelte";
+  import { registerMPVViewShortcuts } from "$lib/app/shortcuts/mpvView";
   import { MPVWindowManager } from "$lib/mpv/window";
   import { assertNonNull } from "$lib/utils/assert";
   import MPV from "./MPV.svelte";
@@ -33,6 +34,8 @@
   $effect(() => {
     mpvWindow.mpvControls.setLoop(currentBound);
   });
+
+  registerMPVViewShortcuts(handlerContext);
 </script>
 
 <div class="flex flex-col items-center">

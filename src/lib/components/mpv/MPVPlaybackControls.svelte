@@ -19,8 +19,7 @@
   const job = getJob();
   const bounds = $derived(assertNonNull(job.bounds.get(currentBoundLabel)));
 
-  const { setBoundaryAToCurrent, setBoundaryBToCurrent } =
-    commands("mpvView").playback;
+  const { setBoundaryAToCurrent, setBoundaryBToCurrent } = commands("mpvView").playback;
   type Callback = () => void;
 </script>
 
@@ -42,7 +41,11 @@
   <div class="flex h-14 justify-around">
     <div></div>
     <div class="flex items-center justify-center gap-2 text-[rgb(159,147,184)] transition">
-      {@render button(setBoundaryAToCurrent, "mdi:contain-start", "Set Loop Start (Shift+Alt+Left)")}
+      {@render button(
+        setBoundaryAToCurrent,
+        "mdi:contain-start",
+        "Set Loop Start (Shift+Alt+Left)"
+      )}
       {@render button(
         "previousFrame",
         "fluent:previous-frame-24-filled",

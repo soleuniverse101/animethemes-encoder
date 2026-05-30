@@ -1,7 +1,6 @@
 <script lang="ts">
   import { registerJobHandler } from "$lib/app/commands/job";
   import { createBlankJob, setJob } from "$lib/app/job.svelte";
-  import { registerShortcuts } from "$lib/app/shortcuts";
   import MenuBar from "$lib/components/menu/bar/MenuBar.svelte";
   import MPVView from "$lib/components/mpv/MPVView.svelte";
   import { MPVWindowManager } from "$lib/mpv/window";
@@ -17,7 +16,6 @@
   setJob(job);
 
   const unlistens = [
-    registerShortcuts(),
     await main.onCloseRequested(() => {
       mpvWindowManager.destroy();
     })
