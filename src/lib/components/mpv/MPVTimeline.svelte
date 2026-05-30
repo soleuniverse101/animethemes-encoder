@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type Bounds } from "$lib/app/job";
+  import { type Bounds } from "$lib/app/job.svelte";
   import type { MPVControls } from "$lib/mpv/controls";
   import { clamp, Nullable } from "$lib/utils/math";
   import { derived } from "svelte/store";

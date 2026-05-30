@@ -1,22 +1,23 @@
 <script lang="ts">
   import { commands } from "$lib/app/commands";
-  import { getJob } from "$lib/app/job";
+  import { getJob } from "$lib/app/job.svelte";
   import type { MPVControls } from "$lib/mpv/controls";
+  import { assertNonNull } from "$lib/utils/assert";
   import Icon from "@iconify/svelte";
   import { Select } from "bits-ui";
   import MPVTimeline from "./MPVTimeline.svelte";
 
   interface Props {
     controls: MPVControls;
-    currentBoundIndex: number;
+    currentBoundLabel: string;
   }
 
-  let { controls, currentBoundIndex = $bindable() }: Props = $props();
+  let { controls, currentBoundLabel = $bindable() }: Props = $props();
 
   const pause = $derived(controls.listenerView.propertyStore("pause"));
 
   const job = getJob();
-  const bounds = $derived(job.bounds[currentBoundIndex]);
+  const bounds = $derived(assertNonNull(job.bounds.get(currentBoundLabel)));
 
   const { setBoundaryA, setBoundaryB } = commands("mpvView").playback;
   type Callback = () => void;
@@ -56,20 +57,15 @@
       {@render button("nextFrame", "fluent:next-frame-24-filled", "Next Frame (Shift+Right)")}
       {@render button(setBoundaryB, "mdi:contain-end", "Set Loop End (Shift+Alt+Right)")}
     </div>
-    <Select.Root
-      type="single"
-      bind:value={() => currentBoundIndex.toString(), (i) => (currentBoundIndex = parseInt(i))}
-    >
+    <Select.Root type="single" bind:value={currentBoundLabel}>
       <Select.Trigger>
-        <Select.Value>
-          {bounds.title}
-        </Select.Value>
+        <Select.Value />
       </Select.Trigger>
       <Select.Portal>
         <Select.Content>
           <Select.Viewport>
-            {#each job.bounds as { title }, i}
-              <Select.Item value={i.toString()} label={title}>{title}</Select.Item>
+            {#each job.bounds.keys() as label}
+              <Select.Item value={label} {label}>{label}</Select.Item>
             {/each}
           </Select.Viewport>
         </Select.Content>

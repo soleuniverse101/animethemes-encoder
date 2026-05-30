@@ -1,4 +1,4 @@
-import type { Bounds } from "$lib/app/job";
+import type { Bounds } from "$lib/app/job.svelte";
 import { assertNonNull } from "$lib/utils/assert";
 import { FileUtils } from "$lib/utils/file";
 import type { MPVWindowContext } from "./api";
