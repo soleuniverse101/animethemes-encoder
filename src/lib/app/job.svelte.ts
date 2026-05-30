@@ -2,8 +2,11 @@ import type { TimePosition } from "$lib/mpv/types";
 import { createContext } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 
-export type Bounds = { title: string; a?: TimePosition; b?: TimePosition };
-const createBounds = (title: string, a?: TimePosition, b?: TimePosition): Bounds => ({
+export namespace Bounds {
+  export type Label = string;
+}
+export type Bounds = { title: Bounds.Label; a?: TimePosition; b?: TimePosition };
+const createBounds = (title: Bounds.Label, a?: TimePosition, b?: TimePosition): Bounds => ({
   title,
   a,
   b
@@ -11,7 +14,7 @@ const createBounds = (title: string, a?: TimePosition, b?: TimePosition): Bounds
 
 export type Job = {
   file?: string;
-  bounds: SvelteMap<string, Bounds>;
+  bounds: SvelteMap<Bounds.Label, Bounds>;
 };
 
 export function createBlankJob(): Job {

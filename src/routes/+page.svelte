@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { registerJobHandler } from "$lib/app/commands/job";
   import { createBlankJob, setJob } from "$lib/app/job.svelte";
   import { registerShortcuts } from "$lib/app/shortcuts";
   import MenuBar from "$lib/components/menu/bar/MenuBar.svelte";
@@ -12,6 +13,7 @@
   const mpvWindowManager = new MPVWindowManager(main);
 
   const job = $state(createBlankJob());
+  registerJobHandler(job);
   setJob(job);
 
   const unlistens = [

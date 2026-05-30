@@ -19,7 +19,8 @@
   const job = getJob();
   const bounds = $derived(assertNonNull(job.bounds.get(currentBoundLabel)));
 
-  const { setBoundaryA, setBoundaryB } = commands("mpvView").playback;
+  const { setBoundaryAToCurrent, setBoundaryBToCurrent } =
+    commands("mpvView").playback;
   type Callback = () => void;
 </script>
 
@@ -41,7 +42,7 @@
   <div class="flex h-14 justify-around">
     <div></div>
     <div class="flex items-center justify-center gap-2 text-[rgb(159,147,184)] transition">
-      {@render button(setBoundaryA, "mdi:contain-start", "Set Loop Start (Shift+Alt+Left)")}
+      {@render button(setBoundaryAToCurrent, "mdi:contain-start", "Set Loop Start (Shift+Alt+Left)")}
       {@render button(
         "previousFrame",
         "fluent:previous-frame-24-filled",
@@ -55,7 +56,7 @@
       )}
       {@render button("forwardSeek", "fa6-solid:forward", "Forward 5 Seconds (Right)")}
       {@render button("nextFrame", "fluent:next-frame-24-filled", "Next Frame (Shift+Right)")}
-      {@render button(setBoundaryB, "mdi:contain-end", "Set Loop End (Shift+Alt+Right)")}
+      {@render button(setBoundaryBToCurrent, "mdi:contain-end", "Set Loop End (Shift+Alt+Right)")}
     </div>
     <Select.Root type="single" bind:value={currentBoundLabel}>
       <Select.Trigger>

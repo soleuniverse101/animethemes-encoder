@@ -1,4 +1,5 @@
-import { mpvView } from "./mpvView";
+import type { JobHandler } from "./job";
+import type { MPVViewHandler } from "./mpvView";
 
 type Handler<H extends {} = {}> = Record<string, H | Function>;
 
@@ -9,7 +10,8 @@ export function createModule<H extends Handler>(): { handler: H | null } {
 }
 
 const modules = {
-  mpvView
+  mpvView: createModule<MPVViewHandler>(),
+  job: createModule<JobHandler>()
 };
 
 type Modules = typeof modules;

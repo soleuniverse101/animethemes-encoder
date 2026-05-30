@@ -1,12 +1,10 @@
 <script lang="ts">
-  import { registerHandler } from "$lib/app/commands";
+  import { registerMPVViewHandler, type MPVViewHandlerContext } from "$lib/app/commands/mpvView";
   import { getJob } from "$lib/app/job.svelte";
   import { MPVWindowManager } from "$lib/mpv/window";
-  import { FileUtils } from "$lib/utils/file";
-  import { open } from "@tauri-apps/plugin-dialog";
+  import { assertNonNull } from "$lib/utils/assert";
   import MPV from "./MPV.svelte";
   import MPVPlaybackControls from "./MPVPlaybackControls.svelte";
-  import { assertNonNull } from "$lib/utils/assert";
 
   interface Props {
     mpvWindowManager: MPVWindowManager;
@@ -24,35 +22,23 @@
 
   const job = getJob();
 
-  let currentBoundLabel = $state(assertNonNull(job.bounds.keys().next().value));
-  let currentBound = $derived(assertNonNull(job.bounds.get(currentBoundLabel)));
+  const handlerContext: MPVViewHandlerContext = $state({
+    mpvWindow,
+    job,
+    currentBoundsLabel: assertNonNull(job.bounds.keys().next().value)
+  });
+  registerMPVViewHandler(handlerContext);
+
+  const currentBound = $derived(assertNonNull(job.bounds.get(handlerContext.currentBoundsLabel)));
   $effect(() => {
     mpvWindow.mpvControls.setLoop(currentBound);
-  });
-
-  registerHandler("mpvView", {
-    importFile: async () => {
-      const file = await open({ multiple: false, title: "Upload source file" });
-      if (file == null) {
-        throw new Error(`File not found (${file})`);
-      } else if (FileUtils.isVideoFile(file)) {
-        throw new Error(`Incorrect extension for video file (${file})`);
-      }
-      await mpvWindow.mpvControls.loadFile(file);
-      job.file = file;
-    },
-    playback: {
-      setBoundaryA: async () => {
-        currentBound.a = await mpvWindow.mpvControls.setLoopAToCurrent();
-      },
-      setBoundaryB: async () => {
-        currentBound.b = await mpvWindow.mpvControls.setLoopBToCurrent();
-      }
-    }
   });
 </script>
 
 <div class="flex flex-col items-center">
   <MPV mpvWindowControls={mpvWindow.controls} />
-  <MPVPlaybackControls controls={mpvWindow.mpvControls} bind:currentBoundLabel />
+  <MPVPlaybackControls
+    controls={mpvWindow.mpvControls}
+    bind:currentBoundLabel={handlerContext.currentBoundsLabel}
+  />
 </div>
