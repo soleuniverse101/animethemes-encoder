@@ -20,12 +20,10 @@
     items: Item[];
   };
 
-  const { importFile } = commands("mpvView");
-
   const menus: Menu[] = [
     {
       title: "File",
-      items: [{ title: "Open...", type: "button", action: () => importFile() }]
+      items: [{ title: "Open...", type: "button", action: () => commands("mpvView").importFile() }]
     },
     {
       title: "Help",
