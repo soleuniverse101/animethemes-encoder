@@ -18,7 +18,10 @@
   const app = getApp();
 </script>
 
-<div class="flex w-full flex-col justify-center pt-2">
+<div
+  class="flex w-full flex-col justify-center pt-2 **:select-none data-disabled:pointer-events-none data-disabled:opacity-40"
+  data-disabled={app.file != null ? null : "true"}
+>
   <MPVTimeline {controls} />
   {#snippet button(action: Command.Parameterless.Name, icon: string, tooltip: string)}
     <button

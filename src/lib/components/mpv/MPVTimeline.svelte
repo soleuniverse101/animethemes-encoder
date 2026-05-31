@@ -63,7 +63,7 @@
   <div class="h-4/5 w-full relative bg-[rgb(230,225,240)]">
     {#if progress != null}
       <div
-        class="h-full w-full select-none"
+        class="h-full w-full"
         onmousedown={async ({ button, clientX }) => {
           if (button == 0) {
             updatePosition(clientX);
