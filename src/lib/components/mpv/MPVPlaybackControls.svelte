@@ -1,37 +1,28 @@
 <script lang="ts">
-  import { commands } from "$lib/app/commands";
-  import { getJob } from "$lib/app/job.svelte";
+  import { command, type Command } from "$lib/app/commands";
+  import { getApp } from "$lib/app/index.svelte";
   import type { MPVControls } from "$lib/mpv/controls";
-  import { assertNonNull } from "$lib/utils/assert";
   import Icon from "@iconify/svelte";
   import { Select } from "bits-ui";
   import MPVTimeline from "./MPVTimeline.svelte";
 
   interface Props {
     controls: MPVControls;
-    currentBoundLabel: string;
+    currentJobLabel: string;
   }
 
-  let { controls, currentBoundLabel = $bindable() }: Props = $props();
+  let { controls, currentJobLabel = $bindable() }: Props = $props();
 
-  const pause = $derived(controls.listenerView.propertyStore("pause"));
+  const pause = $derived(controls.listenerView["pause"]);
 
-  const job = getJob();
-  const bounds = $derived(assertNonNull(job.bounds.get(currentBoundLabel)));
-
-  const { setBoundaryAToCurrent, setBoundaryBToCurrent } = commands("mpvView").playback;
-  type Callback = () => void;
+  const app = getApp();
 </script>
 
 <div class="flex w-full flex-col justify-center pt-2">
-  <MPVTimeline {controls} {bounds} />
-  {#snippet button(
-    action: MPVControls.ParameterlessCommand | Callback,
-    icon: string,
-    tooltip: string
-  )}
+  <MPVTimeline {controls} />
+  {#snippet button(action: Command.Parameterless.Name, icon: string, tooltip: string)}
     <button
-      onclick={() => (typeof action == "string" ? controls[action]() : action())}
+      onclick={() => command(action)()}
       title={tooltip}
       class="flex aspect-square h-8 items-center justify-center rounded-full bg-none p-2 transition hover:bg-[rgb(230,225,240)]"
     >
@@ -42,33 +33,49 @@
     <div></div>
     <div class="flex items-center justify-center gap-2 text-[rgb(159,147,184)] transition">
       {@render button(
-        setBoundaryAToCurrent,
+        "mpvView.playback.setJobStartToCurrent",
         "mdi:contain-start",
         "Set Loop Start (Shift+Alt+Left)"
       )}
       {@render button(
-        "previousFrame",
+        "mpvView.playback.previousFrame",
         "fluent:previous-frame-24-filled",
         "Previous Frame (Shift+Left)"
       )}
-      {@render button("backwardSeek", "fa6-solid:backward", "Backward 5 Seconds (Left)")}
       {@render button(
-        "playPause",
+        "mpvView.playback.backwardSeek",
+        "fa6-solid:backward",
+        "Backward 5 Seconds (Left)"
+      )}
+      {@render button(
+        "mpvView.playback.playPause",
         $pause == "yes" ? "fa6-solid:play" : "fa6-solid:pause",
         "Play/Pause (Space)"
       )}
-      {@render button("forwardSeek", "fa6-solid:forward", "Forward 5 Seconds (Right)")}
-      {@render button("nextFrame", "fluent:next-frame-24-filled", "Next Frame (Shift+Right)")}
-      {@render button(setBoundaryBToCurrent, "mdi:contain-end", "Set Loop End (Shift+Alt+Right)")}
+      {@render button(
+        "mpvView.playback.forwardSeek",
+        "fa6-solid:forward",
+        "Forward 5 Seconds (Right)"
+      )}
+      {@render button(
+        "mpvView.playback.nextFrame",
+        "fluent:next-frame-24-filled",
+        "Next Frame (Shift+Right)"
+      )}
+      {@render button(
+        "mpvView.playback.setJobEndToCurrent",
+        "mdi:contain-end",
+        "Set Loop End (Shift+Alt+Right)"
+      )}
     </div>
-    <Select.Root type="single" bind:value={currentBoundLabel}>
+    <Select.Root type="single" bind:value={currentJobLabel}>
       <Select.Trigger>
         <Select.Value />
       </Select.Trigger>
       <Select.Portal>
         <Select.Content>
           <Select.Viewport>
-            {#each job.bounds.keys() as label}
+            {#each app.jobs.keys() as label}
               <Select.Item value={label} {label}>{label}</Select.Item>
             {/each}
           </Select.Viewport>

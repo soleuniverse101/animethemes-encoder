@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { registerJobHandler } from "$lib/app/commands/job";
-  import { createBlankJob, setJob } from "$lib/app/job.svelte";
+  import { createApp, setApp } from "$lib/app/index.svelte";
   import MenuBar from "$lib/components/menu/bar/MenuBar.svelte";
   import MPVView from "$lib/components/mpv/MPVView.svelte";
   import { MPVWindowManager } from "$lib/mpv/window";
@@ -11,9 +10,8 @@
   const main = getCurrentWebviewWindow();
   const mpvWindowManager = new MPVWindowManager(main);
 
-  const job = $state(createBlankJob());
-  registerJobHandler(job);
-  setJob(job);
+  const app = $state(createApp());
+  setApp(app);
 
   const unlistens = [
     await main.onCloseRequested(() => {

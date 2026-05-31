@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type Bounds } from "$lib/app/job.svelte";
+  import { getApp } from "$lib/app/index.svelte";
   import type { MPVControls } from "$lib/mpv/controls";
   import { clamp, Nullable } from "$lib/utils/math";
   import { derived } from "svelte/store";
@@ -7,14 +7,13 @@
 
   interface Props {
     controls: MPVControls;
-    bounds: Bounds;
   }
 
-  const { controls, bounds }: Props = $props();
-  const { propertyStore } = $derived(controls.listenerView);
+  const { controls }: Props = $props();
+  const { listenerView } = $derived(controls);
 
-  let timePos = $derived(derived(propertyStore("time-pos/full"), (v) => v ?? NaN));
-  let duration = $derived(derived(propertyStore("duration"), (v) => v ?? NaN));
+  let timePos = $derived(derived(listenerView["time-pos/full"], (v) => v ?? NaN));
+  let duration = $derived(derived(listenerView["duration"], (v) => v ?? NaN));
   let progress = $derived.by(() => {
     if (!Number.isNaN($timePos) && !Number.isNaN($duration)) {
       return $timePos / $duration;
@@ -22,8 +21,9 @@
     return null;
   });
 
-  let loopA = $derived(Nullable.div(bounds.a, $duration));
-  let loopB = $derived(Nullable.div(bounds.b, $duration));
+  const app = getApp();
+  let loopA = $derived(Nullable.div(app.currentJob.bounds.start, $duration));
+  let loopB = $derived(Nullable.div(app.currentJob.bounds.end, $duration));
 
   let sliding = $state(false);
 

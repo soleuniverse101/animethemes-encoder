@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { commands } from "$lib/app/commands";
+  import { command, type Command } from "$lib/app/commands";
   import { openUrl } from "@tauri-apps/plugin-opener";
   import { Menubar } from "bits-ui";
 
   type ItemType =
     | {
         type: "button";
-        action: () => void;
+        command: Command.Parameterless.Name;
       }
     | {
         type: "link";
@@ -23,7 +23,7 @@
   const menus: Menu[] = [
     {
       title: "File",
-      items: [{ title: "Open...", type: "button", action: () => commands("mpvView").importFile() }]
+      items: [{ title: "Open...", type: "button", command: "mpvView.importFile" }]
     },
     {
       title: "Help",
@@ -39,7 +39,7 @@
       <Menubar.Content>
         {#each items as item}
           {#if item.type == "button"}
-            <Menubar.Item onSelect={item.action}>{item.title}</Menubar.Item>
+            <Menubar.Item onSelect={() => command(item.command)}>{item.title}</Menubar.Item>
           {:else if item.type == "link"}
             <Menubar.Item onSelect={() => openUrl(item.href)}>{item.title}</Menubar.Item>
           {/if}

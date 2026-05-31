@@ -1,9 +1,9 @@
 <script lang="ts">
   import { registerMPVViewHandler, type MPVViewHandlerContext } from "$lib/app/commands/mpvView";
-  import { getJob } from "$lib/app/job.svelte";
+  import { getApp } from "$lib/app/index.svelte";
   import { registerMPVViewShortcuts } from "$lib/app/shortcuts/mpvView";
   import { MPVWindowManager } from "$lib/mpv/window";
-  import { assertNonNull } from "$lib/utils/assert";
+  import { onDestroy } from "svelte";
   import MPV from "./MPV.svelte";
   import MPVPlaybackControls from "./MPVPlaybackControls.svelte";
 
@@ -21,27 +21,24 @@
     "ab-loop-b"
   ]);
 
-  const job = getJob();
+  const app = getApp();
 
   const handlerContext: MPVViewHandlerContext = $state({
     mpvWindow,
-    job,
-    currentBoundsLabel: assertNonNull(job.bounds.keys().next().value)
+    app
   });
   registerMPVViewHandler(handlerContext);
+  const unlisten = registerMPVViewShortcuts();
 
-  const currentBound = $derived(assertNonNull(job.bounds.get(handlerContext.currentBoundsLabel)));
-  $effect(() => {
-    mpvWindow.mpvControls.setLoop(currentBound);
-  });
-
-  registerMPVViewShortcuts(handlerContext);
+  onDestroy(() => unlisten);
 </script>
 
 <div class="flex flex-col items-center">
   <MPV mpvWindowControls={mpvWindow.controls} />
   <MPVPlaybackControls
     controls={mpvWindow.mpvControls}
-    bind:currentBoundLabel={handlerContext.currentBoundsLabel}
+    bind:currentJobLabel={
+      () => app.currentJob.label, (label) => (app.currentJob = app.jobs.get(label)!)
+    }
   />
 </div>

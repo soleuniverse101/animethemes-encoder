@@ -1,7 +1,7 @@
+import type { UnlistenFn } from "@tauri-apps/api/event";
 import { registerShortcuts } from ".";
-import type { Bounds } from "../job.svelte";
 
-export const registerMPVViewShortcuts = (context: { currentBoundsLabel: Bounds.Label }) =>
+export const registerMPVViewShortcuts = (): UnlistenFn =>
   registerShortcuts({
     "ctrl+o": "mpvView.importFile",
     space: "mpvView.playback.playPause",
@@ -9,6 +9,6 @@ export const registerMPVViewShortcuts = (context: { currentBoundsLabel: Bounds.L
     left: "mpvView.playback.backwardSeek",
     "shift+right": "mpvView.playback.nextFrame",
     "shift+left": "mpvView.playback.previousFrame",
-    "shift+alt+left": "mpvView.playback.setBoundaryAToCurrent",
-    "shift+alt+right": "mpvView.playback.setBoundaryBToCurrent"
+    "shift+alt+left": "mpvView.playback.setJobStartToCurrent",
+    "shift+alt+right": "mpvView.playback.setJobEndToCurrent"
   });

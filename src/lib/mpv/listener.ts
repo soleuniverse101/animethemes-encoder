@@ -23,6 +23,9 @@ export namespace ObservedProperties {
 export type Stores = {
   [Property in ObservedProperties.Name]: Writable<ObservedProperties.DataFromName<Property>>;
 };
+export type ReadonlyStores = {
+  [Property in ObservedProperties.Name]: Readable<ObservedProperties.DataFromName<Property>>;
+};
 export type Formats = {
   type: { [Property in ObservedProperties.Name]: ObservedProperties.FromName<Property>[1] };
   nullable: {
@@ -46,10 +49,13 @@ export class MPVListener {
   readonly observedProperties: ObservedProperties;
   // private readonly properties: Partial<ObservedProperties> = {};
   private readonly stores: Stores = {} as any;
+  private readonly readonlyStores: ReadonlyStores = {} as any;
 
   constructor(observedProperties: ObservedProperties.Name[]) {
     for (const prop of observedProperties) {
-      this.stores[prop] = writable<any>();
+      const store = writable<any>();
+      this.stores[prop] = store;
+      this.readonlyStores[prop] = readonly(store);
     }
     this.observedProperties = OBSERVABLE_PROPERTIES.filter(([name]) => name in this.stores);
   }
@@ -63,19 +69,10 @@ export class MPVListener {
   }
 
   getView(): MPVListenerView {
-    return {
-      propertyStore: (name) => {
-        if (name in this.stores) {
-          return readonly(this.stores[name]);
-        }
-        throw new Error(`Property '${name}' is not observed`);
-      }
-    };
+    return this.readonlyStores;
   }
 }
 
-export interface MPVListenerView {
-  readonly propertyStore: <N extends ObservedProperties.Name>(
-    name: N
-  ) => Readable<ObservedProperties.DataFromName<N>>;
-}
+export type MPVListenerView = {
+  readonly [N in ObservedProperties.Name]: Readable<ObservedProperties.DataFromName<N>>;
+};

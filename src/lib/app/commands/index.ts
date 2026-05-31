@@ -1,5 +1,4 @@
 import { flattenHandler, type FlattenHandler, type Handler } from "./handler";
-import type { JobHandler } from "./job";
 import type { MPVViewHandler } from "./mpvView";
 
 type NullModule = { handler: null; flatHandler: null };
@@ -13,8 +12,7 @@ export const createModule = <H extends Handler>(): Module<H> => ({
 });
 
 const modules = {
-  mpvView: createModule<MPVViewHandler>(),
-  job: createModule<JobHandler>()
+  mpvView: createModule<MPVViewHandler>()
 };
 
 type Modules = typeof modules;
@@ -22,14 +20,13 @@ type ModuleName = keyof Modules;
 
 export function registerHandler<M extends ModuleName>(
   module: M,
-  handler: NonNullable<Modules[M]["handler"]>
+  handler: HandlerFromModule<Modules[M]>
 ) {
   if (modules[module].handler) {
     throw new Error(`Cannot register two handlers for the same module (${module})`);
   }
-  (modules[module] as Module<HandlerFromModule<Modules[ModuleName]>>).handler = handler;
-  (modules[module] as Module<HandlerFromModule<Modules[ModuleName]>>).flatHandler =
-    flattenHandler(handler);
+  (modules[module] as Module<HandlerFromModule<Modules[M]>>).handler = handler;
+  (modules[module] as Module<HandlerFromModule<Modules[M]>>).flatHandler = flattenHandler(handler);
 }
 
 export function commands<Name extends ModuleName>(
