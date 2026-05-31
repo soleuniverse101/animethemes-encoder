@@ -1,8 +1,8 @@
 <script lang="ts">
   import { getApp } from "$lib/app/index.svelte";
   import type { MPVControls } from "$lib/mpv/controls";
+  import { assertNonNull } from "$lib/utils/assert";
   import { clamp, Nullable } from "$lib/utils/math";
-  import { derived } from "svelte/store";
   import TimePosDisplay from "./TimePosDisplay.svelte";
 
   interface Props {
@@ -10,33 +10,34 @@
   }
 
   const { controls }: Props = $props();
-  const { listenerView } = $derived(controls);
+  const {
+    listenerView: { "time-pos/full": timePos, duration }
+  } = $derived(controls);
 
-  let timePos = $derived(derived(listenerView["time-pos/full"], (v) => v ?? NaN));
-  let duration = $derived(derived(listenerView["duration"], (v) => v ?? NaN));
-  let progress = $derived.by(() => {
-    if (!Number.isNaN($timePos) && !Number.isNaN($duration)) {
-      return $timePos / $duration;
+  let progress = $derived(Nullable.div($timePos, $duration));
+
+  const {
+    currentJob: {
+      bounds: { start, end }
     }
-    return null;
-  });
-
-  const app = getApp();
-  let loopA = $derived(Nullable.div(app.currentJob.bounds.start, $duration));
-  let loopB = $derived(Nullable.div(app.currentJob.bounds.end, $duration));
+  } = $derived(getApp());
+  let loopStart = $derived(Nullable.div(start, $duration));
+  let loopEnd = $derived(Nullable.div(end, $duration));
 
   let sliding = $state(false);
 
   let slider: HTMLDivElement;
   const updatePosition = async (clickX: number) => {
     const rect = slider.getBoundingClientRect();
-    await controls.setPosition(clamp((clickX - rect.x) / rect.width, 0, 1) * $duration);
+    await controls.setPosition(
+      clamp((clickX - rect.x) / rect.width, 0, 1) * assertNonNull($duration)
+    );
   };
 
   const posFormatter = new Intl.DurationFormat(undefined, {
     style: "long"
   });
-  let roundedTimePos = $derived(Math.round($timePos));
+  let roundedTimePos = $derived(Nullable.round($timePos));
 </script>
 
 <svelte:document
@@ -48,46 +49,54 @@
   onmouseup={() => (sliding = false)}
 />
 
-{#snippet loopMarker(type: "a" | "b", progress: number)}
+{#snippet loopMarker(type: "start" | "end", progress: number)}
   <div
     class="pointer-events-none absolute h-full w-3 border-4 border-[rgb(159,147,184)]"
-    class:-translate-x-1={type == "a"}
-    class:-translate-x-2={type == "b"}
+    class:-translate-x-1={type == "start"}
+    class:-translate-x-2={type == "end"}
     style:left={`${progress * 100}%`}
-    style={`border-${type == "a" ? "right" : "left"}: none`}
+    style={`border-${type == "start" ? "right" : "left"}: none`}
   ></div>
 {/snippet}
 
-<div bind:this={slider} class="relative h-10 w-full flex flex-col justify-center">
-  {#if progress != null}
-    <div
-      class="h-4/5 w-full bg-[rgb(230,225,240)] select-none"
-      // bind:contentRect={sliderRect}
-      onmousedown={async ({ button, clientX }) => {
-        if (button == 0) {
-          updatePosition(clientX);
-          sliding = true;
-        }
-      }}
-      role="slider"
-      tabindex="0"
-      aria-valuemin="0"
-      aria-valuemax={$duration}
-      aria-valuenow={roundedTimePos}
-      aria-valuetext={posFormatter.format(Temporal.Duration.from({ seconds: roundedTimePos }))}
-    >
-      <div class="h-full bg-[#319488] transition-[width]" style:width={progress * 100 + "%"}></div>
-    </div>
-    <TimePosDisplay
-      timePos={$timePos}
-      duration={$duration}
-      class="pointer-events-none absolute right-2 opacity-40"
-    />
-    {#if loopA}
-      {@render loopMarker("a", loopA)}
+<div bind:this={slider} class="h-10 relative w-full flex flex-col justify-center">
+  <div class="h-4/5 w-full relative bg-[rgb(230,225,240)]">
+    {#if progress != null}
+      <div
+        class="h-full w-full select-none"
+        onmousedown={async ({ button, clientX }) => {
+          if (button == 0) {
+            updatePosition(clientX);
+            sliding = true;
+          }
+        }}
+        role="slider"
+        tabindex="0"
+        aria-valuemin="0"
+        aria-valuemax={$duration}
+        aria-valuenow={roundedTimePos}
+        aria-valuetext={roundedTimePos
+          ? posFormatter.format(Temporal.Duration.from({ seconds: roundedTimePos }))
+          : null}
+      >
+        <div
+          class="h-full bg-[#319488] transition-[width]"
+          style:width={progress * 100 + "%"}
+        ></div>
+      </div>
+      {#if $timePos != null && $duration != null}
+        <TimePosDisplay
+          timePos={$timePos}
+          duration={$duration}
+          class="pointer-events-none top-1/2 -translate-y-1/2 absolute right-2 opacity-40"
+        />
+      {/if}
     {/if}
-    {#if loopB}
-      {@render loopMarker("b", loopB)}
-    {/if}
+  </div>
+  {#if loopStart}
+    {@render loopMarker("start", loopStart)}
+  {/if}
+  {#if loopEnd}
+    {@render loopMarker("end", loopEnd)}
   {/if}
 </div>

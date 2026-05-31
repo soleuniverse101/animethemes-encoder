@@ -4,17 +4,22 @@ export function clamp(value: number, min: number, max: number) {
 }
 
 export namespace Nullable {
-  type Value = number | undefined;
-  type OperationResult<A extends Value, B extends Value> = A extends number
+  type Value = number | null | undefined;
+  type SingleOperationResult<V extends Value> = V extends number ? number : null;
+  type BinaryOperationResult<A extends Value, B extends Value> = A extends number
     ? B extends number
       ? number
       : null
     : null;
 
-  export function div<A extends Value, B extends Value>(a: A, b: B): OperationResult<A, B> {
+  export function div<A extends Value, B extends Value>(a: A, b: B): BinaryOperationResult<A, B> {
     if (a != null && b != null) {
-      return (a / b) as OperationResult<A, B>;
+      return (a / b) as BinaryOperationResult<A, B>;
     }
-    return null as OperationResult<A, B>;
+    return null as BinaryOperationResult<A, B>;
+  }
+
+  export function round<V extends Value>(value: V): SingleOperationResult<V> {
+    return (value == null ? null : Math.round(value)) as SingleOperationResult<V>;
   }
 }
