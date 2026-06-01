@@ -35,4 +35,4 @@
 <svelte:window onresize={alignPlayer} />
 
 <!-- TODO shouldn't MPVView control the size ? -->
-<div bind:this={mpvDiv} class="h-[360px] w-[640px] bg-gray-400"></div>
+<div bind:this={mpvDiv} class="h-[360px] w-[640px] bg-primary-300"></div>

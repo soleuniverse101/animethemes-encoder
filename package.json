@@ -14,7 +14,8 @@
     "tauri": "tauri",
     "lint": "prettier --check .",
     "format": "prettier --write . && cargo fmt --manifest-path src-tauri/Cargo.toml",
-    "ci:version": "changeset version && node scripts/cargo-version.js"
+    "ci:version": "changeset version && node scripts/cargo-version.js",
+    "generateTheme": "node scripts/generate-theme.js"
   },
   "license": "MIT",
   "dependencies": {
@@ -43,6 +44,7 @@
     "svelte": "^5.55.9",
     "svelte-check": "^4.4.8",
     "tailwindcss": "^4.3.0",
+    "theme-colors": "^0.1.0",
     "typescript": "~6.0.3",
     "vite": "^8.0.14"
   },

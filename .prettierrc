@@ -10,7 +10,7 @@
     "prettier-plugin-jsdoc",
     "prettier-plugin-merge"
   ],
-  "tailwindStylesheet": "./src/routes/layout.css",
+  "tailwindStylesheet": "./src/style/layout.css",
 
   "tsdoc": true,
   "jsdocDescriptionWithDot": true

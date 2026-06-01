@@ -32,14 +32,14 @@
   ] as const;
 </script>
 
-<Menubar.Root class="px-2 select-none">
+<Menubar.Root class="px-2 flex select-none">
   {#each menus as { title, items }}
     <Menubar.Menu>
       <Menubar.Trigger>{title}</Menubar.Trigger>
-      <Menubar.Content>
+      <Menubar.Content align="start">
         {#each items as item}
           {#if item.type == "button"}
-            <Menubar.Item onSelect={() => command(item.command)}>{item.title}</Menubar.Item>
+            <Menubar.Item onSelect={() => command(item.command)()}>{item.title}</Menubar.Item>
           {:else if item.type == "link"}
             <Menubar.Item onSelect={() => openUrl(item.href)}>{item.title}</Menubar.Item>
           {/if}

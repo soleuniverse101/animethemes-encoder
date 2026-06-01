@@ -18,10 +18,7 @@
   const app = getApp();
 </script>
 
-<div
-  class="flex w-full flex-col justify-center pt-2 **:select-none data-disabled:pointer-events-none data-disabled:opacity-40"
-  data-disabled={app.file != null ? null : "true"}
->
+<div class="flex w-full flex-col justify-center pt-2">
   <MPVTimeline {controls} />
   {#snippet button(action: Command.Parameterless.Name, icon: string, tooltip: string)}
     <button
@@ -71,19 +68,22 @@
         "Set Loop End (Shift+Alt+Right)"
       )}
     </div>
-    <Select.Root type="single" bind:value={currentJobLabel}>
-      <Select.Trigger>
-        <Select.Value />
-      </Select.Trigger>
-      <Select.Portal>
-        <Select.Content>
-          <Select.Viewport>
-            {#each app.jobs.keys() as label}
-              <Select.Item value={label} {label}>{label}</Select.Item>
-            {/each}
-          </Select.Viewport>
-        </Select.Content>
-      </Select.Portal>
-    </Select.Root>
+    <div class="flex items-center">
+      <Select.Root type="single" bind:value={currentJobLabel}>
+        <Select.Trigger class="flex items-center justify-between min-w-12">
+          <Select.Value />
+          <Icon icon="mdi:chevron-up-down" class="h-full" />
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Content>
+            <Select.Viewport>
+              {#each app.jobs.keys() as label}
+                <Select.Item value={label} {label}>{label}</Select.Item>
+              {/each}
+            </Select.Viewport>
+          </Select.Content>
+        </Select.Portal>
+      </Select.Root>
+    </div>
   </div>
 </div>

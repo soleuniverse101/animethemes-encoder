@@ -1,0 +1,36 @@
+@layer components {
+  [data-menubar-trigger] {
+    @apply px-2;
+
+    @variant hover, data-[state=open] {
+      @apply bg-primary-300;
+    }
+  }
+
+  [data-menubar-content] {
+    @apply bg-primary-300 py-1;
+  }
+
+  [data-menubar-item] {
+    @apply px-1;
+
+    @variant hover {
+      @apply bg-primary-400;
+    }
+  }
+
+  [data-select-trigger] {
+    @apply bg-primary-300 pl-2;
+  }
+
+  [data-select-content] {
+    @apply w-(--bits-select-anchor-width) bg-primary-300 py-1;
+  }
+
+  [data-select-item] {
+    @apply pl-2;
+    @variant hover {
+      @apply bg-primary-400;
+    }
+  }
+}

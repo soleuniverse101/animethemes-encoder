@@ -33,7 +33,10 @@
   onDestroy(() => unlisten);
 </script>
 
-<div class="flex flex-col items-center">
+<div
+  class="flex flex-col items-center data-disabled:pointer-events-none data-disabled:opacity-40"
+  data-disabled={app.file != null ? null : "true"}
+>
   <MPV mpvWindowControls={mpvWindow.controls} />
   <MPVPlaybackControls
     controls={mpvWindow.mpvControls}

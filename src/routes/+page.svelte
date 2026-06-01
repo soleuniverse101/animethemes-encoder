@@ -25,9 +25,9 @@
   });
 </script>
 
-<header>
+<header class="z-10">
   <MenuBar />
 </header>
-<main class="flex h-full w-full flex-col items-center">
+<main class="pt-6 flex h-full w-full flex-col items-center">
   <MPVView {mpvWindowManager} />
 </main>
