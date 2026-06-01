@@ -27,7 +27,7 @@
   });
 </script>
 
-<header class="z-10 w-full max-w-4xl">
+<header class="z-10 w-full max-w-4xl sticky top-0 bg-background">
   <MenuBar />
 </header>
 

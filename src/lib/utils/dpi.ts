@@ -35,13 +35,31 @@ export namespace Positions {
     return new PhysicalPosition(Math.round(position.x), Math.round(position.y));
   }
 
-  export function fromBoundingRect(rect: DOMRect) {
-    return new LogicalPosition(rect.x, rect.y);
+  export function fromBoundingRect(rect: DOMRectReadOnly, viewport: Viewport) {
+    return new LogicalPosition(Math.max(rect.x, viewport.x), Math.max(rect.y, viewport.y));
   }
 }
 
+// TODO Turn into LogicalPosition & LogicalSize wrapper
+/** Represents a rectangle in logical size (DOM pixels) */
+export type Viewport = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
 export namespace Sizes {
-  export function fromBoundingRect(rect: DOMRect) {
-    return new LogicalSize(rect.width, rect.height);
+  export function fromBoundingRect(rect: DOMRectReadOnly, viewport: Viewport) {
+    return new LogicalSize(
+      Math.max(
+        0,
+        Math.min(rect.right, viewport.x + viewport.width) - Math.max(rect.left, viewport.x)
+      ),
+      Math.max(
+        0,
+        Math.min(rect.bottom, viewport.y + viewport.height) - Math.max(rect.top, viewport.y)
+      )
+    );
   }
 }

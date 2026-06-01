@@ -13,5 +13,5 @@ html {
 }
 
 body {
-  @apply flex h-full w-full flex-col items-center;
+  @apply flex h-fit min-h-full w-full flex-col items-center;
 }
