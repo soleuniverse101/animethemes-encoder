@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Format } from "$lib/utils/format";
   import type { SvelteHTMLElements } from "svelte/elements";
 
   type Props = {
@@ -8,14 +9,12 @@
 
   let { timePos, duration, class: _class }: Props = $props();
 
-  const formatter = new Intl.DurationFormat(undefined, { style: "digital", hoursDisplay: "auto" });
-
-  let pos = $derived(Temporal.Duration.from({ milliseconds: Math.round(timePos * 1000) }));
-  let dur = $derived(Temporal.Duration.from({ milliseconds: Math.round(duration * 1000) }));
+  let pos = $derived(Format.toTimecode(timePos));
+  let dur = $derived(Format.toTimecode(duration));
 </script>
 
 <div class={_class + " flex items-center gap-1 align-middle font-mono"}>
-  <span>{formatter.format(pos)}</span>
+  <span>{pos}</span>
   <span>/</span>
-  <span>{formatter.format(dur)}</span>
+  <span>{dur}</span>
 </div>

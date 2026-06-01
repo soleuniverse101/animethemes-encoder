@@ -1,6 +1,7 @@
 <script lang="ts">
   import { version } from "$app/environment";
   import { createApp, setApp } from "$lib/app/index.svelte";
+  import EncodingSection from "$lib/components/encoding/EncodingSection.svelte";
   import MenuBar from "$lib/components/menu/bar/MenuBar.svelte";
   import MPVView from "$lib/components/mpv/MPVView.svelte";
   import { MPVWindowManager } from "$lib/mpv/window";
@@ -26,15 +27,18 @@
   });
 </script>
 
-<header class="z-10">
+<header class="z-10 w-full max-w-4xl">
   <MenuBar />
 </header>
 
-<main class="pt-6 flex h-full w-full flex-col items-center">
+<main class="py-6 gap-3 grow flex h-max max-w-4xl w-full flex-col items-stretch px-10">
   <MPVView {mpvWindowManager} />
+  <EncodingSection />
 </main>
 
-<footer class="text-text-400 bg-primary-200 px-1">
-  <p class="float-left">by <a href="https://soleuniverse.me/">soleuniverse</a></p>
-  <p class="float-right">v{version}</p>
+<footer class="text-text-400 bg-primary-200 px-1 w-full sticky bottom-0">
+  <div class="mx-auto w-full max-w-4xl flex justify-between">
+    <span>by <a href="https://soleuniverse.me/">soleuniverse</a></span>
+    <span>v{version}</span>
+  </div>
 </footer>

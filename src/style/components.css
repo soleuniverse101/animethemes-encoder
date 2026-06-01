@@ -1,7 +1,17 @@
 @layer components {
+  h2 {
+    @apply text-primary-400;
+  }
+
   a,
   .link {
-    @apply cursor-pointer underline;
+    @apply underline;
+  }
+
+  a,
+  button,
+  .link {
+    @apply cursor-pointer;
   }
 
   [data-menubar-trigger] {
@@ -37,5 +47,9 @@
     @variant hover {
       @apply bg-primary-400;
     }
+  }
+
+  [data-tabs-trigger] {
+    @apply bg-primary-200 p-2;
   }
 }

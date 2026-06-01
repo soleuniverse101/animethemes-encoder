@@ -1,15 +1,6 @@
-import type { TimePosition } from "$lib/mpv/types";
 import { createContext } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
-
-namespace Job {
-  export type Name = `${"OP" | "ED"}`;
-  export type Bounds = { start: TimePosition; end: TimePosition };
-}
-interface Job {
-  label: Job.Name;
-  bounds: Job.Bounds;
-}
+import type { Job } from "./encoding/job.svelte";
 
 /** Not reactive by default. */
 export const createJob = (

@@ -8,11 +8,10 @@
   }
 }
 
-html,
-body {
+html {
   @apply h-full;
 }
 
 body {
-  @apply flex flex-col;
+  @apply flex h-full w-full flex-col items-center;
 }
