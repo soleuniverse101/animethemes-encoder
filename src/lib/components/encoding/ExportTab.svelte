@@ -11,10 +11,10 @@
 
 <div class="p-2 bg-primary-300 relative">
   {#if cmd}
-    <button onclick={async () => writeText(cmd)} class="bg-primary-200 block p-2 ml-auto"
+    <button onclick={async () => writeText(cmd)} class="bg-primary-200 block p-2 mb-2 ml-auto"
       ><Icon icon="mdi:content-copy" /></button
     >
-    <p class="font-mono select-text overflow-x-scroll py-2">{cmd}</p>
+    <p class="font-mono select-text overflow-x-auto py-2 px-3 bg-primary-200">{cmd}</p>
   {:else}
     <p>Cannot export command if no file is selected.</p>
   {/if}

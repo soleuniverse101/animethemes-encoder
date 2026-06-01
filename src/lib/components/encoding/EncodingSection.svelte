@@ -14,7 +14,7 @@
       {/each}
     </Tabs.List>
     {#each tabs as [id, _, Tab]}
-      <Tabs.Content value={id} class="p-1"><Tab /></Tabs.Content>
+      <Tabs.Content value={id} class="pt-1"><Tab /></Tabs.Content>
     {/each}
   </Tabs.Root>
 </div>
