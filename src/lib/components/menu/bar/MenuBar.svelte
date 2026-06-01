@@ -33,6 +33,7 @@
 </script>
 
 <Menubar.Root class="px-2 flex select-none">
+  <h1 class="mr-6 font-bold">AnimeThemes Encoder</h1>
   {#each menus as { title, items }}
     <Menubar.Menu>
       <Menubar.Trigger>{title}</Menubar.Trigger>

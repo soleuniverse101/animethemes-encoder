@@ -37,6 +37,7 @@
   class="flex flex-col items-center data-disabled:pointer-events-none data-disabled:opacity-40"
   data-disabled={app.file != null ? null : "true"}
 >
+  <h2>MPV View</h2>
   <MPV mpvWindowControls={mpvWindow.controls} />
   <MPVPlaybackControls
     controls={mpvWindow.mpvControls}
