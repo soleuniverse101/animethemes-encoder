@@ -1,5 +1,6 @@
 import type { TimePosition } from "$lib/mpv/types";
 import type { MPVWindow } from "$lib/mpv/window";
+import { assertNonNull } from "$lib/utils/assert";
 import { FileUtils } from "$lib/utils/file";
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import { registerHandler } from ".";
@@ -28,6 +29,11 @@ export const registerMPVViewHandler = ({ mpvWindow, app }: MPVViewHandlerContext
     importFile: async () => {
       const file = await FileUtils.promptVideoFile();
       await mpvWindow.mpvControls.loadFile(file);
+      if (app.currentJob.bounds.end == Number.POSITIVE_INFINITY) {
+        app.currentJob.bounds.end = assertNonNull(
+          await mpvWindow.mpvContext.getProperty("duration", "double")
+        );
+      }
       app.file = file;
     },
     playback: {

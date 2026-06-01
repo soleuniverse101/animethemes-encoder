@@ -93,10 +93,10 @@
       {/if}
     {/if}
   </div>
-  {#if loopStart}
+  {#if loopStart != null}
     {@render loopMarker("start", loopStart)}
   {/if}
-  {#if loopEnd}
+  {#if loopEnd != null}
     {@render loopMarker("end", loopEnd)}
   {/if}
 </div>
