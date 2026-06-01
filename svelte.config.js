@@ -11,7 +11,10 @@ const config = {
   kit: {
     adapter: adapter({
       fallback: "index.html"
-    })
+    }),
+    version: {
+      name: process.env.npm_package_version
+    }
   },
   compilerOptions: {
     experimental: { async: true }

@@ -41,7 +41,9 @@
           {#if item.type == "button"}
             <Menubar.Item onSelect={() => command(item.command)()}>{item.title}</Menubar.Item>
           {:else if item.type == "link"}
-            <Menubar.Item onSelect={() => openUrl(item.href)}>{item.title}</Menubar.Item>
+            <Menubar.Item class="link" onSelect={() => openUrl(item.href)}
+              >{item.title}</Menubar.Item
+            >
           {/if}
         {/each}
       </Menubar.Content>

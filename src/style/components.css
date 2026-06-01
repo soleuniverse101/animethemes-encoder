@@ -1,4 +1,9 @@
 @layer components {
+  a,
+  .link {
+    @apply cursor-pointer underline;
+  }
+
   [data-menubar-trigger] {
     @apply px-2;
 

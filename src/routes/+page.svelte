@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { version } from "$app/environment";
   import { createApp, setApp } from "$lib/app/index.svelte";
   import MenuBar from "$lib/components/menu/bar/MenuBar.svelte";
   import MPVView from "$lib/components/mpv/MPVView.svelte";
@@ -28,6 +29,12 @@
 <header class="z-10">
   <MenuBar />
 </header>
+
 <main class="pt-6 flex h-full w-full flex-col items-center">
   <MPVView {mpvWindowManager} />
 </main>
+
+<footer class="text-text-400 bg-primary-200 px-1">
+  <p class="float-left">by <a href="https://soleuniverse.me/">soleuniverse</a></p>
+  <p class="float-right">v{version}</p>
+</footer>
