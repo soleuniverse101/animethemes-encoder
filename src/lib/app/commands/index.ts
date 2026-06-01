@@ -1,3 +1,4 @@
+import type { UnlistenFn } from "@tauri-apps/api/event";
 import { flattenHandler, type FlattenHandler, type Handler } from "./handler";
 import type { MPVViewHandler } from "./mpvView";
 
@@ -21,12 +22,18 @@ type ModuleName = keyof Modules;
 export function registerHandler<M extends ModuleName>(
   module: M,
   handler: HandlerFromModule<Modules[M]>
-) {
+): UnlistenFn {
   if (modules[module].handler) {
     throw new Error(`Cannot register two handlers for the same module (${module})`);
   }
+
   (modules[module] as Module<HandlerFromModule<Modules[M]>>).handler = handler;
   (modules[module] as Module<HandlerFromModule<Modules[M]>>).flatHandler = flattenHandler(handler);
+
+  return () => {
+    modules[module].handler = null;
+    modules[module].flatHandler = null;
+  };
 }
 
 export function commands<Name extends ModuleName>(

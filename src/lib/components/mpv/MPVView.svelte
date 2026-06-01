@@ -3,6 +3,7 @@
   import { getApp } from "$lib/app/index.svelte";
   import { registerMPVViewShortcuts } from "$lib/app/shortcuts/mpvView";
   import { MPVWindowManager } from "$lib/mpv/window";
+  import { unlistenAll } from "$lib/utils/tauri";
   import { onDestroy } from "svelte";
   import MPV from "./MPV.svelte";
   import MPVPlaybackControls from "./MPVPlaybackControls.svelte";
@@ -27,10 +28,9 @@
     mpvWindow,
     app
   });
-  registerMPVViewHandler(handlerContext);
-  const unlisten = registerMPVViewShortcuts();
+  const unlistens = [registerMPVViewHandler(handlerContext), registerMPVViewShortcuts()];
 
-  onDestroy(() => unlisten);
+  onDestroy(() => unlistenAll(unlistens));
 </script>
 
 <div

@@ -1,6 +1,7 @@
 import type { TimePosition } from "$lib/mpv/types";
 import type { MPVWindow } from "$lib/mpv/window";
 import { FileUtils } from "$lib/utils/file";
+import type { UnlistenFn } from "@tauri-apps/api/event";
 import { registerHandler } from ".";
 import type { App } from "../index.svelte";
 
@@ -22,7 +23,7 @@ export type MPVViewHandlerContext = {
   app: App;
 };
 
-export function registerMPVViewHandler({ mpvWindow, app }: MPVViewHandlerContext) {
+export const registerMPVViewHandler = ({ mpvWindow, app }: MPVViewHandlerContext): UnlistenFn =>
   registerHandler("mpvView", {
     importFile: async () => {
       const file = await FileUtils.promptVideoFile();
@@ -45,4 +46,3 @@ export function registerMPVViewHandler({ mpvWindow, app }: MPVViewHandlerContext
       }
     }
   });
-}
