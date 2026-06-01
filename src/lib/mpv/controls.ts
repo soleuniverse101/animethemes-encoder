@@ -1,6 +1,4 @@
-import type { Bounds } from "$lib/app/job.svelte";
 import { assertNonNull } from "$lib/utils/assert";
-import { FileUtils } from "$lib/utils/file";
 import type { MPVWindowContext } from "./api";
 import type { MPVListenerView } from "./listener";
 import type { TimePosition } from "./types";
@@ -79,9 +77,5 @@ export class MPVControls {
     const position = assertNonNull(await this.context.getProperty("time-pos/full", "double"));
     await this.context.setProperty("ab-loop-b", position);
     return position;
-  }
-  async setLoop(bounds: Bounds) {
-    await this.setLoopA(bounds.a ?? null);
-    await this.setLoopB(bounds.b ?? null);
   }
 }
