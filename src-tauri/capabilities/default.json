@@ -16,6 +16,11 @@
     "core:window:allow-destroy",
     "core:window:allow-set-ignore-cursor-events",
     "clipboard-manager:default",
-    "clipboard-manager:allow-write-text"
+    "clipboard-manager:allow-write-text",
+    "os:default",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [{ "name": "ffmpeg", "cmd": "ffmpeg", "args": true }]
+    }
   ]
 }

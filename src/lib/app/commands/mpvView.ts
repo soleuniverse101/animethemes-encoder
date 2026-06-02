@@ -1,9 +1,7 @@
 import type { TimePosition } from "$lib/mpv/types";
 import type { MPVWindow } from "$lib/mpv/window";
-import { assertNonNull } from "$lib/utils/assert";
 import { FileUtils } from "$lib/utils/file";
-import type { UnlistenFn } from "@tauri-apps/api/event";
-import { registerHandler } from ".";
+import { commands, registerHandler } from ".";
 import type { App } from "../index.svelte";
 
 export type MPVViewHandler = {
@@ -24,16 +22,11 @@ export type MPVViewHandlerContext = {
   app: App;
 };
 
-export const registerMPVViewHandler = ({ mpvWindow, app }: MPVViewHandlerContext): UnlistenFn =>
+export const registerMPVViewHandler = ({ mpvWindow, app }: MPVViewHandlerContext) =>
   registerHandler("mpvView", {
     importFile: async () => {
       const file = await FileUtils.promptVideoFile();
       await mpvWindow.mpvControls.loadFile(file);
-      if (app.currentJob.bounds.end == Number.POSITIVE_INFINITY) {
-        app.currentJob.bounds.end = assertNonNull(
-          await mpvWindow.mpvContext.getProperty("duration", "double")
-        );
-      }
       app.file = file;
     },
     playback: {
@@ -44,11 +37,9 @@ export const registerMPVViewHandler = ({ mpvWindow, app }: MPVViewHandlerContext
         await mpvWindow.mpvControls.backwardSeek(duration),
       nextFrame: async () => await mpvWindow.mpvControls.nextFrame(),
       previousFrame: async () => await mpvWindow.mpvControls.previousFrame(),
-      setJobStartToCurrent: async () => {
-        app.currentJob.bounds.start = await mpvWindow.mpvControls.setLoopAToCurrent();
-      },
-      setJobEndToCurrent: async () => {
-        app.currentJob.bounds.end = await mpvWindow.mpvControls.setLoopBToCurrent();
-      }
+      setJobStartToCurrent: async () =>
+        commands("jobs").current.setStart(await mpvWindow.mpvControls.setLoopAToCurrent()),
+      setJobEndToCurrent: async () =>
+        commands("jobs").current.setEnd(await mpvWindow.mpvControls.setLoopBToCurrent())
     }
   });

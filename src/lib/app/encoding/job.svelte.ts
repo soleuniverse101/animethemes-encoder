@@ -8,4 +8,5 @@ export namespace Job {
 export interface Job {
   label: Job.Name;
   bounds: Job.Bounds;
+  normalizationFilters: string | null;
 }

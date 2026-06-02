@@ -1,5 +1,6 @@
 <script lang="ts">
   import { version } from "$app/environment";
+  import { registerJobsHandler } from "$lib/app/commands/jobs";
   import { createApp, setApp } from "$lib/app/index.svelte";
   import EncodingSection from "$lib/components/encoding/EncodingSection.svelte";
   import MenuBar from "$lib/components/menu/bar/MenuBar.svelte";
@@ -16,6 +17,7 @@
   setApp(app);
 
   const unlistens = [
+    registerJobsHandler({ app }),
     await main.onCloseRequested(() => {
       mpvWindowManager.destroy();
     })

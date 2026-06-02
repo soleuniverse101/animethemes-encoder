@@ -1,20 +1,45 @@
-export class CommandBuilder {
-  private command: string;
-  private args: Map<string, string> = new Map();
+import { os } from "$lib/app/index.svelte";
 
-  constructor(command: string) {
-    this.command = command;
+export class CommandBuilder {
+  readonly program: string;
+  private args: string[] = [];
+
+  constructor(program: string) {
+    this.program = program;
   }
 
-  setArgument(arg: string, value: string) {
-    this.args.set(`-${arg}`, value);
+  clone() {
+    const builder = new CommandBuilder(this.program);
+    builder.args = this.args.slice();
+    return builder;
+  }
+
+  add(part: string) {
+    this.args.push(part);
+    return this;
+  }
+
+  addArgument(arg: string, value?: string) {
+    this.args.push(`-${arg}`);
+    if (value) {
+      this.args.push(`${value}`);
+    }
+    return this;
+  }
+
+  addOutput(output: string | null) {
+    if (output == null) {
+      // TODO replace for linux
+      this.addArgument("f", "null");
+      this.add(os == "windows" ? "NUL" : "/dev/null");
+    }
+    return this;
   }
 
   compile() {
-    return `${this.command} ${this.args
-      .entries()
-      .map(([arg, val]) => `${arg} ${val}`)
-      .toArray()
-      .join(" ")}`;
+    return [this.program, ...this.args].join(" ");
+  }
+  getArgs(): string[] {
+    return this.args;
   }
 }

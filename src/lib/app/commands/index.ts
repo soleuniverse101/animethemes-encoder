@@ -1,5 +1,6 @@
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import { flattenHandler, type FlattenHandler, type Handler } from "./handler";
+import type { JobsHandler } from "./jobs";
 import type { MPVViewHandler } from "./mpvView";
 
 type NullModule = { handler: null; flatHandler: null };
@@ -13,7 +14,8 @@ export const createModule = <H extends Handler>(): Module<H> => ({
 });
 
 const modules = {
-  mpvView: createModule<MPVViewHandler>()
+  mpvView: createModule<MPVViewHandler>(),
+  jobs: createModule<JobsHandler>()
 };
 
 type Modules = typeof modules;

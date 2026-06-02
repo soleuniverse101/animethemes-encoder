@@ -52,4 +52,8 @@
   [data-tabs-trigger] {
     @apply bg-primary-200 p-2;
   }
+
+  [data-button-root] {
+    @apply bg-secondary-200 p-2;
+  }
 }

@@ -20,15 +20,27 @@ importers:
       '@tauri-apps/plugin-opener':
         specifier: ^2.5.4
         version: 2.5.4
+      '@tauri-apps/plugin-os':
+        specifier: ~2.3.2
+        version: 2.3.2
+      '@tauri-apps/plugin-shell':
+        specifier: ~2.3.5
+        version: 2.3.5
       bits-ui:
         specifier: ^2.18.1
         version: 2.18.1(@internationalized/date@3.12.1)(@sveltejs/kit@2.61.1(@sveltejs/vite-plugin-svelte@7.1.2(svelte@5.56.0)(vite@8.0.15(@types/node@25.9.1)(jiti@2.7.0)))(svelte@5.56.0)(typescript@6.0.3)(vite@8.0.15(@types/node@25.9.1)(jiti@2.7.0)))(svelte@5.56.0)
       hotkeys-js:
         specifier: ^4.0.4
         version: 4.0.4
+      pretty-ms:
+        specifier: ^9.3.0
+        version: 9.3.0
       tauri-plugin-libmpv-api:
         specifier: ^0.3.2
         version: 0.3.2
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@changesets/cli':
         specifier: ^2.31.0
@@ -562,6 +574,12 @@ packages:
 
   '@tauri-apps/plugin-opener@2.5.4':
     resolution: {integrity: sha512-1HnPkb+AmgO29HBazm4uPLKB+r7zzcTBW1d0fyYp1uP+jwtpoiNDGKMMzz58SFp49nOIrxdE3aUJtT57lfO9CQ==}
+
+  '@tauri-apps/plugin-os@2.3.2':
+    resolution: {integrity: sha512-n+nXWeuSeF9wcEsSPmRnBEGrRgOy6jjkSU+UVCOV8YUGKb2erhDOxis7IqRXiRVHhY8XMKks00BJ0OAdkpf6+A==}
+
+  '@tauri-apps/plugin-shell@2.3.5':
+    resolution: {integrity: sha512-jewtULhiQ7lI7+owCKAjc8tYLJr92U16bPOeAa472LHJdgaibLP83NcfAF2e+wkEcA53FxKQAZ7byDzs2eeizg==}
 
   '@tybys/wasm-util@0.10.2':
     resolution: {integrity: sha512-RoBvJ2X0wuKlWFIjrwffGw1IqZHKQqzIchKaadZZfnNpsAYp2mM0h36JtPCjNDAHGgYez/15uMBpfGwchhiMgg==}
@@ -1422,6 +1440,9 @@ packages:
   zimmerframe@1.1.4:
     resolution: {integrity: sha512-B58NGBEoc8Y9MWWCQGl/gq9xBCe4IiKM0a2x7GZdQKOW5Exr8S1W24J6OgM1njK8xCRGvAJIL/MxXHf6SkmQKQ==}
 
+  zod@4.4.3:
+    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
+
 snapshots:
 
   7z-wasm@1.2.0:
@@ -1898,6 +1919,14 @@ snapshots:
       '@tauri-apps/api': 2.11.0
 
   '@tauri-apps/plugin-opener@2.5.4':
+    dependencies:
+      '@tauri-apps/api': 2.11.0
+
+  '@tauri-apps/plugin-os@2.3.2':
+    dependencies:
+      '@tauri-apps/api': 2.11.0
+
+  '@tauri-apps/plugin-shell@2.3.5':
     dependencies:
       '@tauri-apps/api': 2.11.0
 
@@ -2660,3 +2689,5 @@ snapshots:
       isexe: 2.0.0
 
   zimmerframe@1.1.4: {}
+
+  zod@4.4.3: {}

@@ -26,3 +26,5 @@ tauri-plugin-dialog = "2"
 tauri-plugin-libmpv = "0.3.2"
 raw-window-handle = "0.6.2"                      # To access window handle
 tauri-plugin-clipboard-manager = "2"
+tauri-plugin-os = "2"
+tauri-plugin-shell = "2"

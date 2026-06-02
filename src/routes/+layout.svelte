@@ -1,7 +1,7 @@
 <script lang="ts">
+  import hotkeys from "hotkeys-js";
   import { onDestroy } from "svelte";
   import "../style/layout.css";
-  import hotkeys from "hotkeys-js";
 
   const { children } = $props();
 

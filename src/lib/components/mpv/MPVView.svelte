@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { commands } from "$lib/app/commands";
   import { registerMPVViewHandler, type MPVViewHandlerContext } from "$lib/app/commands/mpvView";
   import { getApp } from "$lib/app/index.svelte";
   import { registerMPVViewShortcuts } from "$lib/app/shortcuts/mpvView";
@@ -29,6 +30,14 @@
     app
   });
   const unlistens = [registerMPVViewHandler(handlerContext), registerMPVViewShortcuts()];
+
+  const duration = mpvWindow.mpvControls.listenerView.duration;
+  $effect(() => {
+    if (app.file == null) return;
+    if (app.currentJob.bounds.end == Number.POSITIVE_INFINITY && $duration) {
+      commands("jobs").current.setEnd($duration);
+    }
+  });
 
   onDestroy(() => unlistenAll(unlistens));
 </script>

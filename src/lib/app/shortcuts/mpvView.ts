@@ -1,7 +1,6 @@
-import type { UnlistenFn } from "@tauri-apps/api/event";
 import { registerShortcuts } from ".";
 
-export const registerMPVViewShortcuts = (): UnlistenFn =>
+export const registerMPVViewShortcuts = () =>
   registerShortcuts({
     "ctrl+o": "mpvView.importFile",
     space: "mpvView.playback.playPause",
