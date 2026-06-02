@@ -2,6 +2,7 @@
   import { getApp } from "$lib/app/index.svelte";
   import type { MPVControls } from "$lib/mpv/controls";
   import { assertNonNull } from "$lib/utils/assert";
+  import { Format } from "$lib/utils/format";
   import { clamp, Nullable } from "$lib/utils/math";
   import TimePosDisplay from "./TimePosDisplay.svelte";
 
@@ -34,9 +35,6 @@
     );
   };
 
-  const posFormatter = new Intl.DurationFormat(undefined, {
-    style: "long"
-  });
   let roundedTimePos = $derived(Nullable.round($timePos));
 </script>
 
@@ -75,9 +73,7 @@
         aria-valuemin="0"
         aria-valuemax={$duration}
         aria-valuenow={roundedTimePos}
-        aria-valuetext={roundedTimePos
-          ? posFormatter.format(Temporal.Duration.from({ seconds: roundedTimePos }))
-          : null}
+        aria-valuetext={roundedTimePos ? Format.toReadable(roundedTimePos * 1000) : null}
       >
         <div
           class="h-full bg-[#319488] transition-[width]"
