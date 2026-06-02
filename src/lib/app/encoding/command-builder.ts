@@ -1,4 +1,12 @@
-import { os } from "$lib/app/index.svelte";
+import { family } from "@tauri-apps/plugin-os";
+import { Command } from "@tauri-apps/plugin-shell";
+
+const os = family();
+if (os != "unix" && os != "windows") {
+  throw new Error("OSes other than Linux and Windows are currently not supported.");
+}
+
+export const NULL_DEVICE = os == "windows" ? "NUL" : "/dev/null";
 
 export class CommandBuilder {
   readonly program: string;
@@ -27,11 +35,13 @@ export class CommandBuilder {
     return this;
   }
 
-  addOutput(output: string | null) {
+  addOutput(output: [format: "webm", destination: string] | null) {
     if (output == null) {
-      // TODO replace for linux
       this.addArgument("f", "null");
-      this.add(os == "windows" ? "NUL" : "/dev/null");
+      this.add(NULL_DEVICE);
+    } else {
+      this.addArgument("f", output[0]);
+      this.add(output[1]);
     }
     return this;
   }
@@ -39,7 +49,11 @@ export class CommandBuilder {
   compile() {
     return [this.program, ...this.args].join(" ");
   }
-  getArgs(): string[] {
+  getArgs(): readonly string[] {
     return this.args;
+  }
+
+  build() {
+    return Command.create(this.program, this.args);
   }
 }
