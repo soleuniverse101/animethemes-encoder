@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { onDestroy } from "svelte";
   import "../style/layout.css";
+  import hotkeys from "hotkeys-js";
 
   const { children } = $props();
 
@@ -14,6 +16,14 @@
       button.blur();
     }
   });
+
+  hotkeys("space", (event) => {
+    if (event.target == document.body) {
+      event.preventDefault();
+    }
+  });
+
+  onDestroy(() => hotkeys.unbind("space"));
 </script>
 
 {@render children()}
