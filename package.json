@@ -41,17 +41,17 @@
     "@tauri-apps/cli": "^2.11.2",
     "@types/node": "^25.9.1",
     "prettier": "^3.8.3",
-    "prettier-plugin-jsdoc": "^1.8.0",
+    "prettier-plugin-jsdoc": "^1.8.1",
     "prettier-plugin-merge": "^0.10.1",
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-svelte": "^4.0.1",
     "prettier-plugin-tailwindcss": "^0.8.0",
-    "svelte": "^5.55.9",
+    "svelte": "^5.56.0",
     "svelte-check": "^4.4.8",
     "tailwindcss": "^4.3.0",
     "theme-colors": "^0.1.0",
     "typescript": "~6.0.3",
-    "vite": "^8.0.14"
+    "vite": "^8.0.15"
   },
   "packageManager": "pnpm@11.4.0+sha512.f0febc7e37552ab485494a914241b338e0b3580b93d54ce31f00933015880863129038a1b4ae4e414a0ee63ac35bf21197e990172c4a68256450b5636310968f"
 }
