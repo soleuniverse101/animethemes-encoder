@@ -1,7 +1,6 @@
-import { platform } from "@tauri-apps/plugin-os";
 import { createContext } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
-import type { Job } from "./encoding/job.svelte";
+import type { Job } from "./encoding/job";
 
 /** Not reactive by default. */
 export const createJob = (
@@ -25,9 +24,3 @@ export const createApp = (): App => {
 };
 
 export const [getApp, setApp] = createContext<App>();
-
-const os = platform();
-if (os != "linux" && os != "windows") {
-  throw new Error("OSes other than Linux and Windows are currently not supported.");
-}
-export { os };
