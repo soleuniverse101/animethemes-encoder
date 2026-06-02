@@ -9,7 +9,7 @@ import { MPVControls } from "./controls";
 import { MPVListener, OBSERVABLE_PROPERTIES_FORMAT, type ObservedProperties } from "./listener";
 
 const DEFAULT_MPV_CONFIG: MpvConfig = {
-  initialOptions: { "keep-open": "yes", pause: "yes" }
+  initialOptions: { "keep-open": "yes", pause: "yes", volume: "50" }
 };
 
 export class MPVWindowManager {
