@@ -1,19 +1,19 @@
 import { BaseDirectory, writeTextFile } from "@tauri-apps/plugin-fs";
+import { type Config } from ".";
 import { registerHandler } from "../commands";
-import type { App } from "../index.svelte";
 
 export type ConfigHandler = {
   save: () => Promise<void>;
 };
 
 export type ConfigHandlerContext = {
-  app: App;
+  config: Config;
 };
 
-export const registerConfigHandler = ({ app }: ConfigHandlerContext) =>
+export const registerConfigHandler = ({ config }: ConfigHandlerContext) =>
   registerHandler("config", {
     save: () =>
-      writeTextFile("recent.json", JSON.stringify(app.config.recent), {
+      writeTextFile("recent.json", JSON.stringify(config.recent), {
         baseDir: BaseDirectory.AppLocalData
       })
   });

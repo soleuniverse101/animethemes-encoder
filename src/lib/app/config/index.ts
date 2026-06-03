@@ -3,10 +3,13 @@ import { exists, mkdir, readTextFile, writeTextFile } from "@tauri-apps/plugin-f
 import z from "zod";
 
 const Config = z.object({
+  /** Sorted in reverse (first is most recent). */
   recent: z.array(z.string())
 });
 
 export type Config = z.infer<typeof Config>;
+
+export const RECENT_FILES_MAX_COUNT = 5;
 
 export async function initConfig(): Promise<Config> {
   const localDir = await appLocalDataDir();

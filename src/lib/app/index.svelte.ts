@@ -17,10 +17,10 @@ export interface App {
 }
 
 /** Not reactive by default. **IMPORTANT**: config must be set manually. */
-export const createApp = (): App => {
+export const createApp = (config: Config): App => {
   const defaultJob = createJob("OP");
   return {
-    config: null as any,
+    config,
     jobs: new SvelteMap([[defaultJob.label, defaultJob]]),
     currentJob: defaultJob
   };
