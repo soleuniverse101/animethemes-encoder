@@ -1,53 +1,21 @@
 <script lang="ts">
-  import { command, type Command } from "$lib/app/commands";
-  import { openUrl } from "@tauri-apps/plugin-opener";
   import { Menubar } from "bits-ui";
-
-  type ItemType =
-    | {
-        type: "button";
-        command: Command.Parameterless.Name;
-      }
-    | {
-        type: "link";
-        href: string;
-      };
-  type Item = {
-    title: string;
-  } & ItemType;
-  type Menu = {
-    title: string;
-    items: Item[];
-  };
-
-  const menus: Menu[] = [
-    {
-      title: "File",
-      items: [{ title: "Open...", type: "button", command: "mpvView.importFile" }]
-    },
-    {
-      title: "Help",
-      items: [{ title: "AnimeThemes Wiki", type: "link", href: "https://animethemes.moe/wiki/" }]
-    }
-  ] as const;
+  import Menu from "./Menu.svelte";
+  import MenuItem from "./MenuItem.svelte";
+  import RecentFiles from "./RecentFiles.svelte";
 </script>
 
 <Menubar.Root class="px-2 flex select-none">
   <h1 class="mr-6 font-bold">AnimeThemes Encoder</h1>
-  {#each menus as { title, items }}
-    <Menubar.Menu>
-      <Menubar.Trigger>{title}</Menubar.Trigger>
-      <Menubar.Content align="start">
-        {#each items as item}
-          {#if item.type == "button"}
-            <Menubar.Item onSelect={() => command(item.command)()}>{item.title}</Menubar.Item>
-          {:else if item.type == "link"}
-            <Menubar.Item class="link" onSelect={() => openUrl(item.href)}
-              >{item.title}</Menubar.Item
-            >
-          {/if}
-        {/each}
-      </Menubar.Content>
-    </Menubar.Menu>
-  {/each}
+  <Menu title="File">
+    <MenuItem title="Open..." action={{ type: "commandButton", command: "mpvView.importFile" }} />
+    <Menubar.Separator />
+    <RecentFiles />
+  </Menu>
+  <Menu title="Help">
+    <MenuItem
+      title="AnimeThemes Wiki"
+      action={{ type: "link", href: "https://animethemes.moe/wiki/" }}
+    />
+  </Menu>
 </Menubar.Root>

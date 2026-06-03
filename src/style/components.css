@@ -34,6 +34,14 @@
     }
   }
 
+  [data-menubar-group-heading] {
+    @apply px-1 text-text-400;
+  }
+
+  [data-menubar-separator] {
+    @apply mt-1 h-px bg-primary;
+  }
+
   [data-select-trigger] {
     @apply bg-primary-300 pl-2;
   }

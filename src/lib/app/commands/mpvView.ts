@@ -5,7 +5,7 @@ import { commands, registerHandler } from ".";
 import type { App } from "../index.svelte";
 
 export type MPVViewHandler = {
-  importFile: () => Promise<void>;
+  importFile: (path?: string) => Promise<void>;
   playback: {
     playPause: () => Promise<void>;
     forwardSeek: (duration?: TimePosition) => Promise<void>;
@@ -24,10 +24,17 @@ export type MPVViewHandlerContext = {
 
 export const registerMPVViewHandler = ({ mpvWindow, app }: MPVViewHandlerContext) =>
   registerHandler("mpvView", {
-    importFile: async () => {
-      const file = await FileUtils.promptVideoFile();
+    importFile: async (path) => {
+      // TODO add validation of path
+      let file: string;
+      if (path) {
+        file = path;
+      } else {
+        file = await FileUtils.promptVideoFile();
+      }
       await mpvWindow.mpvControls.loadFile(file);
       app.file = file;
+      commands("config").recent.add(file);
     },
     playback: {
       playPause: async () => await mpvWindow.mpvControls.playPause(),
