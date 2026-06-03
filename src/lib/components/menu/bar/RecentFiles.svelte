@@ -7,12 +7,15 @@
   const app = getApp();
 </script>
 
-<Menubar.Group>
-  <Menubar.GroupHeading>Recent files</Menubar.GroupHeading>
-  {#each app.config.recent as path}
-    <MenuItem
-      title={path}
-      action={{ type: "button", callback: () => commands("mpvView").importFile(path) }}
-    />
-  {/each}
-</Menubar.Group>
+{#if app.config.recent.length > 0}
+  <Menubar.Separator />
+  <Menubar.Group>
+    <Menubar.GroupHeading>Recent files</Menubar.GroupHeading>
+    {#each app.config.recent as path}
+      <MenuItem
+        title={path}
+        action={{ type: "button", callback: () => commands("mpvView").importFile(path) }}
+      />
+    {/each}
+  </Menubar.Group>
+{/if}

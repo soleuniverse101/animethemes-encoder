@@ -9,7 +9,6 @@
   <h1 class="mr-6 font-bold">AnimeThemes Encoder</h1>
   <Menu title="File">
     <MenuItem title="Open..." action={{ type: "commandButton", command: "mpvView.importFile" }} />
-    <Menubar.Separator />
     <RecentFiles />
   </Menu>
   <Menu title="Help">
