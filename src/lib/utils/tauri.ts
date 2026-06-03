@@ -10,10 +10,8 @@ export function unlistenAll<U extends UnlistenFn | Promise<UnlistenFn>>(
   unlistens: U[]
 ): U extends UnlistenFn ? void : Promise<void> {
   for (let i = 0; i < unlistens.length; i++) {
-    const unlisten = unlistens[i];
-    if (typeof unlisten == "function") {
-      unlisten();
-      unlistens.splice(i--, 1);
+    if (typeof unlistens[i] == "function") {
+      (unlistens.splice(i--, 1)[0] as UnlistenFn)();
     }
   }
 

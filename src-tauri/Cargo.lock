@@ -52,6 +52,7 @@ dependencies = [
  "tauri-build",
  "tauri-plugin-clipboard-manager",
  "tauri-plugin-dialog",
+ "tauri-plugin-fs",
  "tauri-plugin-libmpv",
  "tauri-plugin-opener",
  "tauri-plugin-os",

@@ -20,7 +20,15 @@
     "os:default",
     {
       "identifier": "shell:allow-execute",
-      "allow": [{ "name": "ffmpeg", "cmd": "ffmpeg", "args": true }]
-    }
+      "allow": [
+        {
+          "name": "ffmpeg",
+          "cmd": "ffmpeg",
+          "args": true
+        }
+      ]
+    },
+    "fs:default",
+    "fs:allow-applocaldata-write"
   ]
 }
