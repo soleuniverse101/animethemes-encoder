@@ -7,6 +7,7 @@
   import Icon from "@iconify/svelte";
   import { writeText } from "@tauri-apps/plugin-clipboard-manager";
   import { Button } from "bits-ui";
+  import Checkbox from "../ui/Checkbox.svelte";
 
   const app = getApp();
 
@@ -33,19 +34,24 @@
   }
 </script>
 
-<div class="p-2 bg-primary-300 relative">
+<div class="p-2 bg-primary-300 relative flex flex-col gap-2">
   {#if app.file}
     {#if app.currentJob.normalizationFilters != null}
       <!-- TODO Replace by {const} once prettier-plugin-svelte handles declaration tags -->
       {@const cmds = exportCommands()}
-      <button
-        onclick={() => writeText(cmds.join("\n"))}
-        class="bg-primary-200 block p-2 mb-2 ml-auto"><Icon icon="mdi:content-copy" /></button
-      >
+      {let wrap = $state(false)}
+      <div class="flex justify-between items-center">
+        <Checkbox bind:checked={wrap} text="Wrap lines" />
+        <button onclick={() => writeText(cmds.join("\n"))} class="bg-primary-200 p-2"
+          ><Icon icon="mdi:content-copy" /></button
+        >
+      </div>
       <div class="overflow-x-auto bg-primary-200 py-2 px-3">
         {#each cmds as cmd}
           <!-- TODO add wrapping bound to checkbox -->
-          <pre class="font-mono select-text not-first:mt-3">{cmd}</pre>
+          <pre
+            class="font-mono select-text not-first:mt-3 wrap-break-word"
+            class:whitespace-normal={wrap}>{cmd}</pre>
         {/each}
       </div>
     {:else}
