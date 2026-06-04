@@ -1,10 +1,12 @@
 import { appLocalDataDir, BaseDirectory } from "@tauri-apps/api/path";
 import { exists, mkdir, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import z from "zod";
+import { defaultProfile, Profile } from "../encoding/profile";
 
 const Config = z.object({
   /** Sorted in reverse (first is most recent). */
-  recent: z.array(z.string())
+  recent: z.array(z.string()),
+  profile: Profile
 });
 
 export type Config = z.infer<typeof Config>;
@@ -27,5 +29,5 @@ export async function initConfig(): Promise<Config> {
     recent = [];
   }
 
-  return { recent };
+  return { recent, profile: defaultProfile() };
 }

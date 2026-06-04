@@ -1,19 +1,34 @@
 <script lang="ts">
-  import { compileCommand, loudnormCommand } from "$lib/app/encoding/export";
-  import { toFiltersList } from "$lib/app/encoding/loudnorm";
+  import type { CompilerContext } from "$lib/app/encoding/compilers";
+  import { firstPass, secondPass } from "$lib/app/encoding/compilers/export";
+  import { normalizationPass, toFiltersList } from "$lib/app/encoding/compilers/loudnorm";
   import { getApp } from "$lib/app/index.svelte";
   import { assertNonNull } from "$lib/utils/assert";
   import Icon from "@iconify/svelte";
   import { writeText } from "@tauri-apps/plugin-clipboard-manager";
-  import { Command } from "@tauri-apps/plugin-shell";
   import { Button } from "bits-ui";
 
   const app = getApp();
 
+  // TODO should be derived ?
+  const context: CompilerContext | null = $derived(
+    app.file
+      ? {
+          profile: app.config.profile,
+          file: app.file,
+          job: app.currentJob
+        }
+      : null
+  );
+
   async function computeLoudness() {
-    const cmd = loudnormCommand(assertNonNull(app.file), app.currentJob);
-    app.currentJob.normalizationFilters = toFiltersList(
-      JSON.parse((await Command.create(cmd.program, cmd.getArgs()).execute()).stdout)
+    const cmd = await normalizationPass(assertNonNull(context)).build().execute();
+    app.currentJob.normalizationFilters = toFiltersList(JSON.parse(cmd.stdout));
+  }
+
+  function exportCommands() {
+    return [firstPass(assertNonNull(context)), secondPass(assertNonNull(context))].map((cmd) =>
+      cmd.compile()
     );
   }
 </script>
@@ -21,11 +36,18 @@
 <div class="p-2 bg-primary-300 relative">
   {#if app.file}
     {#if app.currentJob.normalizationFilters != null}
-      {@const cmd = compileCommand(app.file, app.currentJob).compile()}
-      <button onclick={() => writeText(cmd)} class="bg-primary-200 block p-2 mb-2 ml-auto"
-        ><Icon icon="mdi:content-copy" /></button
+      <!-- TODO Replace by {const} once prettier-plugin-svelte handles declaration tags -->
+      {@const cmds = exportCommands()}
+      <button
+        onclick={() => writeText(cmds.join("\n"))}
+        class="bg-primary-200 block p-2 mb-2 ml-auto"><Icon icon="mdi:content-copy" /></button
       >
-      <p class="font-mono select-text overflow-x-auto py-2 px-3 bg-primary-200">{cmd}</p>
+      <div class="overflow-x-auto bg-primary-200 py-2 px-3">
+        {#each cmds as cmd}
+          <!-- TODO add wrapping bound to checkbox -->
+          <pre class="font-mono select-text not-first:mt-3">{cmd}</pre>
+        {/each}
+      </div>
     {:else}
       <Button.Root onclick={computeLoudness}>Compute loudness normalization</Button.Root>
     {/if}

@@ -1,4 +1,8 @@
-import * as z from "zod/mini";
+import z from "zod";
+import type { CompilerContext } from ".";
+import { base } from "./base";
+
+const loudnormDefaults = "loudnorm=I=-16:LRA=20:TP=-1:dual_mono=true:linear=true";
 
 const LoudnessStats = z.object({
   input_i: z.string(),
@@ -8,11 +12,15 @@ const LoudnessStats = z.object({
   target_offset: z.string()
 });
 
-const base = "loudnorm=I=-16:LRA=20:TP=-1:dual_mono=true:linear=true";
+export function normalizationPass(context: CompilerContext) {
+  return base(context)
+    .setOption("af", `${loudnormDefaults}:print_format=json:stats_file=-`)
+    .addOutput(null);
+}
 
 export function toFiltersList(stats: object): string {
   const { input_i, input_lra, input_tp, input_thresh, target_offset } = LoudnessStats.parse(stats);
-  return `${base}:${[
+  return `${loudnormDefaults}:${[
     ["measured_I", input_i],
     ["measured_LRA", input_lra],
     ["measured_TP", input_tp],

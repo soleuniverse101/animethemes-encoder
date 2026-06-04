@@ -8,52 +8,109 @@ if (os != "unix" && os != "windows") {
 
 export const NULL_DEVICE = os == "windows" ? "NUL" : "/dev/null";
 
+type Argument = Readonly<
+  | {
+      type: "positional";
+      value: string;
+    }
+  | {
+      type: "flag";
+      name: string;
+    }
+  | {
+      type: "option";
+      name: string;
+      value: string;
+    }
+>;
+
+/**
+ * TODO if multiple inputs with different associated options are needed, create "CommandPart" that
+ * has the same structure as CommandBuilder the args map is localized, then builder may store each
+ * part individually and the caller can reference them by ID.
+ */
 export class CommandBuilder {
   readonly program: string;
-  private args: string[] = [];
+  private args: Map<string, Argument> = new Map();
+  private positionalKey = 0;
 
   constructor(program: string) {
     this.program = program;
   }
 
-  clone() {
-    const builder = new CommandBuilder(this.program);
-    builder.args = this.args.slice();
-    return builder;
+  private nextKey() {
+    return (this.positionalKey++).toString();
   }
 
-  add(part: string) {
-    this.args.push(part);
+  addPositional(value: string) {
+    this.args.set(this.nextKey(), { type: "positional", value });
+  }
+
+  setFlag(name: string) {
+    name = `-${name}`;
+    this.args.set(name, { type: "flag", name });
     return this;
   }
 
-  addArgument(arg: string, value?: string) {
-    this.args.push(`-${arg}`);
-    if (value) {
-      this.args.push(`${value}`);
-    }
+  // TODO
+  /** Cannot be reset later. */
+  private addFlag(name: string) {
+    name = `-${name}`;
+    this.args.set(this.nextKey(), { type: "flag", name });
+    return this;
+  }
+
+  setOption(name: string, value: string | number) {
+    name = `-${name}`;
+    this.args.set(name, { type: "option", name, value: value.toString() });
+    return this;
+  }
+
+  // TODO
+  private addOption(name: string, value: string | number) {
+    name = `-${name}`;
+    this.args.set(this.nextKey(), { type: "option", name, value: value.toString() });
     return this;
   }
 
   addOutput(output: [format: "webm", destination: string] | null) {
     if (output == null) {
-      this.addArgument("f", "null");
-      this.add(NULL_DEVICE);
+      this.addOption("f", "null");
+      this.addPositional(NULL_DEVICE);
     } else {
-      this.addArgument("f", output[0]);
-      this.add(output[1]);
+      this.addOption("f", output[0]);
+      this.addPositional(output[1]);
     }
     return this;
   }
 
-  compile() {
-    return [this.program, ...this.args].join(" ");
-  }
-  getArgs(): readonly string[] {
-    return this.args;
+  /** @returns A copied list of the arguments. */
+  private getArgs(): string[] {
+    return this.args
+      .values()
+      .toArray()
+      .flatMap((arg) => {
+        switch (arg.type) {
+          case "positional":
+            return arg.value;
+          case "flag":
+            return arg.name;
+          case "option":
+            return [arg.name, arg.value];
+        }
+      });
   }
 
+  clone() {
+    const builder = new CommandBuilder(this.program);
+    builder.args = new Map(this.args);
+    return builder;
+  }
+
+  compile() {
+    return [this.program, ...this.getArgs()].join(" ");
+  }
   build() {
-    return Command.create(this.program, this.args);
+    return Command.create(this.program, this.getArgs());
   }
 }
