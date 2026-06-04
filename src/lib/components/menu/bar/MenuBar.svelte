@@ -5,7 +5,7 @@
   import RecentFiles from "./RecentFiles.svelte";
 </script>
 
-<Menubar.Root class="px-2 flex select-none">
+<Menubar.Root class="flex px-2 select-none">
   <h1 class="mr-6 font-bold">AnimeThemes Encoder</h1>
   <Menu title="File">
     <MenuItem title="Open..." action={{ type: "commandButton", command: "mpvView.importFile" }} />

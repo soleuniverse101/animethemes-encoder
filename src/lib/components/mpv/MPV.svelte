@@ -52,4 +52,4 @@
   }}
 />
 
-<div bind:this={mpvDiv} class="w-full aspect-video bg-primary-300"></div>
+<div bind:this={mpvDiv} class="aspect-video w-full bg-primary-300"></div>

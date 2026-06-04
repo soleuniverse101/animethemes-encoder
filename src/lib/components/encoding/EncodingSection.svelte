@@ -7,7 +7,7 @@
 
 <div class="flex flex-col items-center">
   <h2>Encoding settings</h2>
-  <Tabs.Root value={tabs[0][0]} class="w-full mt-2">
+  <Tabs.Root value={tabs[0][0]} class="mt-2 w-full">
     <Tabs.List>
       {#each tabs as [id, name]}
         <Tabs.Trigger value={id}>{name}</Tabs.Trigger>

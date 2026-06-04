@@ -72,6 +72,9 @@ importers:
       prettier:
         specifier: ^3.8.3
         version: 3.8.3
+      prettier-plugin-classnames:
+        specifier: 0.10.2
+        version: 0.10.2(prettier-plugin-svelte@4.1.0(prettier@3.8.3)(svelte@5.56.1))(prettier@3.8.3)
       prettier-plugin-jsdoc:
         specifier: ^1.8.1
         version: 1.8.1(prettier@3.8.3)
@@ -1120,6 +1123,22 @@ packages:
     resolution: {integrity: sha512-FfR8sjd4em2T6fb3I2MwAJU7HWVMr9zba+enmQeeWFfCbm+UOC/0X4DS8XtpUTMwWMGbjKYP7xjfNekzyGmB3A==}
     engines: {node: ^10 || ^12 || >=14}
 
+  prettier-plugin-classnames@0.10.2:
+    resolution: {integrity: sha512-t8X4dRoLqozJyiCaokDViFbIeXBzQFftXbzWz+6nyUbLReSgzJoBJeD2jDUPOYMWM7CoEBnOmeoa7hko9lUBQw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@prettier/plugin-oxc': '*'
+      prettier: ^3
+      prettier-plugin-astro: '*'
+      prettier-plugin-svelte: '*'
+    peerDependenciesMeta:
+      '@prettier/plugin-oxc':
+        optional: true
+      prettier-plugin-astro:
+        optional: true
+      prettier-plugin-svelte:
+        optional: true
+
   prettier-plugin-jsdoc@1.8.1:
     resolution: {integrity: sha512-XuMqBWTc3b/8eCOe+OlZlFy9Z413a7WOmF4i5hDGtjbtIFOdvRrVtGjXR2Feye3TrLWhkkkHheNXPTyYKxw3nA==}
     engines: {node: '>=14.13.1 || >=16.0.0'}
@@ -1445,6 +1464,9 @@ packages:
 
   zimmerframe@1.1.4:
     resolution: {integrity: sha512-B58NGBEoc8Y9MWWCQGl/gq9xBCe4IiKM0a2x7GZdQKOW5Exr8S1W24J6OgM1njK8xCRGvAJIL/MxXHf6SkmQKQ==}
+
+  zod@3.22.4:
+    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
 
   zod@4.4.3:
     resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
@@ -2460,6 +2482,13 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
+  prettier-plugin-classnames@0.10.2(prettier-plugin-svelte@4.1.0(prettier@3.8.3)(svelte@5.56.1))(prettier@3.8.3):
+    dependencies:
+      prettier: 3.8.3
+      zod: 3.22.4
+    optionalDependencies:
+      prettier-plugin-svelte: 4.1.0(prettier@3.8.3)(svelte@5.56.1)
+
   prettier-plugin-jsdoc@1.8.1(prettier@3.8.3):
     dependencies:
       binary-searching: 2.0.5
@@ -2699,5 +2728,7 @@ snapshots:
       isexe: 2.0.0
 
   zimmerframe@1.1.4: {}
+
+  zod@3.22.4: {}
 
   zod@4.4.3: {}

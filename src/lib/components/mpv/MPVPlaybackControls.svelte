@@ -70,7 +70,7 @@
     </div>
     <div class="flex items-center">
       <Select.Root type="single" bind:value={currentJobLabel}>
-        <Select.Trigger class="flex items-center justify-between min-w-12">
+        <Select.Trigger class="flex min-w-12 items-center justify-between">
           <Select.Value />
           <Icon icon="mdi:chevron-up-down" class="h-full" />
         </Select.Trigger>

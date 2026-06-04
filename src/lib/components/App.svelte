@@ -26,17 +26,17 @@
   onDestroy(() => unlistenAll(unlistens));
 </script>
 
-<header class="z-10 w-full max-w-4xl sticky top-0 bg-background">
+<header class="sticky top-0 z-10 w-full max-w-4xl bg-background">
   <MenuBar />
 </header>
 
-<main class="py-6 gap-3 grow flex h-max max-w-4xl w-full flex-col items-stretch px-10">
+<main class="flex h-max w-full max-w-4xl grow flex-col items-stretch gap-3 px-10 py-6">
   <MPVView {mpvWindowManager} />
   <EncodingSection />
 </main>
 
-<footer class="text-text-400 bg-primary-200 px-1 w-full sticky bottom-0">
-  <div class="mx-auto w-full max-w-4xl flex justify-between">
+<footer class="sticky bottom-0 w-full bg-primary-200 px-1 text-text-400">
+  <div class="mx-auto flex w-full max-w-4xl justify-between">
     <span>by <a href="https://soleuniverse.me/">soleuniverse</a></span>
     <span>v{version}</span>
   </div>

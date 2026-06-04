@@ -57,8 +57,8 @@
   ></div>
 {/snippet}
 
-<div bind:this={slider} class="h-10 relative w-full flex flex-col justify-center">
-  <div class="h-4/5 w-full relative bg-[rgb(230,225,240)]">
+<div bind:this={slider} class="relative flex h-10 w-full flex-col justify-center">
+  <div class="relative h-4/5 w-full bg-[rgb(230,225,240)]">
     {#if progress != null}
       <div
         class="h-full w-full"
@@ -84,7 +84,7 @@
         <TimePosDisplay
           timePos={$timePos}
           duration={$duration}
-          class="pointer-events-none top-1/2 -translate-y-1/2 absolute right-2 opacity-40"
+          class="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 opacity-40"
         />
       {/if}
     {/if}
