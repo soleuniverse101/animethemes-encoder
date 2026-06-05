@@ -61,6 +61,7 @@
     @apply bg-primary-200 p-2;
   }
 
+  /* If issues, ProgressButton.svelte contains style for class=loading */
   [data-button-root] {
     @apply bg-secondary-200 p-2;
   }

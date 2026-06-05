@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./theme.generated.css";
 @import "./components.css";
+@import "./animations.css";
 
 @layer base {
   :root {

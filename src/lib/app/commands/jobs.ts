@@ -18,7 +18,10 @@ export type JobsHandlerContext = {
 export const registerJobsHandler = ({ app }: JobsHandlerContext) =>
   registerHandler("jobs", {
     current: {
-      invalidateArtifacts: () => (app.currentJob.normalizationFilters = null),
+      invalidateArtifacts: () =>
+        app.jobs.forEach((job) =>
+          Object.values(job.filters.audio).forEach((filter) => filter?.invalidate())
+        ),
       setStart: (position) => {
         commands("jobs").current.invalidateArtifacts();
         app.currentJob.bounds.start = position;

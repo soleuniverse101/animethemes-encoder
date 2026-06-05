@@ -1,13 +1,7 @@
 import { createContext } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 import type { Config } from "./config";
-import type { Job } from "./encoding/job";
-
-/** Not reactive by default. */
-export const createJob = (
-  label: Job.Name,
-  bounds: Job.Bounds = { start: 0, end: Number.POSITIVE_INFINITY }
-): Job => ({ label, bounds, normalizationFilters: null });
+import { createJob, type Job } from "./encoding/job";
 
 export interface App {
   config: Config;

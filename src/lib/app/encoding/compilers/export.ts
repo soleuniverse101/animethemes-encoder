@@ -75,7 +75,7 @@ export function secondPass(context: CompilerContext) {
   // Audio
   cmd.setOption("c:a", audio.codec); // codec
   cmd.setOption("b:a", audio.bitrate);
-  cmd.setOption("af", assertNonNull(job.normalizationFilters)); // TODO audio filters (fade)
+  cmd.setOption("af", assertNonNull(job.filters.audio.normalization.value)); // TODO audio filters (fade)
 
   // Processing, multithreading & parallelization
   cmd.setOption("cpu-used", "0"); // 0-5

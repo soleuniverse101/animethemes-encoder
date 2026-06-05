@@ -6,7 +6,7 @@ export function base({ file, job }: CompilerContext) {
   const base = new CommandBuilder("ffmpeg");
 
   base.setFlag("nostdin");
-  
+
   // TODO change once precise timecode mappings available through ffprobe
   base
     .setOption("ss", Format.toTimecode(job.bounds.start))

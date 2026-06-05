@@ -1,0 +1,37 @@
+/*
+Source - https://stackoverflow.com/a/79393666
+Posted by rozsazoltan, modified by community. See post 'Timeline' for change history
+Retrieved 2026-06-05, License - CC BY-SA 4.0
+*/
+
+@import "tailwindcss";
+
+@theme {
+  --animate-wave-gradient: wave-gradient 0.8s cubic-bezier(0.5, -0.5, 1, 1.5) infinite alternate;
+
+  @keyframes wave-gradient {
+    from {
+      --wave-gradient-progress: 0%;
+    }
+    to {
+      --wave-gradient-progress: 40%;
+    }
+  }
+}
+
+@property --wave-gradient-progress {
+  syntax: "<percentage>";
+  initial-value: 0%;
+  inherits: false;
+}
+
+.animate-wave-gradient {
+  opacity: var(--wave-gradient-progress);
+  background: linear-gradient(
+    to right,
+    var(--color-accent-300) 0%,
+    transparent var(--wave-gradient-progress),
+    transparent calc(100% - var(--wave-gradient-progress)),
+    var(--color-accent-300) 100%
+  );
+}

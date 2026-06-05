@@ -2,9 +2,11 @@
   import Icon from "@iconify/svelte";
   import { Checkbox, Label, useId, type WithoutChildrenOrChild } from "bits-ui";
 
-  type Props = Pick<WithoutChildrenOrChild<Checkbox.RootProps>, "id" | "checked">;
+  type Props = Pick<WithoutChildrenOrChild<Checkbox.RootProps>, "id" | "checked"> & {
+    text: string;
+  };
 
-  let { id = useId(), checked = $bindable(false), text }: Props & { text: string } = $props();
+  let { id = useId(), checked = $bindable(false), text }: Props = $props();
 </script>
 
 <span class="inline-flex items-center gap-1 pl-1">
