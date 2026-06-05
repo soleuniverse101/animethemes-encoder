@@ -8,10 +8,9 @@
 
   interface Props {
     controls: MPVControls;
-    currentJobLabel: string;
   }
 
-  let { controls, currentJobLabel = $bindable() }: Props = $props();
+  let { controls }: Props = $props();
 
   const pause = $derived(controls.listenerView["pause"]);
 
@@ -69,7 +68,10 @@
       )}
     </div>
     <div class="flex items-center">
-      <Select.Root type="single" bind:value={currentJobLabel}>
+      <Select.Root
+        type="single"
+        bind:value={() => app.currentJob.label, (label) => (app.currentJob = app.jobs.get(label)!)}
+      >
         <Select.Trigger class="flex min-w-12 items-center justify-between">
           <Select.Value />
           <Icon icon="mdi:chevron-up-down" class="h-full" />

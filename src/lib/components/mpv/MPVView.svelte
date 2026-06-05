@@ -48,10 +48,5 @@
 >
   <h2>MPV View</h2>
   <MPV mpvWindowControls={mpvWindow.controls} />
-  <MPVPlaybackControls
-    controls={mpvWindow.mpvControls}
-    bind:currentJobLabel={
-      () => app.currentJob.label, (label) => (app.currentJob = app.jobs.get(label)!)
-    }
-  />
+  <MPVPlaybackControls controls={mpvWindow.mpvControls} />
 </div>

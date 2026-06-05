@@ -1,4 +1,4 @@
-import type { Job } from "../job";
+import type { Job } from "../job.svelte";
 import type { Profile } from "../profile";
 
 // Default structure

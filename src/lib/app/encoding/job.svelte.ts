@@ -25,19 +25,22 @@ export interface Job {
 export const createJob = (
   label: Job.Name,
   bounds: Job.Bounds = { start: 0, end: Number.POSITIVE_INFINITY }
-): Job => ({
-  label,
-  bounds,
-  filters: {
-    video: {},
-    audio: {
-      normalization: new AsyncFilter(async (context) => {
-        return toFiltersList(
-          JSON.parse((await normalizationPass(assertNonNull(context)).build().execute()).stdout)
-        );
-      }),
-      startFade: null,
-      endFade: null
+): Job => {
+  const job = $state({
+    label,
+    bounds,
+    filters: {
+      video: {},
+      audio: {
+        normalization: new AsyncFilter(async (context) => {
+          return toFiltersList(
+            JSON.parse((await normalizationPass(assertNonNull(context)).build().execute()).stdout)
+          );
+        }),
+        startFade: null,
+        endFade: null
+      }
     }
-  }
-});
+  });
+  return job;
+};
