@@ -1,9 +1,8 @@
-import { joinFilter } from "$lib/utils/filters";
-import { Format } from "$lib/utils/format";
 import type { PrefixKeys } from "$lib/utils/types";
 import z from "zod";
 import type { CompilerContext } from "./compilers";
 import { normalizationPass, toFiltersList } from "./compilers/loudnorm";
+import { fadeIn, fadeInSchema, fadeOut, fadeOutSchema } from "./filters/afade";
 
 type ComputeFunction<Options extends {}> = (
   context: CompilerContext,
@@ -39,19 +38,11 @@ export class Filter<Id extends FilterId = FilterId> {
   }
 }
 
-export type FilterOptionInfo = { title: string };
-export const schemaInfo = z.registry<FilterOptionInfo>();
 const filtersOptionsSchemasDefinitions = {
   audio: {
     normalization: z.object({}),
-    fadeIn: z.object({
-      duration: z.number().register(schemaInfo, { title: "Duration (ms)" }),
-      curve: z.literal(["tri", "exp"]).register(schemaInfo, { title: "Transition curve" })
-    }),
-    fadeOut: z.object({
-      duration: z.number().register(schemaInfo, { title: "Duration (ms)" }),
-      curve: z.literal(["tri", "exp"]).register(schemaInfo, { title: "Transition curve" })
-    })
+    fadeIn: fadeInSchema,
+    fadeOut: fadeOutSchema
   },
   video: {}
 } as const;
@@ -101,6 +92,12 @@ type FilterDescription<Id extends FilterId> = {
   description: string;
 };
 
+export function createDescription<Id extends FilterId>(
+  description: FilterDescription<Id>
+): FilterDescription<Id> {
+  return description;
+}
+
 const filtersDefinition: {
   audio: {
     [Id in AudioFilterId]: FilterDescription<`audio.${Id}`>;
@@ -119,18 +116,8 @@ const filtersDefinition: {
       defaultOptions: () => ({}),
       description: "Loudness normalization"
     },
-    fadeIn: {
-      compute: async (_, { duration, curve }) =>
-        joinFilter("afade", { d: Format.toSeconds(duration), curve }),
-      defaultOptions: () => ({ duration: 500, curve: "exp" }),
-      description: "Fade at the start"
-    },
-    fadeOut: {
-      compute: async (_, { duration, curve }) =>
-        joinFilter("afade", { t: "out", d: Format.toSeconds(duration), curve }),
-      defaultOptions: () => ({ duration: 500, curve: "exp" }),
-      description: "Fade at the end"
-    }
+    fadeIn,
+    fadeOut
   },
   video: {}
 };

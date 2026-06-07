@@ -27,13 +27,11 @@
   </Select.Trigger>
   <Select.Portal>
     <Select.Content {...contentProps}>
-      <Select.ScrollUpButton>up</Select.ScrollUpButton>
-      <Select.Viewport>
+      <Select.Viewport class="max-h-32">
         {#each items as { value, label, disabled } (value)}
           <Select.Item {value} {label} {disabled}>{label}</Select.Item>
         {/each}
       </Select.Viewport>
-      <Select.ScrollDownButton>down</Select.ScrollDownButton>
     </Select.Content>
   </Select.Portal>
 </Select.Root>
