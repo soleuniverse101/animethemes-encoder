@@ -1,11 +1,22 @@
 <script lang="ts">
+  import { commands } from "$lib/app/commands";
   import { Menubar } from "bits-ui";
   import Menu from "./Menu.svelte";
   import MenuItem from "./MenuItem.svelte";
   import RecentFiles from "./RecentFiles.svelte";
+
+  let value = $state("");
+
+  $effect(() => {
+    if (value == "") {
+      commands("mpvView").window.show();
+    } else {
+      commands("mpvView").window.hide();
+    }
+  });
 </script>
 
-<Menubar.Root class="flex px-2 select-none">
+<Menubar.Root bind:value class="flex px-2 select-none">
   <h1 class="mr-6 font-bold">AnimeThemes Encoder</h1>
   <Menu title="File">
     <MenuItem title="Open..." action={{ type: "commandButton", command: "mpvView.importFile" }} />

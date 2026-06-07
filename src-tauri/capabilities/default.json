@@ -29,6 +29,8 @@
       ]
     },
     "fs:default",
-    "fs:allow-applocaldata-write"
+    "fs:allow-applocaldata-write",
+    "core:window:allow-hide",
+    "core:window:allow-show"
   ]
 }
