@@ -14,11 +14,14 @@ export function registerShortcuts(shortcuts: ShortcutsMap): UnlistenFn {
 
   for (const [keys, commandInfo] of Object.entries(shortcuts)) {
     if (typeof commandInfo == "string") {
-      hotkeys(keys, () => {
+      hotkeys(keys, (event) => {
+        // TODO should we prevent for all shortcuts ? if not make it available to registerShortcuts API
+        event.preventDefault();
         command(commandInfo)();
       });
     } else {
-      hotkeys(keys, () => {
+      hotkeys(keys, (event) => {
+        event.preventDefault();
         (command(commandInfo[0]) as any)(...(commandInfo[1]() as any[]));
       });
     }
