@@ -30,9 +30,9 @@
       <Icon {icon} class="h-full" />
     </button>
   {/snippet}
-  <div class="flex h-14 justify-around">
-    <div></div>
-    <div class="flex items-center justify-center gap-2 text-[rgb(159,147,184)] transition">
+  <div class="flex h-14 justify-around px-1">
+    <div class="w-1/4"></div>
+    <div class="flex w-1/2 items-center justify-center gap-2 text-[rgb(159,147,184)] transition">
       {@render button(
         "mpvView.playback.setJobStartToCurrent",
         "mdi:contain-start",
@@ -69,7 +69,7 @@
         "Set Loop End (Shift+Alt+Right)"
       )}
     </div>
-    <div class="flex items-center">
+    <div class="flex items-center w-1/4 justify-end">
       {@render button(
         "mpvView.playback.toggleLoop",
         $loop ? "mdi:repeat" : "mdi:repeat-off",
