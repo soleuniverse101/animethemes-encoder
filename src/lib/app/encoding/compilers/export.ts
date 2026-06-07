@@ -1,4 +1,4 @@
-import { assertNonNull } from "$lib/utils/assert";
+import { computeFilters } from "$lib/utils/filters";
 import type { CompilerContext } from ".";
 import { base } from "./base";
 
@@ -29,7 +29,7 @@ export function exportBase(context: CompilerContext) {
   cmd.setOption("color_primaries", "bt709");
   cmd.setOption("color_trc", "bt709");
 
-  // TODO video filters
+  // TODO video filters (note that they don't always apply on a specific pass, e.g. subtitles only go on pass 2)
 
   // Processing, multithreading & parallelization
   cmd.setOption("g", "240"); // maximum keyframe interval (= distance between full keyframes)
@@ -63,7 +63,7 @@ export function firstPass(context: CompilerContext) {
   return cmd;
 }
 
-export function secondPass(context: CompilerContext) {
+export async function secondPass(context: CompilerContext) {
   const cmd = exportBase(context);
   const {
     profile: { audio },
@@ -75,7 +75,8 @@ export function secondPass(context: CompilerContext) {
   // Audio
   cmd.setOption("c:a", audio.codec); // codec
   cmd.setOption("b:a", audio.bitrate);
-  cmd.setOption("af", assertNonNull(job.filters.audio.normalization.value)); // TODO audio filters (fade)
+  const audioFilters = await computeFilters(context, "audio");
+  if (audioFilters) cmd.setOption("af", audioFilters);
 
   // Processing, multithreading & parallelization
   cmd.setOption("cpu-used", "0"); // 0-5

@@ -107,6 +107,7 @@ export class CommandBuilder {
     return builder;
   }
 
+  // TODO depending on platform, escape arguments & paths, and add quotes
   compile() {
     return [this.program, ...this.getArgs()].join(" ");
   }

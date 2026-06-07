@@ -14,6 +14,10 @@
     @apply cursor-pointer;
   }
 
+  input {
+    @apply bg-primary-200;
+  }
+
   [data-menubar-trigger] {
     @apply px-2;
 
@@ -58,7 +62,7 @@
   }
 
   [data-tabs-trigger] {
-    @apply bg-primary-200 p-2;
+    @apply bg-primary-200 p-2 data-[state=active]:bg-primary-300;
   }
 
   /* If issues, ProgressButton.svelte contains style for class=loading */

@@ -34,7 +34,7 @@
   const duration = mpvWindow.mpvControls.listenerView.duration;
   $effect(() => {
     if (app.file == null) return;
-    if (app.currentJob.bounds.end == Number.POSITIVE_INFINITY && $duration) {
+    if (!Number.isFinite(app.currentJob.bounds.end) && $duration) {
       commands("jobs").current.setEnd($duration);
     }
   });

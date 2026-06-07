@@ -1,4 +1,5 @@
 import type { TimePosition } from "$lib/mpv/types";
+import { listFilters } from "$lib/utils/filters";
 import { commands, registerHandler } from ".";
 import type { App } from "../index.svelte";
 
@@ -19,16 +20,14 @@ export const registerJobsHandler = ({ app }: JobsHandlerContext) =>
   registerHandler("jobs", {
     current: {
       invalidateArtifacts: () =>
-        app.jobs.forEach((job) =>
-          Object.values(job.filters.audio).forEach((filter) => filter?.invalidate())
-        ),
+        listFilters(app.currentJob.filters, "all").forEach((filter) => filter.invalidate()),
       setStart: (position) => {
-        commands("jobs").current.invalidateArtifacts();
         app.currentJob.bounds.start = position;
+        commands("jobs").current.invalidateArtifacts();
       },
       setEnd: (position) => {
-        commands("jobs").current.invalidateArtifacts();
         app.currentJob.bounds.end = position;
+        commands("jobs").current.invalidateArtifacts();
       }
     }
   });

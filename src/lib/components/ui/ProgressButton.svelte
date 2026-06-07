@@ -1,3 +1,4 @@
+<!-- TODO remove if unused -->
 <script lang="ts">
   import { Button } from "bits-ui";
   import type { HTMLButtonAttributes } from "svelte/elements";

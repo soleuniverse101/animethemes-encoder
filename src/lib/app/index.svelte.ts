@@ -1,7 +1,7 @@
 import { createContext } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 import type { Config } from "./config";
-import { createJob, type Job } from "./encoding/job";
+import { createJob, type Job } from "./encoding/job.svelte";
 
 export interface App {
   config: Config;

@@ -10,6 +10,9 @@ export namespace Format {
       secondsDecimalDigits: 3
     });
 
+  // TODO maybe put in a namespace to do Seconds.fromMillis or Millis.toSeconds
+  export const toSeconds = (milliseconds: number) => (milliseconds / 1000).toFixed(3);
+
   /** Example of result : 15 days 11 hours 1 minute 9 seconds. */
   export const toReadable = (position: TimePosition) =>
     prettyMilliseconds(Math.round(position * 1000), { verbose: true });
