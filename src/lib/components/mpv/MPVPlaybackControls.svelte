@@ -3,7 +3,7 @@
   import { getApp } from "$lib/app/index.svelte";
   import type { MPVControls } from "$lib/mpv/controls";
   import Icon from "@iconify/svelte";
-  import { Select } from "bits-ui";
+  import Select from "../ui/Select.svelte";
   import MPVTimeline from "./MPVTimeline.svelte";
 
   interface Props {
@@ -68,24 +68,14 @@
       )}
     </div>
     <div class="flex items-center">
-      <Select.Root
+      <Select
         type="single"
+        items={app.jobs
+          .keys()
+          .toArray()
+          .map((id) => ({ value: id, label: id }))}
         bind:value={() => app.currentJob.label, (label) => (app.currentJob = app.jobs.get(label)!)}
-      >
-        <Select.Trigger class="flex min-w-12 items-center justify-between">
-          <Select.Value />
-          <Icon icon="mdi:chevron-up-down" class="h-full" />
-        </Select.Trigger>
-        <Select.Portal>
-          <Select.Content>
-            <Select.Viewport>
-              {#each app.jobs.keys() as label}
-                <Select.Item value={label} {label}>{label}</Select.Item>
-              {/each}
-            </Select.Viewport>
-          </Select.Content>
-        </Select.Portal>
-      </Select.Root>
+      />
     </div>
   </div>
 </div>
