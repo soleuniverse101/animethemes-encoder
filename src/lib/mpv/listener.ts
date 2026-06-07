@@ -7,7 +7,9 @@ const OBSERVABLE_PROPERTIES = [
   ["time-pos/full", "double", "none"] as const,
   ["pause", "string"] as const,
   ["ab-loop-a", "double", "none"] as const,
-  ["ab-loop-b", "double", "none"] as const
+  ["ab-loop-b", "double", "none"] as const,
+  // Takes ints and "inf"
+  ["ab-loop-count", "string"] as const
 ] satisfies MpvObservableProperty[];
 
 export type ObservedProperties = typeof OBSERVABLE_PROPERTIES;

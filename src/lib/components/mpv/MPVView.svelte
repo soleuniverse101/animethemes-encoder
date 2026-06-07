@@ -20,7 +20,8 @@
     "time-pos/full",
     "pause",
     "ab-loop-a",
-    "ab-loop-b"
+    "ab-loop-b",
+    "ab-loop-count"
   ]);
 
   const app = getApp();
@@ -33,10 +34,11 @@
 
   const duration = mpvWindow.mpvControls.listenerView.duration;
   $effect(() => {
-    if (app.file == null) return;
-    if (!Number.isFinite(app.currentJob.bounds.end) && $duration) {
+    if (app.file == null || !$duration) return;
+    if (!Number.isFinite(app.currentJob.bounds.end)) {
       commands("jobs").current.setEnd($duration);
     }
+    mpvWindow.mpvControls.setLoop(app.currentJob.bounds);
   });
 
   onDestroy(() => unlistenAll(unlistens));

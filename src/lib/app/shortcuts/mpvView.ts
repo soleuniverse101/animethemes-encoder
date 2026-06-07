@@ -9,5 +9,6 @@ export const registerMPVViewShortcuts = () =>
     "shift+right": "mpvView.playback.nextFrame",
     "shift+left": "mpvView.playback.previousFrame",
     "shift+alt+left": "mpvView.playback.setJobStartToCurrent",
-    "shift+alt+right": "mpvView.playback.setJobEndToCurrent"
+    "shift+alt+right": "mpvView.playback.setJobEndToCurrent",
+    "ctrl+l": "mpvView.playback.toggleLoop"
   });

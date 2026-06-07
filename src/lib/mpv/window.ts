@@ -9,7 +9,8 @@ import { MPVControls } from "./controls";
 import { MPVListener, OBSERVABLE_PROPERTIES_FORMAT, type ObservedProperties } from "./listener";
 
 const DEFAULT_MPV_CONFIG: MpvConfig = {
-  initialOptions: { "keep-open": "yes", pause: "yes", volume: "50" }
+  // TODO add volume control + should loop be toggle on ?
+  initialOptions: { "keep-open": "yes", pause: "yes", volume: "50", "ab-loop-count": 0 }
 };
 
 export class MPVWindowManager {

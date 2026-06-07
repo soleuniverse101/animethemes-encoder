@@ -3,6 +3,7 @@
   import { getApp } from "$lib/app/index.svelte";
   import type { MPVControls } from "$lib/mpv/controls";
   import Icon from "@iconify/svelte";
+  import { derived } from "svelte/store";
   import Select from "../ui/Select.svelte";
   import MPVTimeline from "./MPVTimeline.svelte";
 
@@ -13,6 +14,7 @@
   let { controls }: Props = $props();
 
   const pause = $derived(controls.listenerView["pause"]);
+  const loop = $derived(derived(controls.listenerView["ab-loop-count"], (count) => count == "inf"));
 
   const app = getApp();
 </script>
@@ -68,6 +70,11 @@
       )}
     </div>
     <div class="flex items-center">
+      {@render button(
+        "mpvView.playback.toggleLoop",
+        $loop ? "mdi:repeat" : "mdi:repeat-off",
+        "Toggle Loop (Ctrl+L)"
+      )}
       <Select
         type="single"
         items={app.jobs

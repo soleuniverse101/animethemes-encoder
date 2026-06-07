@@ -1,3 +1,4 @@
+import type { Job } from "$lib/app/encoding/job.svelte";
 import { assertNonNull } from "$lib/utils/assert";
 import type { MPVWindowContext } from "./api";
 import type { MPVListenerView } from "./listener";
@@ -77,5 +78,12 @@ export class MPVControls {
     const position = assertNonNull(await this.context.getProperty("time-pos/full", "double"));
     await this.context.setProperty("ab-loop-b", position);
     return position;
+  }
+  async setLoop(bounds: Job.Bounds) {
+    await Promise.all([this.setLoopA(bounds.start), this.setLoopB(bounds.end)]);
+  }
+  async toggleLoop() {
+    const count = assertNonNull(await this.context.getProperty("ab-loop-count", "string"));
+    await this.context.setProperty("ab-loop-count", count == "inf" ? "0" : "inf");
   }
 }

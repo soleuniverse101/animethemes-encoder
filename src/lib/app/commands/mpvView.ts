@@ -14,6 +14,7 @@ export type MPVViewHandler = {
     previousFrame: () => Promise<void>;
     setJobStartToCurrent: () => Promise<void>;
     setJobEndToCurrent: () => Promise<void>;
+    toggleLoop: () => Promise<void>;
   };
 };
 
@@ -47,6 +48,7 @@ export const registerMPVViewHandler = ({ mpvWindow, app }: MPVViewHandlerContext
       setJobStartToCurrent: async () =>
         commands("jobs").current.setStart(await mpvWindow.mpvControls.setLoopAToCurrent()),
       setJobEndToCurrent: async () =>
-        commands("jobs").current.setEnd(await mpvWindow.mpvControls.setLoopBToCurrent())
+        commands("jobs").current.setEnd(await mpvWindow.mpvControls.setLoopBToCurrent()),
+      toggleLoop: async () => await mpvWindow.mpvControls.toggleLoop()
     }
   });
