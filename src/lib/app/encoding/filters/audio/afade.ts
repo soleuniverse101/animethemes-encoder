@@ -1,7 +1,6 @@
-import { joinFilter } from "$lib/utils/filters";
 import { Format } from "$lib/utils/format";
 import z from "zod";
-import { schemaInfo } from "..";
+import { joinFilter, schemaInfo } from "..";
 import { createDescription } from "../../filter.svelte";
 
 const curveType = z.literal([

@@ -1,6 +1,5 @@
-import { joinFilter } from "$lib/utils/filters";
 import z from "zod";
-import { schemaInfo } from "..";
+import { joinFilter, schemaInfo } from "..";
 import { createDescription } from "../../filter.svelte";
 
 export const scaleSchema = z.object({

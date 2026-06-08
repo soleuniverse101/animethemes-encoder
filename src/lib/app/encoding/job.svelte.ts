@@ -17,7 +17,7 @@ export namespace Job {
 // TODO if more needed, move in filter.svelte.ts
 
 const requiredFilters = {
-  audio: ["normalization"],
+  audio: ["loudnorm"],
   video: []
 } as const satisfies { audio: AudioFilterId[]; video: VideoFilterId[] };
 

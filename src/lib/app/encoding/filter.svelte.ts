@@ -2,8 +2,8 @@ import type { PrefixKeys } from "$lib/utils/types";
 import z from "zod";
 import type { CompilerContext } from "./compilers";
 import type { Pass } from "./compilers/export";
-import { normalizationPass, toFiltersList } from "./compilers/loudnorm";
 import { fadeIn, fadeInSchema, fadeOut, fadeOutSchema } from "./filters/audio/afade";
+import { loudnorm, loudnormSchema } from "./filters/audio/loudnorm";
 import { hqdn3d, hqdn3dSchema } from "./filters/video/hqdn3d";
 import { scale, scaleSchema } from "./filters/video/scale";
 
@@ -46,7 +46,7 @@ export class Filter<Id extends FilterId = FilterId> {
 
 const filtersOptionsSchemasDefinitions = {
   audio: {
-    normalization: null,
+    loudnorm: loudnormSchema,
     fadeIn: fadeInSchema,
     fadeOut: fadeOutSchema
   },
@@ -125,15 +125,7 @@ const filtersDefinition: {
   };
 } = {
   audio: {
-    normalization: {
-      pass: 2,
-      compute: async (context) => {
-        return toFiltersList(
-          JSON.parse((await normalizationPass(context).build().execute()).stdout)
-        );
-      },
-      description: "Loudness normalization"
-    },
+    loudnorm,
     fadeIn,
     fadeOut
   },

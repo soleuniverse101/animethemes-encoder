@@ -1,4 +1,4 @@
-import { joinFilter } from "$lib/utils/filters";
+import { joinFilter } from "..";
 import { createDescription } from "../../filter.svelte";
 
 export const hqdn3dSchema = null;

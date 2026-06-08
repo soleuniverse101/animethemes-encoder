@@ -5,7 +5,7 @@ import type { App } from "../index.svelte";
 
 export type JobsHandler = {
   current: {
-    /** Invalidates precomputed data (loudness normalization stats). */
+    /** Invalidates precomputed data (such as filters). */
     invalidateArtifacts: () => void;
     setStart: (position: TimePosition) => void;
     setEnd: (position: TimePosition) => void;
