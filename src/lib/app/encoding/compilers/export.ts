@@ -2,6 +2,8 @@ import { computeFilters } from "$lib/utils/filters";
 import type { CompilerContext } from ".";
 import { base } from "./base";
 
+export type Pass = 1 | 2;
+
 export function exportBase(context: CompilerContext) {
   const cmd = base(context);
   const { profile } = context;
@@ -29,8 +31,6 @@ export function exportBase(context: CompilerContext) {
   cmd.setOption("color_primaries", "bt709");
   cmd.setOption("color_trc", "bt709");
 
-  // TODO video filters (note that they don't always apply on a specific pass, e.g. subtitles only go on pass 2)
-
   // Processing, multithreading & parallelization
   cmd.setOption("g", "240"); // maximum keyframe interval (= distance between full keyframes)
   cmd.setOption("threads", "4"); // TODO detect # of cores
@@ -45,10 +45,16 @@ export function exportBase(context: CompilerContext) {
   return cmd;
 }
 
-export function firstPass(context: CompilerContext) {
+export async function firstPass(context: CompilerContext) {
   const cmd = exportBase(context);
 
   cmd.setOption("pass", "1");
+
+  // Filters
+  const audioFilters = await computeFilters(context, "audio", 1);
+  if (audioFilters) cmd.setOption("af", audioFilters);
+  const videoFilters = await computeFilters(context, "video", 1);
+  if (videoFilters) cmd.setOption("vf", videoFilters);
 
   // Processing, multithreading & parallelization
   cmd.setOption("cpu-used", "4"); // 0-5
@@ -75,8 +81,12 @@ export async function secondPass(context: CompilerContext) {
   // Audio
   cmd.setOption("c:a", audio.codec); // codec
   cmd.setOption("b:a", audio.bitrate);
-  const audioFilters = await computeFilters(context, "audio");
+
+  // Filters
+  const audioFilters = await computeFilters(context, "audio", 2);
   if (audioFilters) cmd.setOption("af", audioFilters);
+  const videoFilters = await computeFilters(context, "video", 2);
+  if (videoFilters) cmd.setOption("vf", videoFilters);
 
   // Processing, multithreading & parallelization
   cmd.setOption("cpu-used", "0"); // 0-5

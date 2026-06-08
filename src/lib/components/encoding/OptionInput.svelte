@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts" generics="Type extends OptionInputValue">
-  import type { FilterOptionInfo } from "$lib/app/encoding/filter.svelte";
+  import type { FilterOptionInfo } from "$lib/app/encoding/filters";
   import { assertNonNull } from "$lib/utils/assert";
   import { Label, useId } from "bits-ui";
   import type z4 from "zod/v4/core";

@@ -10,7 +10,7 @@
 
   const app = getApp();
   async function exportCommands(context: CompilerContext) {
-    return [firstPass(context), await secondPass(context)].map((cmd) => cmd.compile());
+    return [await firstPass(context), await secondPass(context)].map((cmd) => cmd.compile());
   }
 </script>
 

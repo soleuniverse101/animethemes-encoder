@@ -1,8 +1,10 @@
 import type { PrefixKeys } from "$lib/utils/types";
 import z from "zod";
 import type { CompilerContext } from "./compilers";
+import type { Pass } from "./compilers/export";
 import { normalizationPass, toFiltersList } from "./compilers/loudnorm";
-import { fadeIn, fadeInSchema, fadeOut, fadeOutSchema } from "./filters/afade";
+import { fadeIn, fadeInSchema, fadeOut, fadeOutSchema } from "./filters/audio/afade";
+import { scale, scaleSchema } from "./filters/video/scale";
 
 type ComputeFunction<Options extends {}> = (
   context: CompilerContext,
@@ -44,7 +46,9 @@ const filtersOptionsSchemasDefinitions = {
     fadeIn: fadeInSchema,
     fadeOut: fadeOutSchema
   },
-  video: {}
+  video: {
+    scale: scaleSchema
+  }
 } as const;
 
 type OptionsSchemas = typeof filtersOptionsSchemasDefinitions;
@@ -87,6 +91,8 @@ export type FiltersOptions = PrefixKeys<AudioFiltersOptions, "audio"> &
 export type FilterId = keyof FiltersOptions;
 
 type FilterDescription<Id extends FilterId> = {
+  /** Export encoding pass for which to apply the filter. Leave empty to apply on both. */
+  pass?: Pass;
   compute: ComputeFunction<FiltersOptions[Id]>;
   defaultOptions: () => FiltersOptions[Id];
   description: string;
@@ -108,6 +114,7 @@ const filtersDefinition: {
 } = {
   audio: {
     normalization: {
+      pass: 2,
       compute: async (context) => {
         return toFiltersList(
           JSON.parse((await normalizationPass(context).build().execute()).stdout)
@@ -119,10 +126,10 @@ const filtersDefinition: {
     fadeIn,
     fadeOut
   },
-  video: {}
+  video: { scale }
 };
 
-const filters = Object.fromEntries(
+export const filters = Object.fromEntries(
   Object.entries(filtersDefinition).map(([type, subIds]) => [
     type,
     Object.fromEntries(

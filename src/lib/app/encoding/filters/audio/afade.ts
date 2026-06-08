@@ -1,8 +1,8 @@
 import { joinFilter } from "$lib/utils/filters";
 import { Format } from "$lib/utils/format";
 import z from "zod";
-import { schemaInfo } from ".";
-import { createDescription } from "../filter.svelte";
+import { schemaInfo } from "..";
+import { createDescription } from "../../filter.svelte";
 
 const curveType = z.literal([
   "tri",
@@ -30,7 +30,8 @@ export const fadeInSchema = z.object({
 });
 
 export const fadeIn = createDescription<"audio.fadeIn">({
-  compute: async (
+  pass: 2,
+  compute: (
     {
       job: {
         bounds: { start }
@@ -54,7 +55,8 @@ export const fadeOutSchema = z.object({
 });
 
 export const fadeOut = createDescription<"audio.fadeOut">({
-  compute: async (
+  pass: 2,
+  compute: (
     {
       job: {
         bounds: { end }

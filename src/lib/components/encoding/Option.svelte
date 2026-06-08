@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts" generics="Type extends OptionValue">
-  import { schemaInfo } from "$lib/app/encoding/filter.svelte";
+  import { schemaInfo } from "$lib/app/encoding/filters";
   import { assertNonNull } from "$lib/utils/assert";
   import z, { ZodObject } from "zod";
   import * as z4 from "zod/v4/core";
