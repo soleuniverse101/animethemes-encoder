@@ -8,7 +8,7 @@ export const scaleSchema = z.object({
 });
 
 export const scale = createDescription<"video.scale">({
-  compute: (_, { scale }) => joinFilter("scale", { [scale]: null }),
+  compute: (_, { scale }) => joinFilter("scale", scale),
   defaultOptions: () => ({ scale: "-1:720" }),
-  description: "Resize the input video"
+  description: "Resize the input video (scale)"
 });

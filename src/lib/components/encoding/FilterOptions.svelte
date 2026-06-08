@@ -11,14 +11,18 @@
   const app = getApp();
 
   let filter = $derived(assertNonNull(app.currentJob.filters[id].filter));
+  let schema = $derived(filtersOptionsSchemas.all[id]);
 </script>
 
-<div class="ml-8">
-  <div class="text-sm">
-    <Option
-      schema={filtersOptionsSchemas.all[id]}
-      bind:value={() => filter.options, () => {}}
-      invalidate={() => filter.invalidate()}
-    />
+<!-- Schema non-null means that options is necessarily not null -->
+{#if schema}
+  <div class="ml-8">
+    <div class="text-sm">
+      <Option
+        {schema}
+        bind:value={() => filter.options!, () => {}}
+        invalidate={() => filter.invalidate()}
+      />
+    </div>
   </div>
-</div>
+{/if}

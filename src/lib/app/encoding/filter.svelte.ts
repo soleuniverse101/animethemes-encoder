@@ -4,12 +4,12 @@ import type { CompilerContext } from "./compilers";
 import type { Pass } from "./compilers/export";
 import { normalizationPass, toFiltersList } from "./compilers/loudnorm";
 import { fadeIn, fadeInSchema, fadeOut, fadeOutSchema } from "./filters/audio/afade";
+import { hqdn3d, hqdn3dSchema } from "./filters/video/hqdn3d";
 import { scale, scaleSchema } from "./filters/video/scale";
 
-type ComputeFunction<Options extends {}> = (
-  context: CompilerContext,
-  options: Options
-) => string | Promise<string>;
+type ComputeFunction<Options extends {} | null> = Options extends null
+  ? (context: CompilerContext) => string | Promise<string>
+  : (context: CompilerContext, options: Options) => string | Promise<string>;
 
 // TODO maybe make distinction between async & sync and use it to differentiate long compute processes against quick ones
 export class Filter<Id extends FilterId = FilterId> {
@@ -32,7 +32,11 @@ export class Filter<Id extends FilterId = FilterId> {
 
   /** @returns Computed value of the filter. Skips computation if value is already defined. */
   async compute(context: CompilerContext): Promise<string> {
-    return this.#value ?? (this.#value = await this.computeFunction(context, this.options));
+    if (this.#value != null) return this.#value;
+    return (this.#value =
+      this.options == null
+        ? await (this.computeFunction as ComputeFunction<null>)(context)
+        : await (this.computeFunction as ComputeFunction<{}>)(context, this.options));
   }
 
   get value() {
@@ -42,12 +46,13 @@ export class Filter<Id extends FilterId = FilterId> {
 
 const filtersOptionsSchemasDefinitions = {
   audio: {
-    normalization: z.object({}),
+    normalization: null,
     fadeIn: fadeInSchema,
     fadeOut: fadeOutSchema
   },
   video: {
-    scale: scaleSchema
+    scale: scaleSchema,
+    hqdn3d: hqdn3dSchema
   }
 } as const;
 
@@ -79,10 +84,14 @@ export type AudioFilterId = keyof OptionsSchemas["audio"];
 export type VideoFilterId = keyof OptionsSchemas["video"];
 
 type AudioFiltersOptions = {
-  [Id in AudioFilterId]: z.infer<OptionsSchemas["audio"][Id]>;
+  [Id in AudioFilterId]: OptionsSchemas["audio"][Id] extends null
+    ? null
+    : z.infer<OptionsSchemas["audio"][Id]>;
 };
 type VideoFiltersOptions = {
-  [Id in VideoFilterId]: z.infer<OptionsSchemas["video"][Id]>;
+  [Id in VideoFilterId]: OptionsSchemas["video"][Id] extends null
+    ? null
+    : z.infer<OptionsSchemas["video"][Id]>;
 };
 
 export type FiltersOptions = PrefixKeys<AudioFiltersOptions, "audio"> &
@@ -94,9 +103,12 @@ type FilterDescription<Id extends FilterId> = {
   /** Export encoding pass for which to apply the filter. Leave empty to apply on both. */
   pass?: Pass;
   compute: ComputeFunction<FiltersOptions[Id]>;
-  defaultOptions: () => FiltersOptions[Id];
   description: string;
-};
+} & (FiltersOptions[Id] extends null
+  ? {}
+  : {
+      defaultOptions: () => FiltersOptions[Id];
+    });
 
 export function createDescription<Id extends FilterId>(
   description: FilterDescription<Id>
@@ -120,13 +132,12 @@ const filtersDefinition: {
           JSON.parse((await normalizationPass(context).build().execute()).stdout)
         );
       },
-      defaultOptions: () => ({}),
       description: "Loudness normalization"
     },
     fadeIn,
     fadeOut
   },
-  video: { scale }
+  video: { scale, hqdn3d }
 };
 
 export const filters = Object.fromEntries(
@@ -152,10 +163,17 @@ export const filtersIds = {
 };
 filtersIds.all = [...filtersIds.audio, ...filtersIds.video];
 
+type WithOptionalOptions<Id extends FilterId> = {
+  defaultOptions?: () => FiltersOptions[Id];
+};
 export function createFilter<Id extends FilterId>(id: Id): Filter<Id> {
   const filter = filters.all[id];
-  const options = $state(filter.defaultOptions());
-  return new Filter({ compute: filter.compute, options });
+  const options = $state(
+    (filter as WithOptionalOptions<Id>).defaultOptions
+      ? (filter as WithOptionalOptions<Id>).defaultOptions!()
+      : null
+  );
+  return new Filter({ compute: filter.compute, options: options as FiltersOptions[Id] });
 }
 
 export function filterDescription<Id extends FilterId>(filter: Id) {

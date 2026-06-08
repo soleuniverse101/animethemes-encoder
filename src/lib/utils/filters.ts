@@ -58,7 +58,16 @@ export function listFilters(
   return output;
 }
 
-export const joinFilter = (filter: string, args: Record<string, string | number | null>) =>
-  `${filter}=${Object.entries(args)
-    .map(([arg, val]) => (val != null ? `${arg}=${val}` : arg))
-    .join(":")}`;
+export const joinFilter = (
+  filter: string,
+  args: Record<string, string | number> | string | number
+) =>
+  `${filter}=${
+    typeof args == "string"
+      ? args
+      : typeof args == "number"
+        ? args.toString()
+        : Object.entries(args)
+            .map(([arg, val]) => `${arg}=${val}`)
+            .join(":")
+  }`;
