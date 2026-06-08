@@ -69,4 +69,8 @@
   [data-button-root] {
     @apply bg-secondary-200 p-2;
   }
+
+  [data-separator-root] {
+    @apply shrink-0 bg-primary data-[orientation=horizontal]:h-px data-[orientation=vertical]:w-px;
+  }
 }
