@@ -1,5 +1,6 @@
 import type { PrefixKeys } from "$lib/utils/types";
 import z from "zod";
+import type z4 from "zod/v4/core";
 import type { CompilerContext } from "./compilers";
 import type { Pass } from "./compilers/export";
 import { fadeIn, fadeInSchema, fadeOut, fadeOutSchema } from "./filters/audio/afade";
@@ -54,7 +55,7 @@ const filtersOptionsSchemasDefinitions = {
     scale: scaleSchema,
     hqdn3d: hqdn3dSchema
   }
-} as const;
+} as const satisfies Record<string, Record<string, z4.$ZodObject | null>>;
 
 type OptionsSchemas = typeof filtersOptionsSchemasDefinitions;
 
