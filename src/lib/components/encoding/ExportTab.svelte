@@ -23,7 +23,7 @@
     {:then cmds}
       <div class="flex flex-col">
         <!-- TODO make it persistent either through settings, or remembering session to session -->
-        {let wrap = $state(false)}
+        {let wrap = $state(true)}
         <div class="flex justify-between items-center">
           <Checkbox bind:checked={wrap} text="Wrap lines" />
           <button onclick={() => writeText(cmds.join("\n"))} class="bg-primary-200 p-2"
