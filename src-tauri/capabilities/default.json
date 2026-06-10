@@ -25,6 +25,11 @@
           "name": "ffmpeg",
           "cmd": "ffmpeg",
           "args": true
+        },
+        {
+          "name": "ffprobe",
+          "cmd": "ffprobe",
+          "args": true
         }
       ]
     },

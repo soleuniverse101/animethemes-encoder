@@ -2,14 +2,16 @@
   import { Tabs } from "bits-ui";
   import ExportTab from "./ExportTab.svelte";
   import FiltersTab from "./filters/FiltersTab.svelte";
+  import InfoTab from "./info/InfoTab.svelte";
 
   const tabs = [
+    ["info", "Info", InfoTab],
     ["filters", "Filters", FiltersTab],
     ["export", "Export", ExportTab]
   ] as const;
 
   type TabId = (typeof tabs)[number][0];
-  let currentTab: TabId = $state("filters");
+  let currentTab: TabId = $state(tabs[0][0]);
 </script>
 
 <div class="flex flex-col items-center">
