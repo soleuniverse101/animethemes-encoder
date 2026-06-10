@@ -5,8 +5,11 @@ import type { CompilerContext } from "./compilers";
 import type { Pass } from "./compilers/export";
 import { fadeIn, fadeInSchema, fadeOut, fadeOutSchema } from "./filters/audio/afade";
 import { loudnorm, loudnormSchema } from "./filters/audio/loudnorm";
+import { gradfun, gradfunSchema } from "./filters/video/gradfun";
 import { hqdn3d, hqdn3dSchema } from "./filters/video/hqdn3d";
 import { scale, scaleSchema } from "./filters/video/scale";
+import { unsharp, unsharpSchema } from "./filters/video/unsharp";
+import { yadif, yadifSchema } from "./filters/video/yadif";
 
 // TODO maybe make distinction between async & sync and use it to differentiate long compute processes against quick ones
 type ComputeFunction<Options extends {}> = (
@@ -21,8 +24,11 @@ const filtersOptionsSchemasDefinitions = {
     fadeOut: fadeOutSchema
   },
   video: {
+    gradfun: gradfunSchema,
     scale: scaleSchema,
-    hqdn3d: hqdn3dSchema
+    hqdn3d: hqdn3dSchema,
+    unsharp: unsharpSchema,
+    yadif: yadifSchema
   }
 } as const satisfies Record<"audio" | "video", Record<string, z4.$ZodObject>>;
 
@@ -82,7 +88,13 @@ const filtersDefinition = {
     fadeIn,
     fadeOut
   },
-  video: { scale, hqdn3d }
+  video: {
+    gradfun,
+    scale,
+    hqdn3d,
+    unsharp,
+    yadif
+  }
 } as const satisfies {
   audio: {
     [Id in AudioFilterId]: FilterDescription<`audio.${Id}`>;
