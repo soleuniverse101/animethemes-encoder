@@ -19,18 +19,13 @@ export const createJob = (
   label: Job.Name,
   bounds: Job.Bounds = { start: 0, end: Number.POSITIVE_INFINITY }
 ): Job => {
-  // TODO should it be $state-ified ?
-
-  const job =
-    // $state
-    {
-      label,
-      bounds,
-      // TODO move in JobFilters ?
-      filters: Object.fromEntries([
-        ...JobFilters.requiredFiltersIds.all.map((id) => [id, JobFilters.create(id)])
-      ])
-    } satisfies Job;
-  // console.log({ job });
+  const job = $state({
+    label,
+    bounds,
+    // TODO move in JobFilters ?
+    filters: Object.fromEntries([
+      ...JobFilters.requiredFiltersIds.all.map((id) => [id, JobFilters.create(id)])
+    ])
+  } satisfies Job);
   return job;
 };
