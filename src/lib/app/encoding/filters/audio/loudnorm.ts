@@ -1,3 +1,4 @@
+import { emptyOptionsSchema } from "$lib/utils/zod";
 import z from "zod";
 import { createFilterJoiner } from "..";
 import type { CompilerContext } from "../../compilers";
@@ -37,7 +38,7 @@ function toFiltersList(stats: object): string {
   });
 }
 
-export const loudnormSchema = null;
+export const loudnormSchema = emptyOptionsSchema();
 
 export const loudnorm = createDescription<"audio.loudnorm">({
   pass: 2,
