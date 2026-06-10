@@ -1,3 +1,10 @@
+<script lang="ts" module>
+  export type TabProps = {
+    /** Use to lazily load elements in tab. */
+    tabLoaded: boolean;
+  };
+</script>
+
 <script lang="ts">
   import type { Snippet } from "svelte";
 

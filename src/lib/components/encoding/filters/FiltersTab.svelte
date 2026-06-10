@@ -1,8 +1,10 @@
-<script>
+<script lang="ts">
   import { Filters } from "$lib/app/encoding/filter.svelte";
   import { Separator } from "bits-ui";
-  import EncodingTab from "../EncodingTab.svelte";
+  import EncodingTab, { type TabProps } from "../EncodingTab.svelte";
   import Filter from "./Filter.svelte";
+
+  const {}: TabProps = $props();
 </script>
 
 <EncodingTab class="flex">

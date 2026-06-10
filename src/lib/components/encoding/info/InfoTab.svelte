@@ -2,8 +2,10 @@
   import { parseInfo } from "$lib/app/encoding/source/info";
   import { getApp } from "$lib/app/index.svelte";
   import SpinningIcon from "$lib/components/ui/SpinningIcon.svelte";
-  import EncodingTab from "../EncodingTab.svelte";
+  import EncodingTab, { type TabProps } from "../EncodingTab.svelte";
   import StreamInfo from "./StreamInfo.svelte";
+
+  const {}: TabProps = $props();
 
   const app = getApp();
 </script>
