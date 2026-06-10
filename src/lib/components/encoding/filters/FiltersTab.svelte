@@ -1,7 +1,7 @@
 <script>
   import { Filters } from "$lib/app/encoding/filter.svelte";
   import { Separator } from "bits-ui";
-  import EncodingTab from "./EncodingTab.svelte";
+  import EncodingTab from "../EncodingTab.svelte";
   import Filter from "./Filter.svelte";
 </script>
 

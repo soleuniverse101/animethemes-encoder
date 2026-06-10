@@ -21,6 +21,8 @@
   const schemaType = $derived(schema._zod.def.type);
 </script>
 
+<!-- TODO generalize to use in other tabs & settings menu -->
+
 {#if schemaType == "object"}
   {const obj = schema as ZodObject}
   <div class="flex flex-col gap-1">

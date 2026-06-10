@@ -4,9 +4,9 @@
 
 <script lang="ts" generics="Type extends OptionInputValue">
   import type { FilterOptionInfo } from "$lib/app/encoding/filters";
+  import Select from "$lib/components/ui/Select.svelte";
   import { Label, useId } from "bits-ui";
   import type z4 from "zod/v4/core";
-  import Select from "../ui/Select.svelte";
 
   interface Props {
     info: FilterOptionInfo;

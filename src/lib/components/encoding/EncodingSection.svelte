@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Tabs } from "bits-ui";
   import ExportTab from "./ExportTab.svelte";
-  import FiltersTab from "./FiltersTab.svelte";
+  import FiltersTab from "./filters/FiltersTab.svelte";
 
   const tabs = [
     ["filters", "Filters", FiltersTab],
