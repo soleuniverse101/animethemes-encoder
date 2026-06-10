@@ -1,7 +1,7 @@
 import type { CompilerContext } from "$lib/app/encoding/compilers";
 import type { Pass } from "$lib/app/encoding/compilers/export";
-import { filters, type Filter } from "$lib/app/encoding/filter.svelte";
-import { optionalFiltersIds, requiredFiltersIds, type Filters } from "$lib/app/encoding/job.svelte";
+import { Filters, type FilterId } from "$lib/app/encoding/filter.svelte";
+import { JobFilters, type JobFilter } from "$lib/app/encoding/job-filters";
 
 /**
  * @param context {@link CompilerContext}
@@ -17,13 +17,14 @@ export async function computeFilters<T extends "audio" | "video">(
 ): Promise<string> {
   return (
     await Promise.all(
-      listFilters(context.job.filters, type, pass).map((filter) => filter.compute(context))
+      listFilters(context.job.filters, type, pass).map(
+        async ({ id, jobFilter }) =>
+          jobFilter.value ??
+          (jobFilter.value = await Filters.compute(id)(context, jobFilter.options))
+      )
     )
   ).join(",");
 }
-
-// export const filtersComputed = (context: CompilerContext) =>
-//   !listFilters(context.job.filters).some((filter) => filter.value == null);
 
 /**
  * @param jobFilters
@@ -34,24 +35,24 @@ export async function computeFilters<T extends "audio" | "video">(
  *   **defined** optional filters.
  */
 export function listFilters(
-  jobFilters: Filters,
+  jobFilters: JobFilters,
   type: "audio" | "video" | "all",
   pass?: Pass
-): Filter[] {
-  const output: Filter[] = [];
+): { id: FilterId; jobFilter: JobFilter<FilterId> }[] {
+  const output: { id: FilterId; jobFilter: JobFilter<FilterId> }[] = [];
 
-  for (const id of requiredFiltersIds[type]) {
-    const filter = jobFilters[id].filter as Filter;
-    const filterPass = filters.all[id].pass;
+  for (const id of JobFilters.requiredFiltersIds[type]) {
+    const jobFilter = jobFilters[id];
+    const filterPass = Filters.pass(id);
     if (filterPass == null || filterPass == pass) {
-      output.push(filter);
+      output.push({ id, jobFilter });
     }
   }
-  for (const id of optionalFiltersIds[type]) {
-    const filter = jobFilters[id].filter as Filter | null;
-    const filterPass = filters.all[id].pass;
-    if (filter != null && (filterPass == null || filterPass == pass)) {
-      output.push(filter);
+  for (const id of JobFilters.optionalFiltersIds[type]) {
+    const jobFilter = jobFilters[id];
+    const filterPass = Filters.pass(id);
+    if (jobFilter != null && (filterPass == null || filterPass == pass)) {
+      output.push({ id, jobFilter });
     }
   }
 

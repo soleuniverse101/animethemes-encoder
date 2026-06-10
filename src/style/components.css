@@ -73,4 +73,8 @@
   [data-separator-root] {
     @apply shrink-0 bg-primary data-[orientation=horizontal]:h-px data-[orientation=vertical]:w-px;
   }
+
+  [data-switch-root] {
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
 }

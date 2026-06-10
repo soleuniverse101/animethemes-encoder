@@ -8,42 +8,11 @@ import { loudnorm, loudnormSchema } from "./filters/audio/loudnorm";
 import { hqdn3d, hqdn3dSchema } from "./filters/video/hqdn3d";
 import { scale, scaleSchema } from "./filters/video/scale";
 
-type ComputeFunction<Options extends {} | null> = Options extends null
-  ? (context: CompilerContext) => string | Promise<string>
-  : (context: CompilerContext, options: Options) => string | Promise<string>;
-
 // TODO maybe make distinction between async & sync and use it to differentiate long compute processes against quick ones
-export class Filter<Id extends FilterId = FilterId> {
-  #value: string | null = $state(null);
-  private computeFunction: ComputeFunction<FiltersOptions[Id]>;
-
-  options: FiltersOptions[Id];
-
-  constructor(parameters: {
-    compute: ComputeFunction<FiltersOptions[Id]>;
-    options: FiltersOptions[Id];
-  }) {
-    this.computeFunction = parameters.compute;
-    this.options = parameters.options;
-  }
-
-  invalidate() {
-    this.#value = null;
-  }
-
-  /** @returns Computed value of the filter. Skips computation if value is already defined. */
-  async compute(context: CompilerContext): Promise<string> {
-    if (this.#value != null) return this.#value;
-    return (this.#value =
-      this.options == null
-        ? await (this.computeFunction as ComputeFunction<null>)(context)
-        : await (this.computeFunction as ComputeFunction<{}>)(context, this.options));
-  }
-
-  get value() {
-    return this.#value;
-  }
-}
+type ComputeFunction<Options extends {}> = (
+  context: CompilerContext,
+  options: Options
+) => string | Promise<string>;
 
 const filtersOptionsSchemasDefinitions = {
   audio: {
@@ -55,44 +24,27 @@ const filtersOptionsSchemasDefinitions = {
     scale: scaleSchema,
     hqdn3d: hqdn3dSchema
   }
-} as const satisfies Record<string, Record<string, z4.$ZodObject | null>>;
+} as const satisfies Record<"audio" | "video", Record<string, z4.$ZodObject>>;
 
 type OptionsSchemas = typeof filtersOptionsSchemasDefinitions;
+// TODO possible to make a FilterType type to generalize audio & video
 
-const filtersOptionsSchemas = {
-  audio: Object.fromEntries([
-    ...Object.entries(filtersOptionsSchemasDefinitions.audio).map(([subId, schema]) => [
-      `audio.${subId}`,
-      schema
-    ])
-  ]),
-  video: Object.fromEntries([
-    ...Object.entries(filtersOptionsSchemasDefinitions.video).map(([subId, schema]) => [
-      `video.${subId}`,
-      schema
-    ])
-  ])
-} as {
-  audio: { [Id in keyof OptionsSchemas["audio"] as `audio.${Id}`]: OptionsSchemas["audio"][Id] };
-  video: { [Id in keyof OptionsSchemas["video"] as `video.${Id}`]: OptionsSchemas["video"][Id] };
-  all: (typeof filtersOptionsSchemas)["audio"] & (typeof filtersOptionsSchemas)["video"];
+const filtersOptionsSchemas = Object.fromEntries(
+  Object.entries(filtersOptionsSchemasDefinitions).flatMap(([type, filters]) =>
+    Object.entries(filters).map(([subId, schema]) => [`${type}.${subId}`, schema])
+  )
+) as { [Id in keyof OptionsSchemas["audio"] as `audio.${Id}`]: OptionsSchemas["audio"][Id] } & {
+  [Id in keyof OptionsSchemas["video"] as `video.${Id}`]: OptionsSchemas["video"][Id];
 };
-filtersOptionsSchemas.all = { ...filtersOptionsSchemas.audio, ...filtersOptionsSchemas.video };
-
-export { filtersOptionsSchemas };
 
 export type AudioFilterId = keyof OptionsSchemas["audio"];
 export type VideoFilterId = keyof OptionsSchemas["video"];
 
 type AudioFiltersOptions = {
-  [Id in AudioFilterId]: OptionsSchemas["audio"][Id] extends null
-    ? null
-    : z.infer<OptionsSchemas["audio"][Id]>;
+  [Id in AudioFilterId]: z.infer<OptionsSchemas["audio"][Id]>;
 };
 type VideoFiltersOptions = {
-  [Id in VideoFilterId]: OptionsSchemas["video"][Id] extends null
-    ? null
-    : z.infer<OptionsSchemas["video"][Id]>;
+  [Id in VideoFilterId]: z.infer<OptionsSchemas["video"][Id]>;
 };
 
 export type FiltersOptions = PrefixKeys<AudioFiltersOptions, "audio"> &
@@ -105,35 +57,43 @@ type FilterDescription<Id extends FilterId> = {
   pass?: Pass;
   compute: ComputeFunction<FiltersOptions[Id]>;
   description: string;
-} & (FiltersOptions[Id] extends null
-  ? {}
-  : {
-      defaultOptions: () => FiltersOptions[Id];
-    });
+  defaultOptions: () => FiltersOptions[Id];
+};
 
+type FilterDescriptor<Id extends FilterId> = {} extends FiltersOptions[Id]
+  ? Omit<FilterDescription<Id>, "defaultOptions">
+  : FilterDescription<Id>;
+type WithOptionalOptions<Id extends FilterId> = {
+  defaultOptions?: () => FiltersOptions[Id];
+};
 export function createDescription<Id extends FilterId>(
-  description: FilterDescription<Id>
+  descriptor: FilterDescriptor<Id>
 ): FilterDescription<Id> {
-  return description;
+  const description = { ...descriptor };
+  if (!(description as WithOptionalOptions<Id>).defaultOptions) {
+    (description as WithOptionalOptions<Id>).defaultOptions = () => ({}) as FiltersOptions[Id];
+  }
+  return description as FilterDescription<Id>;
 }
 
-const filtersDefinition: {
-  audio: {
-    [Id in AudioFilterId]: FilterDescription<`audio.${Id}`>;
-  };
-  video: {
-    [Id in VideoFilterId]: FilterDescription<`video.${Id}`>;
-  };
-} = {
+const filtersDefinition = {
   audio: {
     loudnorm,
     fadeIn,
     fadeOut
   },
   video: { scale, hqdn3d }
+} as const satisfies {
+  audio: {
+    [Id in AudioFilterId]: FilterDescription<`audio.${Id}`>;
+  };
+  video: {
+    [Id in VideoFilterId]: FilterDescription<`video.${Id}`>;
+  };
 };
 
-export const filters = Object.fromEntries(
+// Separating audio from video to be able to list them at will
+const filters = Object.fromEntries(
   Object.entries(filtersDefinition).map(([type, subIds]) => [
     type,
     Object.fromEntries(
@@ -146,29 +106,31 @@ export const filters = Object.fromEntries(
   all: { [Id in FilterId]: FilterDescription<Id> };
 };
 filters.all = { ...filters.audio, ...filters.video };
-export const filtersIds = {
-  audio: Object.keys(filters.audio),
-  video: Object.keys(filters.video)
-} as {
-  audio: (keyof (typeof filters)["audio"])[];
-  video: (keyof (typeof filters)["video"])[];
-  all: (keyof (typeof filters)["all"])[];
-};
-filtersIds.all = [...filtersIds.audio, ...filtersIds.video];
 
-type WithOptionalOptions<Id extends FilterId> = {
-  defaultOptions?: () => FiltersOptions[Id];
-};
-export function createFilter<Id extends FilterId>(id: Id): Filter<Id> {
-  const filter = filters.all[id];
-  const options = $state(
-    (filter as WithOptionalOptions<Id>).defaultOptions
-      ? (filter as WithOptionalOptions<Id>).defaultOptions!()
-      : null
-  );
-  return new Filter({ compute: filter.compute, options: options as FiltersOptions[Id] });
+interface d {
+  get d(): string;
 }
 
-export function filterDescription<Id extends FilterId>(filter: Id) {
-  return filters.all[filter].description;
+export namespace Filters {
+  // TODO methods necessary ? useful to prevent set from unauthorized party. could maybe replace by typing filters descriptions propertiers as getters with no setters
+  export const pass = <Id extends FilterId>(filter: Id) => filters.all[filter].pass;
+  export const compute = <Id extends FilterId>(filter: Id) => filters.all[filter].compute;
+  export const defaultOptions = <Id extends FilterId>(filter: Id) =>
+    filters.all[filter].defaultOptions();
+  export const description = <Id extends FilterId>(filter: Id) => filters.all[filter].description;
+
+  export const schema = <Id extends FilterId>(filter: Id) => filtersOptionsSchemas[filter];
+  export const optionsEmpty = (options: {}) => Object.keys(options).length === 0;
+
+  // TODO make readonly
+  export const ids = {
+    audio: Object.keys(filters.audio),
+    video: Object.keys(filters.video)
+  } as {
+    // TODO turn into a tuple ?
+    audio: (keyof (typeof filters)["audio"])[];
+    video: (keyof (typeof filters)["video"])[];
+    all: (keyof (typeof filters)["all"])[];
+  };
+  ids.all = [...ids.audio, ...ids.video];
 }

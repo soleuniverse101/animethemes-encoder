@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { filtersOptionsSchemas, type FilterId } from "$lib/app/encoding/filter.svelte";
+  import { Filters, type FilterId } from "$lib/app/encoding/filter.svelte";
   import { getApp } from "$lib/app/index.svelte";
   import { assertNonNull } from "$lib/utils/assert";
   import Option from "./Option.svelte";
@@ -10,19 +10,15 @@
 
   const app = getApp();
 
-  let filter = $derived(assertNonNull(app.currentJob.filters[id].filter));
-  let schema = $derived(filtersOptionsSchemas.all[id]);
+  // FilterOptions shouldn't be mounted if the filter doesn't exist
+  const filter = $derived(assertNonNull(app.currentJob.filters[id]));
+  const schema = $derived(Filters.schema(id));
 </script>
 
-<!-- Schema non-null means that options is necessarily not null -->
-{#if schema}
+{#if !Filters.optionsEmpty(filter.options)}
   <div class="ml-8">
     <div class="text-sm">
-      <Option
-        {schema}
-        bind:value={() => filter.options!, () => {}}
-        invalidate={() => filter.invalidate()}
-      />
+      <Option {schema} bind:value={filter.options} invalidate={() => (filter.value = null)} />
     </div>
   </div>
 {/if}

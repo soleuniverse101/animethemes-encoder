@@ -1,5 +1,5 @@
 <script>
-  import { optionalFiltersIds } from "$lib/app/encoding/job.svelte";
+  import { Filters } from "$lib/app/encoding/filter.svelte";
   import { Separator } from "bits-ui";
   import EncodingTab from "./EncodingTab.svelte";
   import Filter from "./Filter.svelte";
@@ -9,8 +9,7 @@
   <div class="w-1/2">
     <h4 class="text-center mb-2">Audio</h4>
     <div class="flex flex-col gap-4">
-      <!-- TODO should required filters be printed ? probably -->
-      {#each optionalFiltersIds.audio as filter}
+      {#each Filters.ids.audio as filter}
         <Filter id={filter} />
       {/each}
     </div>
@@ -19,8 +18,7 @@
   <div class="w-1/2">
     <h4 class="text-center mb-2">Video</h4>
     <div class="flex flex-col gap-4">
-      <!-- TODO should required filters be printed ? probably -->
-      {#each optionalFiltersIds.video as filter}
+      {#each Filters.ids.video as filter}
         <Filter id={filter} />
       {/each}
     </div>

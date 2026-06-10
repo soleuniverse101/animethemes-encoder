@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { createFilter, filterDescription, type FilterId } from "$lib/app/encoding/filter.svelte";
+  import { commands } from "$lib/app/commands";
+  import { Filters, type FilterId } from "$lib/app/encoding/filter.svelte";
+  import { JobFilters } from "$lib/app/encoding/job-filters";
   import { getApp } from "$lib/app/index.svelte";
   import Icon from "@iconify/svelte";
   import { Label, Switch, useId } from "bits-ui";
@@ -12,42 +14,37 @@
   const app = getApp();
 
   const jobFilter = $derived(app.currentJob.filters[id]);
+  const required = $derived(JobFilters.isRequiredId(id));
+
+  const checked = $derived(jobFilter != null);
 </script>
 
-{#if jobFilter.required}
-  <!-- TODO -->
-{:else}
-  {let checked = $derived(jobFilter.filter != null)}
-  <div>
-    <div class="flex items-center gap-1 mb-1">
-      {const rootId = useId()}
-      <Switch.Root
-        class="text-xl translate-y-0.5"
-        bind:checked={
-          () => checked,
-          (checked) => {
-            if (checked) {
-              // TODO check type
-              jobFilter.filter = createFilter(id) as (typeof jobFilter)["filter"];
-            } else {
-              jobFilter.filter = null;
-            }
+<div>
+  <div class="flex items-center gap-1 mb-1">
+    {const rootId = useId()}
+    <Switch.Root
+      class="text-xl translate-y-0.5"
+      disabled={required}
+      bind:checked={
+        () => checked,
+        (checked) => {
+          // TODO remove ? bind shouldn't trigger if Select is disabled
+          // Ensured id is optional
+          if (required) {
+            return;
           }
+          commands("jobs").current.toggleFilter(id as JobFilters.OptionalFilterId, checked);
         }
-        id={rootId}
-      >
-        <Switch.Thumb>
-          {#if checked}
-            <Icon icon="mdi:toggle-switch" />
-          {:else}
-            <Icon icon="mdi:toggle-switch-off" />
-          {/if}
-        </Switch.Thumb>
-      </Switch.Root>
-      <Label.Root class={[checked && "font-bold"]} for={rootId}>{filterDescription(id)}</Label.Root>
-    </div>
-    {#if checked}
-      <FilterOptions {id} />
-    {/if}
+      }
+      id={rootId}
+    >
+      <Switch.Thumb title={required ? "Required filter" : "Optional filter"}>
+        <Icon icon={checked ? "mdi:toggle-switch" : "mdi:toggle-switch-off"} />
+      </Switch.Thumb>
+    </Switch.Root>
+    <Label.Root class={[checked && "font-bold"]} for={rootId}>{Filters.description(id)}</Label.Root>
   </div>
-{/if}
+  {#if checked}
+    <FilterOptions {id} />
+  {/if}
+</div>

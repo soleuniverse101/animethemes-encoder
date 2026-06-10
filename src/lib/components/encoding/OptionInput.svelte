@@ -4,7 +4,6 @@
 
 <script lang="ts" generics="Type extends OptionInputValue">
   import type { FilterOptionInfo } from "$lib/app/encoding/filters";
-  import { assertNonNull } from "$lib/utils/assert";
   import { Label, useId } from "bits-ui";
   import type z4 from "zod/v4/core";
   import Select from "../ui/Select.svelte";
@@ -29,7 +28,7 @@
       {id}
       type="single"
       items={schemaDef.values
-        .map((value) => assertNonNull(value).toString())
+        .map((value) => value.toString())
         .map((value) => ({ value, label: value }))}
       bind:value={() => value.toString(), (v) => (value = v)}
     />

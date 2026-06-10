@@ -9,6 +9,7 @@
   import EncodingTab from "./EncodingTab.svelte";
 
   const app = getApp();
+
   async function exportCommands(context: CompilerContext) {
     return [await firstPass(context), await secondPass(context)].map((cmd) => cmd.compile());
   }
@@ -16,14 +17,8 @@
 
 <EncodingTab>
   {#if app.file && Number.isFinite(app.currentJob.bounds.end)}
-    <!-- TODO should be derived ? -->
-    {const context: CompilerContext = $derived({
-      profile: app.config.profile,
-      file: app.file,
-      job: app.currentJob
-    })}
     <!-- TODO check on all required, maybe inform on state if heavy pass filters are required (they may have to be included in the command instead) -->
-    {#await exportCommands(context)}
+    {#await exportCommands({ profile: app.config.profile, file: app.file, job: app.currentJob })}
       <p class="flex items-center gap-2"><SpinningIcon /> Computing export command</p>
     {:then cmds}
       <div class="flex flex-col">
