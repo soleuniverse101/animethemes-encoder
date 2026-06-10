@@ -19,10 +19,9 @@ export type StreamInfo = FileInfo["streams"][number];
 export async function parseInfo(context: CompilerContext): Promise<FileInfo> {
   const cmd = new CommandBuilder("ffprobe");
 
-  cmd.setOption("output_format", "json");
-
   cmd.setFlag("show_streams");
 
+  cmd.setOption("output_format", "json");
   cmd.addPositional(context.file);
   console.log(cmd.compile());
   const result = JSON.parse((await cmd.build().execute()).stdout);
