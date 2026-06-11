@@ -21,15 +21,17 @@
   interface Props {
     title: string;
     action: Action;
+    class?: string;
   }
 
-  let { title, action }: Props = $props();
+  let { title, action, class: _class }: Props = $props();
 </script>
 
 {#if action.type == "commandButton"}
-  <Menubar.Item onSelect={() => command(action.command)()}>{title}</Menubar.Item>
+  <Menubar.Item class={_class} onSelect={() => command(action.command)()}>{title}</Menubar.Item>
 {:else if action.type == "link"}
-  <Menubar.Item class="link" onSelect={() => openUrl(action.href)}>{title}</Menubar.Item>
+  <Menubar.Item class={["link", _class]} onSelect={() => openUrl(action.href)}>{title}</Menubar.Item
+  >
 {:else if action.type == "button"}
-  <Menubar.Item onSelect={action.callback}>{title}</Menubar.Item>
+  <Menubar.Item class={_class} onSelect={action.callback}>{title}</Menubar.Item>
 {/if}

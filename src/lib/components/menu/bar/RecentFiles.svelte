@@ -13,6 +13,8 @@
     <Menubar.GroupHeading>Recent files</Menubar.GroupHeading>
     {#each app.config.recent as path}
       <MenuItem
+        // TODO rearrange based on window size
+        class="truncate max-w-lg"
         title={path}
         action={{ type: "button", callback: () => commands("mpvView").importFile(path) }}
       />
