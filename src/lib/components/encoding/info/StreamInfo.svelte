@@ -2,7 +2,7 @@
   import type { StreamInfo } from "$lib/app/encoding/source/info";
 
   interface Props {
-    info: StreamInfo;
+    info: NonNullable<StreamInfo>;
   }
 
   let { info }: Props = $props();
