@@ -18,7 +18,11 @@
     {:then info}
       <h4 class="text-center">Streams</h4>
       {#each info.streams as stream}
-        <StreamInfo info={stream} />
+        {#if stream}
+          <StreamInfo info={stream} />
+        {:else}
+          TODO
+        {/if}
       {/each}
     {/await}
   {:else}

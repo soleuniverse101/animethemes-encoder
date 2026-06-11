@@ -4,12 +4,17 @@ import type { CompilerContext } from "../compilers";
 
 const ffprobeSchema = z.object({
   streams: z.array(
-    z.object({
-      index: z.int(),
-      codec_name: z.literal(["vp9", "opus"]),
-      codec_long_name: z.string(),
-      codec_type: z.literal(["audio", "video"])
-    })
+    z.union([
+      z.object({
+        index: z.int(),
+        codec_name: z.string(),
+        codec_long_name: z.string(),
+        // TODO manage attachments
+        codec_type: z.literal(["audio", "video", "subtitle"])
+      }),
+      // z.object({ codec_type: z.literal("attachment") }),
+      z.object({}).pipe(z.transform(() => null))
+    ])
   )
 });
 
