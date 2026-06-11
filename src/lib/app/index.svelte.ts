@@ -15,7 +15,11 @@ export const createApp = (config: Config): App => {
   const defaultJob = createJob("OP");
   return {
     config,
-    jobs: new SvelteMap([[defaultJob.label, defaultJob]]),
+    // TODO add job management menu
+    jobs: new SvelteMap([
+      [defaultJob.label, defaultJob],
+      ["ED", createJob("ED")]
+    ]),
     currentJob: defaultJob
   };
 };
