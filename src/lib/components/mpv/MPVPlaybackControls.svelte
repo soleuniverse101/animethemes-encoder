@@ -69,7 +69,7 @@
         "Set Loop End (Shift+Alt+Right)"
       )}
     </div>
-    <div class="flex items-center w-1/4 justify-end">
+    <div class="flex gap-2 items-center w-1/4 justify-end">
       {@render button(
         "mpvView.playback.toggleLoop",
         $loop ? "mdi:repeat" : "mdi:repeat-off",
