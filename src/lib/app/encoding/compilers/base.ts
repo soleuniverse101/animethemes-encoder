@@ -5,7 +5,8 @@ import { CommandBuilder } from "../command-builder";
 export function base({ file, job }: CompilerContext) {
   const base = new CommandBuilder("ffmpeg");
 
-  base.setFlag("nostdin");
+  // TODO remove for user facing ?
+  // base.setFlag("nostdin");
 
   // TODO change once precise timecode mappings available through ffprobe
   base
