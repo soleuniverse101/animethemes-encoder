@@ -45,10 +45,10 @@ export const OBSERVABLE_PROPERTIES_FORMAT: Formats = {
 } as any;
 
 /**
- * Stores observed properties that can be updated.
+ * MPV observed properties that can be set through a rune/state object.
  *
  * **IMPORTANT** : Will initially be in an invalid state before all observed properties are properly
- * set using update. Until then, all the properties are set as null.
+ * set using init.
  */
 export class MPVListener {
   // Necessary because MPVListener doesn't use generics to check which properties are listened to
@@ -68,6 +68,7 @@ export class MPVListener {
     this.observedProperties = OBSERVABLE_PROPERTIES.filter(([name]) => setProperties.has(name));
 
     const properties = $state({} as Listener);
+    // TODO reverse into stores if this takes too much perf.
     this.properties = new Proxy(properties, {
       get(target, property, receiver) {
         if (!setProperties.get(property as any)) {
