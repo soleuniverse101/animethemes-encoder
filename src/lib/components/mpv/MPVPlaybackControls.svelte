@@ -49,7 +49,7 @@
       )}
       {@render button(
         "mpvView.playback.playPause",
-        pause == "yes" ? "fa6-solid:play" : "fa6-solid:pause",
+        pause ? "fa6-solid:play" : "fa6-solid:pause",
         "Play/Pause (Space)"
       )}
       {@render button(

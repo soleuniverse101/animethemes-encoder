@@ -4,7 +4,7 @@ const OBSERVABLE_PROPERTIES = [
   ["mpv-version", "string"] as const,
   ["duration", "double", "none"] as const,
   ["time-pos/full", "double", "none"] as const,
-  ["pause", "string"] as const,
+  ["pause", "flag"] as const,
   ["ab-loop-a", "double", "none"] as const,
   ["ab-loop-b", "double", "none"] as const,
   // Takes ints and "inf"
