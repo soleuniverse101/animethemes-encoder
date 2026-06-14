@@ -15,15 +15,15 @@
     listenerView: { "time-pos/full": timePos, duration }
   } = $derived(controls);
 
-  let progress = $derived(Nullable.div($timePos, $duration));
+  let progress = $derived(Nullable.div(timePos, duration));
 
   const {
     currentJob: {
       bounds: { start, end }
     }
   } = $derived(getApp());
-  let loopStart = $derived(Nullable.div(start, $duration));
-  let loopEnd = $derived(Nullable.div(end, $duration));
+  let loopStart = $derived(Nullable.div(start, duration));
+  let loopEnd = $derived(Nullable.div(end, duration));
 
   let sliding = $state(false);
 
@@ -31,11 +31,11 @@
   const updatePosition = async (clickX: number) => {
     const rect = slider.getBoundingClientRect();
     await controls.setPosition(
-      clamp((clickX - rect.x) / rect.width, 0, 1) * assertNonNull($duration)
+      clamp((clickX - rect.x) / rect.width, 0, 1) * assertNonNull(duration)
     );
   };
 
-  let roundedTimePos = $derived(Nullable.round($timePos));
+  let roundedTimePos = $derived(Nullable.round(timePos));
 </script>
 
 <svelte:document
@@ -71,7 +71,7 @@
         role="slider"
         tabindex="0"
         aria-valuemin="0"
-        aria-valuemax={$duration}
+        aria-valuemax={duration}
         aria-valuenow={roundedTimePos}
         aria-valuetext={roundedTimePos ? Format.toReadable(roundedTimePos * 1000) : null}
       >
@@ -80,10 +80,10 @@
           style:width={progress * 100 + "%"}
         ></div>
       </div>
-      {#if $timePos != null && $duration != null}
+      {#if timePos != null && duration != null}
         <TimePosDisplay
-          timePos={$timePos}
-          duration={$duration}
+          {timePos}
+          {duration}
           class="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 opacity-40"
         />
       {/if}

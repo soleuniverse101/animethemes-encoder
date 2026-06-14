@@ -32,11 +32,11 @@
   });
   const unlistens = [registerMPVViewHandler(handlerContext), registerMPVViewShortcuts()];
 
-  const duration = mpvWindow.mpvControls.listenerView.duration;
+  const { duration } = $derived(mpvWindow.mpvControls.listenerView);
   $effect(() => {
-    if (app.file == null || !$duration) return;
+    if (app.file == null || !duration) return;
     if (!Number.isFinite(app.currentJob.bounds.end)) {
-      commands("jobs").current.setEnd($duration);
+      commands("jobs").current.setEnd(duration);
     }
     mpvWindow.mpvControls.setLoop(app.currentJob.bounds);
   });

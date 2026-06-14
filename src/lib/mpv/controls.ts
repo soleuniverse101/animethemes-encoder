@@ -1,7 +1,7 @@
 import type { Job } from "$lib/app/encoding/job.svelte";
 import { assertNonNull } from "$lib/utils/assert";
 import type { MPVWindowContext } from "./api";
-import type { MPVListenerView } from "./listener";
+import type { MPVListenerView } from "./listener.svelte";
 import type { TimePosition } from "./types";
 
 export namespace MPVControls {

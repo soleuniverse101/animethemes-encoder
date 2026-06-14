@@ -6,7 +6,11 @@ import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import type { MpvConfig } from "tauri-plugin-libmpv-api";
 import { MPVWindowContext } from "./api";
 import { MPVControls } from "./controls";
-import { MPVListener, OBSERVABLE_PROPERTIES_FORMAT, type ObservedProperties } from "./listener";
+import {
+  MPVListener,
+  OBSERVABLE_PROPERTIES_FORMAT,
+  type ObservedProperties
+} from "./listener.svelte";
 
 const DEFAULT_MPV_CONFIG: MpvConfig = {
   // TODO add volume control + should loop be toggle on ?
@@ -121,13 +125,14 @@ export class MPVWindowManager {
 
     const unlistens: UnlistenFn[] = [];
     unlistens.push(
-      // TODO remove generics
-      await mpvContext.observeProperties<ObservedProperties>(
+      // TODO remove generics & cleanup type
+      await mpvContext.observeProperties(
         mpvListener.observedProperties,
-        ({ name, data }) => mpvWindow.mpvListener.update(name, data)
+        ({ name, data }) => (mpvWindow.mpvListener.properties[name] = data as never)
       )
     );
-    await mpvWindow.forcePropertiesUpdate();
+    // TODO should it go before the listen ?
+    await mpvWindow.initListenerProperties();
 
     this.windowsUnlistens.set(label, unlistens);
     this.windows.set(label, mpvWindow);
@@ -176,7 +181,7 @@ export class MPVWindow {
   }: {
     -readonly [Property in keyof Omit<
       MPVWindow,
-      "controls" | "events" | "mpvControls" | "forcePropertiesUpdate"
+      "controls" | "events" | "mpvControls" | "initListenerProperties"
     >]: MPVWindow[Property];
   }) {
     this.label = label;
@@ -199,14 +204,14 @@ export class MPVWindow {
     this.mpvControls = new MPVControls(label, this.mpvListener.getView(), mpvContext);
   }
 
-  /** Sends {@link mpvListener} all current property values (even if they're null) */
-  async forcePropertiesUpdate() {
+  /** Initializes all {@link mpvListener} property with their current values (even if they're null) */
+  async initListenerProperties() {
     for (const [name, format] of this.mpvListener.observedProperties) {
       try {
-        this.mpvListener.update(name, await this.mpvContext.getProperty(name, format));
+        this.mpvListener.initProperty(name, await this.mpvContext.getProperty(name, format));
       } catch (e) {
         if (OBSERVABLE_PROPERTIES_FORMAT.nullable[name]) {
-          this.mpvListener.update(name, null);
+          this.mpvListener.initProperty(name, null);
         } else {
           console.warn(`Failed to retrieve non-nullable property '${name}' at startup`);
         }
