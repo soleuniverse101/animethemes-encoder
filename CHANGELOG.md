@@ -1,5 +1,16 @@
 # animethemes-encoder
 
+## 0.1.2
+
+### Patch Changes
+
+- 3100768: Added audio & video filters system with audio normalization and fadeIn/Out
+- cafdd43: Added profiles system to set default/user-defined options for encoding. Note that currently, a profile option isn't a one-to-one equivalent of an ffmpeg option/argument.
+- 656cb27: Added basic video file info tab
+- 656cb27: Added major video filters
+- 896a93f: Added info tab entries to match check page "Things to do before encoding" section "Verifying the Source". (Not yet : automatic validation of some properties)
+- 7ed1aa4: Added looping behavior on job bounds
+
 ## 0.1.1
 
 ### Patch Changes
