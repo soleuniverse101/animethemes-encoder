@@ -3,7 +3,7 @@
   import { getApp } from "$lib/app/index.svelte";
   import SpinningIcon from "$lib/components/ui/SpinningIcon.svelte";
   import EncodingTab, { type TabProps } from "../EncodingTab.svelte";
-  import StreamInfo from "./StreamInfo.svelte";
+  import FileInfo from "./FileInfo.svelte";
 
   const {}: TabProps = $props();
 
@@ -17,13 +17,7 @@
       <p class="flex items-center gap-2"><SpinningIcon /> Parsing file info</p>
     {:then info}
       <h4 class="text-center">Streams</h4>
-      {#each info.streams as stream}
-        {#if stream}
-          <StreamInfo info={stream} />
-        {:else}
-          TODO
-        {/if}
-      {/each}
+      <FileInfo {info} />
     {/await}
   {:else}
     <p>Import a video file to show info.</p>

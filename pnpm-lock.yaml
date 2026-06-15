@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@shie1/bytes':
+        specifier: ^1.1.1
+        version: 1.1.1
       '@tauri-apps/api':
         specifier: ^2.11.0
         version: 2.11.0
@@ -359,6 +362,9 @@ packages:
 
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
+
+  '@shie1/bytes@1.1.1':
+    resolution: {integrity: sha512-hfnfQ9ApnAZUN0qcPhpTUhYjVstDCuh1IXEEdFtJHQfG1SZI0IF6lrF/UzsVNXFAV6ntAGOcwpNM1eQcR2+5Lw==}
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -1934,6 +1940,8 @@ snapshots:
     optional: true
 
   '@rolldown/pluginutils@1.0.1': {}
+
+  '@shie1/bytes@1.1.1': {}
 
   '@standard-schema/spec@1.1.0': {}
 
