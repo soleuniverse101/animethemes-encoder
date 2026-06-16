@@ -4,7 +4,7 @@
   import { assertNonNull } from "$lib/utils/assert";
   import { Format } from "$lib/utils/format";
   import { clamp, Nullable } from "$lib/utils/math";
-  import TimePosDisplay from "./TimePosDisplay.svelte";
+  import Timecode from "../ui/Timecode.svelte";
 
   interface Props {
     controls: MPVControls;
@@ -81,8 +81,8 @@
         ></div>
       </div>
       {#if timePos != null && duration != null}
-        <TimePosDisplay
-          {timePos}
+        <Timecode
+          time={timePos}
           {duration}
           class="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 opacity-40"
         />
