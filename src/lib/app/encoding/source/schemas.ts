@@ -26,7 +26,7 @@ export const stream = z.union([
     z.object({
       ...base.shape,
       codec_type: z.literal("audio"),
-      bit_rate: intString,
+      bit_rate: intString.optional(),
       tags: z.object({ language: z.string() }).partial()
     }),
     z.object({

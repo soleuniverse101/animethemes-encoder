@@ -63,7 +63,7 @@ const languageEntry = (info: StreamInfo.Audio | StreamInfo.Subtitle) =>
 
 export const audioInfo = (info: StreamInfo.Audio, index: number | null): Info =>
   streamDefault(info, index, [
-    ["Bit rate", `${fromBytes(info.bit_rate).kiloBytes} kb/s`],
+    info.bit_rate != null && ["Bit rate", `${fromBytes(info.bit_rate).kiloBytes} kb/s`],
     languageEntry(info)
   ]);
 
