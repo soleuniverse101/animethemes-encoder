@@ -16,8 +16,8 @@
     {#await parseInfo({ profile: app.config.profile, file: app.file, job: app.currentJob })}
       <p class="flex items-center gap-2"><SpinningIcon /> Parsing file info</p>
     {:then info}
-      <h4 class="text-center">Streams</h4>
-      <FileInfo {info} />
+      <h4 class="text-center mb-4">Streams</h4>
+      <FileInfo {info} class="w-full px-4" />
     {/await}
   {:else}
     <p>Import a video file to show info.</p>

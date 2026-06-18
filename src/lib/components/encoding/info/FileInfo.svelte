@@ -1,14 +1,15 @@
 <script lang="ts">
   import type { FileInfo, StreamInfo as StreamInfoType } from "$lib/app/encoding/source/info";
   import { assertNonNull } from "$lib/utils/assert";
-  import GeneralInfo from "./streams/GeneralInfo.svelte";
-  import StreamInfo from "./streams/StreamInfo.svelte";
+  import { audioInfo, generalInfo, subtitleInfo, videoInfo } from "./infoSections";
+  import InfoTable from "./InfoTable.svelte";
 
   interface Props {
     info: FileInfo;
+    class?: string;
   }
 
-  const { info }: Props = $props();
+  const { info, class: _class }: Props = $props();
   const streams = $derived(info.streams.filter((stream) => stream != null));
 
   const streamIndex = new Map<StreamInfoType, number>();
@@ -22,12 +23,22 @@
   });
 </script>
 
-<GeneralInfo {info} />
-{#each streams as info}
-  <StreamInfo
-    {info}
-    index={streamsByType[info.codec_type]?.length == 1
-      ? null
-      : assertNonNull(streamIndex.get(info))}
+<div class={_class}>
+  <InfoTable
+    sections={[
+      generalInfo(info),
+      ...streams.map((info) => {
+        const index =
+          streamsByType[info.codec_type]?.length == 1 ? null : assertNonNull(streamIndex.get(info));
+        switch (info.codec_type) {
+          case "video":
+            return videoInfo(info, index);
+          case "audio":
+            return audioInfo(info, index);
+          case "subtitle":
+            return subtitleInfo(info, index);
+        }
+      })
+    ]}
   />
-{/each}
+</div>
