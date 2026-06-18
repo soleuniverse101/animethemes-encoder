@@ -26,11 +26,14 @@
     }
   }
 
-  [data-menubar-content] {
+  [data-menubar-content],
+  [data-dropdown-menu-content],
+  [data-dialog-content] {
     @apply bg-primary-300 py-1;
   }
 
-  [data-menubar-item] {
+  [data-menubar-item],
+  [data-dropdown-menu-item] {
     @apply px-1;
 
     @variant hover {
@@ -76,5 +79,19 @@
 
   [data-switch-root] {
     @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  [data-dropdown-menu-trigger][data-state="open"] {
+    /* TODO replace by standard color */
+    @apply bg-[rgb(230,225,240)];
+  }
+
+  [data-dialog-overlay] {
+    @apply bg-secondary-700/40;
+  }
+
+  [data-dialog-close],
+  [data-radio-group-item] {
+    @apply cursor-auto;
   }
 }

@@ -54,8 +54,9 @@ const paramsLabel = (params: JobCreateParams): Job.Label =>
 export class Jobs {
   /** Don't edit manually. */
   readonly map: SvelteMap<Job.Label, Job> = new SvelteMap();
-  readonly list: Job[];
-  readonly single: boolean;
+  readonly list: Job[] = $state([]);
+  readonly count = $derived(this.list.length);
+  readonly single = $derived(this.count == 1);
 
   constructor(jobsParams: JobCreateParams[], defaultJob?: Job.Label) {
     if (jobsParams.length == 0) {
@@ -67,9 +68,8 @@ export class Jobs {
         throw new Error(`Cannot create jobs container, duplicate label "${job.label}"`);
       }
       this.map.set(job.label, job);
+      this.list.push(job);
     }
-    this.list = $state(jobs);
-    this.single = $derived(this.list.length == 0);
   }
 
   addJob(params: JobCreateParams): Job {
@@ -78,6 +78,7 @@ export class Jobs {
       throw new Error(`Cannot add job, label "${label}" already in use`);
     }
     const job = createJob(params);
+    this.map.set(label, job);
     this.list.push(job);
     return job;
   }
@@ -103,9 +104,26 @@ export class Jobs {
       throw new Error("Cannot remove single job");
     }
     this.map.delete(label);
-    this.list.splice(
-      this.list.findIndex(({ label: _label }) => _label == label),
-      1
-    );
+    this.list.splice(this.indexOf(label), 1);
+  }
+
+  indexOf(label: Job.Label) {
+    return this.list.findIndex(({ label: _label }) => _label == label);
+  }
+
+  /**
+   * @param label
+   * @returns True if label is valid.
+   */
+  isValidLabel(label: Job.Label) {
+    return label.trim() != "";
+  }
+
+  /**
+   * @param label
+   * @returns True if label is valid for a new job (therefore non taken by any).
+   */
+  isValidNewLabel(label: Job.Label) {
+    return !this.map.has(label) && this.isValidLabel(label);
   }
 }

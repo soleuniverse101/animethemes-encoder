@@ -1,9 +1,8 @@
 <script lang="ts">
   import { command, type Command } from "$lib/app/commands";
-  import { getApp } from "$lib/app/index.svelte";
   import type { MPVControls } from "$lib/mpv/controls";
   import Icon from "@iconify/svelte";
-  import Select from "../ui/Select.svelte";
+  import JobsControls from "./JobsControls.svelte";
   import MPVTimeline from "./MPVTimeline.svelte";
 
   interface Props {
@@ -14,8 +13,6 @@
 
   const { pause } = $derived(controls.listenerView);
   const loop = $derived(controls.listenerView["ab-loop-count"] == "inf");
-
-  const app = getApp();
 </script>
 
 <div class="flex w-full flex-col justify-center pt-2">
@@ -74,11 +71,7 @@
         loop ? "mdi:repeat" : "mdi:repeat-off",
         "Toggle Loop (Ctrl+L)"
       )}
-      <Select
-        type="single"
-        items={app.jobs.list.map((label) => ({ value: label, label }))}
-        bind:value={() => app.currentJob.label, (label) => (app.currentJob = app.jobs.get(label)!)}
-      />
+      <JobsControls />
     </div>
   </div>
 </div>
