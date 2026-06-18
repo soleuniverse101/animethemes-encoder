@@ -76,10 +76,7 @@
       )}
       <Select
         type="single"
-        items={app.jobs
-          .keys()
-          .toArray()
-          .map((id) => ({ value: id, label: id }))}
+        items={app.jobs.list.map((label) => ({ value: label, label }))}
         bind:value={() => app.currentJob.label, (label) => (app.currentJob = app.jobs.get(label)!)}
       />
     </div>
