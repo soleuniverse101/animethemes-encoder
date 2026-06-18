@@ -44,14 +44,14 @@ export function listFilters(
   for (const id of JobFilters.requiredFiltersIds[type]) {
     const jobFilter = jobFilters[id];
     const filterPass = Filters.pass(id);
-    if (filterPass == null || filterPass == pass) {
+    if (pass == null || filterPass == null || filterPass == pass) {
       output.push({ id, jobFilter });
     }
   }
   for (const id of JobFilters.optionalFiltersIds[type]) {
     const jobFilter = jobFilters[id];
     const filterPass = Filters.pass(id);
-    if (jobFilter != null && (filterPass == null || filterPass == pass)) {
+    if (jobFilter != null && (pass == null || filterPass == null || filterPass == pass)) {
       output.push({ id, jobFilter });
     }
   }
