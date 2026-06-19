@@ -73,13 +73,12 @@ export class CommandBuilder {
     return this;
   }
 
-  addOutput(output: [format: "webm", destination: string] | null) {
-    if (output == null) {
-      this.addOption("f", "null");
+  addOutput(format: "webm" | null, destination: string | null) {
+    this.addOption("f", format ?? "null");
+    if (destination == null) {
       this.addPositional(NULL_DEVICE);
     } else {
-      this.addOption("f", output[0]);
-      this.addPositional(output[1]);
+      this.addPositional(destination);
     }
     return this;
   }

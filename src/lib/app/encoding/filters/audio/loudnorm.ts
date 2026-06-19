@@ -24,7 +24,7 @@ const LoudnessStats = z.object({
 function normalizationPass(context: CompilerContext) {
   return base(context)
     .setOption("af", joinFilter({ print_format: "json", stats_file: "-" }))
-    .addOutput(null);
+    .addOutput(null, null);
 }
 
 function toFiltersList(stats: object): string {

@@ -64,7 +64,7 @@ export async function firstPass(context: CompilerContext) {
   cmd.setFlag("sn"); // disable subtitles
 
   // Output
-  cmd.addOutput(["webm", "null"]);
+  cmd.addOutput("webm", null);
 
   return cmd;
 }
@@ -96,7 +96,7 @@ export async function secondPass(context: CompilerContext) {
   cmd.setOption("map_chapters", "-1");
 
   // Output
-  cmd.addOutput(["webm", job.label + ".webm"]); // TODO name
+  cmd.addOutput("webm", job.label + ".webm"); // TODO name
 
   return cmd;
 }
