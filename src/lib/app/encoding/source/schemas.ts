@@ -16,6 +16,7 @@ export const stream = z.union([
       // TODO check coded_width & coded_height
       width: z.int(),
       height: z.int(),
+      display_aspect_ratio: z.string(),
       // Colorspace
       // TODO replace with possible values ?
       color_primaries: z.string(),

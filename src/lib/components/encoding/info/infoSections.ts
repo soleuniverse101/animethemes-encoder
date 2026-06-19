@@ -45,6 +45,8 @@ export function streamDefault(
 export const videoInfo = (info: StreamInfo.Video, index: number | null): Info =>
   streamDefault(info, index, [
     ["Resolution", `${info.width}x${info.height}`],
+    ["Display aspect ratio", `${info.display_aspect_ratio}`],
+    ["Frame rate", `${formatFramerate(info.r_frame_rate)}`],
     {
       title: "Colorspace",
       entries: [
