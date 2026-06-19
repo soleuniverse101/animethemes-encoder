@@ -39,6 +39,8 @@ export const registerMPVViewHandler = ({ mpvWindow, app }: MPVViewHandlerContext
       }
       await mpvWindow.mpvControls.loadFile(file);
       app.file = file;
+      // TODO rething behavior when import new file : overwrite/reset ? or suggest saving workflow associated to particular file ?
+      commands("jobs").invalidateArtifacts();
       commands("config").recent.add(file);
     },
     playback: {

@@ -2,9 +2,12 @@ import type { TimePosition } from "$lib/mpv/types";
 import { listFilters } from "$lib/utils/filters";
 import { commands, registerHandler } from ".";
 import { JobFilters } from "../encoding/job-filters";
+import type { Job } from "../encoding/job.svelte";
 import type { App } from "../index.svelte";
 
 export type JobsHandler = {
+  /** Invalidates precomputed data (such as filters) for all jobs. */
+  invalidateArtifacts: () => void;
   current: {
     /** Invalidates precomputed data (such as filters). */
     invalidateArtifacts: () => void;
@@ -25,13 +28,16 @@ export type JobsHandlerContext = {
   app: App;
 };
 
+// TODO move in job.svelte.ts ?
+function invalidateArtifacts(job: Job) {
+  listFilters(job.filters, "all").forEach(({ jobFilter }) => (jobFilter.value = null));
+}
+
 export const registerJobsHandler = ({ app }: JobsHandlerContext) =>
   registerHandler("jobs", {
+    invalidateArtifacts: () => app.jobs.list.forEach(invalidateArtifacts),
     current: {
-      invalidateArtifacts: () =>
-        listFilters(app.currentJob.filters, "all").forEach(
-          ({ jobFilter }) => (jobFilter.value = null)
-        ),
+      invalidateArtifacts: () => invalidateArtifacts(app.currentJob),
       setStart: (position) => {
         app.currentJob.bounds.start = position;
         commands("jobs").current.invalidateArtifacts();
