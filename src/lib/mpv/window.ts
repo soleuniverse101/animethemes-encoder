@@ -1,6 +1,6 @@
 import { Positions } from "$lib/utils/dpi";
 import { createEventDispatcher } from "$lib/utils/events";
-import { unlistenAll } from "$lib/utils/tauri";
+import { createWebviewWindow, unlistenAll } from "$lib/utils/tauri";
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import type { MpvConfig } from "tauri-plugin-libmpv-api";
@@ -82,9 +82,9 @@ export class MPVWindowManager {
     if (danglingWindow) {
       window = danglingWindow;
     } else {
-      let windowUnlistens: Promise<UnlistenFn>[] = [];
-      window = await new Promise<WebviewWindow>((res, rej) => {
-        const window = new WebviewWindow(label, {
+      window = await createWebviewWindow(
+        label,
+        {
           parent: this.parent,
           url: "/mpv",
 
@@ -93,19 +93,9 @@ export class MPVWindowManager {
           shadow: false,
           resizable: false,
           focusable: false
-        });
-
-        windowUnlistens.push(
-          window.once("tauri://webview-created", async () => {
-            await window.setIgnoreCursorEvents(true);
-            res(window);
-          }),
-          window.once("tauri://error", ({ payload: error }) =>
-            rej(`Failed to create MPVWindow with label ${label} :\n${error}`)
-          )
-        );
-      });
-      unlistenAll(windowUnlistens);
+        },
+        { init: (window) => window.setIgnoreCursorEvents(true) }
+      );
     }
 
     const mpvListener = new MPVListener(observedProperties);
