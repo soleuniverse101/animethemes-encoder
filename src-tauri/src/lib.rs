@@ -1,3 +1,6 @@
+use serde::Deserialize;
+use tauri::{Listener, Manager};
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -15,6 +18,28 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![greet])
+        .setup(|app| {
+            // Open DevTools console for every webview in development
+            #[cfg(debug_assertions)]
+            {
+                let app_handle = app.handle().clone();
+                app.listen("tauri://webview-created", move |event| {
+                    #[derive(Clone, Deserialize)]
+                    struct WebviewCreatedPayload {
+                        label: String,
+                    }
+                    if let Ok(WebviewCreatedPayload { label }) =
+                        serde_json::from_str(event.payload())
+                    {
+                        app_handle
+                            .get_webview_window(&label)
+                            .unwrap()
+                            .open_devtools();
+                    }
+                });
+            }
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
