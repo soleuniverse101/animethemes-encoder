@@ -2,10 +2,9 @@
   import { CommandBuilder } from "$lib/app/encoding/commands/builder";
   import { ProgressReader } from "$lib/app/encoding/ffmpeg/progress";
   import type { RunJobPayload } from "$lib/app/encoding/runner";
-  import Progress from "$lib/components/ui/Progress.svelte";
+  import JobRunner from "$lib/components/runner/JobRunner.svelte";
   import { Nullable } from "$lib/utils/math";
   import { catchToConsole, waitForPayload } from "$lib/utils/tauri";
-  import Icon from "@iconify/svelte";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
   import { Child } from "@tauri-apps/plugin-shell";
 
@@ -26,10 +25,22 @@
 
   let current: Child;
   let cancelled = $state(false);
+  let stderr = $state("");
+
+  async function nextCommand() {
+    const next = cmds.pop();
+    if (!next) {
+      return;
+    }
+
+    stderr += next.text;
+    next.cmd.spawn().then((child) => (current = child));
+  }
 
   const cmds = cmdsInputs.map((input) => {
     const cmd = CommandBuilder.build(input, { cwd: destination });
     cmd.stdout.on("data", (line) => catchToConsole(() => progressReader.line(line)));
+    cmd.stderr.on("data", (line) => (stderr += line.includes("\n") ? line : line + "\n"));
     cmd.on("close", ({ code, signal }) =>
       catchToConsole(() => {
         if (code != 0) {
@@ -41,46 +52,21 @@
           console.log("Job cancelled, not proceeding with next command.");
           return;
         }
-
-        const next = cmds.pop();
-        if (next) {
-          next.spawn().then((child) => (current = child));
-        }
+        nextCommand();
       })
     );
-    return cmd;
+    return { cmd, text: `${input.program} ${input.args.join(" ")}` };
   });
-
-  // TODO add folded logs section
-  // cmd.stderr.on("data", console.log);
-  // cmd.on("close", console.log);
 
   async function cancel() {
     cancelled = true;
     await current.write("q");
   }
 
-  current = await cmds.shift()!.spawn();
+  nextCommand();
 </script>
 
-<main class="w-full p-2">
+<main class="w-full grow p-2 flex flex-col">
   <h1 class="text-center mb-2">Job Runner</h1>
-  <div class="w-full bg-primary-300 flex flex-col gap-2 p-2">
-    <div class="flex justify-between items-center pl-2">
-      <p>{title}</p>
-      line
-      <div class="flex gap-2">
-        <button
-          disabled={cancelled}
-          onclick={cancel}
-          title="Cancel job"
-          class="bg-primary-200 p-2 disabled:opacity-40 disabled:cursor-not-allowed"
-          ><Icon icon="mdi:remove" /></button
-        >
-      </div>
-    </div>
-    <Progress class="bg-primary-200" label="Computing frames..." value={progress ?? 0} />
-  </div>
-  <!-- TODO add folded logs section -->
-  <!-- <pre>{result}</pre> -->
+  <JobRunner {title} {cancelled} {cancel} progress={progress ?? 0} {stderr} />
 </main>

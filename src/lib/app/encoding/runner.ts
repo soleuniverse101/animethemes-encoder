@@ -42,7 +42,7 @@ export async function runJobCommands(cmds: Commands, { file, job }: CompilerCont
     {
       url: "/runner",
       title,
-      height: 200
+      height: 400
     },
     {
       waitFor: "runner-ready",
