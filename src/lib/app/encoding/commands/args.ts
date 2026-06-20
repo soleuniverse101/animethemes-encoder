@@ -7,6 +7,7 @@ const argsDefinition = {
     { name: "i", type: "option" },
     // Pass
     { name: "pass", type: "option" },
+    { name: "passlogfile", type: "option" },
     // Video
     { name: "c:v", type: "option" },
     { name: "crf", type: "option" },

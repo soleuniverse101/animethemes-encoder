@@ -6,7 +6,10 @@ export type Pass = 1 | 2;
 
 export function exportBase(context: CompilerContext) {
   const cmd = base(context);
-  const { profile } = context;
+  const { profile, job } = context;
+
+  // Pass
+  cmd.setOption("passlogfile", job.label);
 
   // Video
   cmd.setOption("c:v", profile.video.codec); // codec
