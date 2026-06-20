@@ -43,8 +43,8 @@ const argsDefinition = {
     { name: "map_chapters", type: "option" },
     // Output
     { name: "f", type: "option" },
-    { name: "output", type: "positional" },
-    { name: "y", type: "flag" }
+    { name: "y", type: "flag" },
+    { name: "output", type: "positional" }
   ],
   ffprobe: [
     { name: "show_format", type: "flag" },
