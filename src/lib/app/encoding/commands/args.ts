@@ -93,7 +93,7 @@ export type Argument<P extends Program> = Readonly<
     }
 >;
 
-function argIndex(program: Program, name: string) {
+function argIndex<P extends Program>(program: P, name: Argument<P>["name"]) {
   return argsDefinition[program].findIndex(({ name: _name }) => _name == name);
 }
 

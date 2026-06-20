@@ -31,7 +31,6 @@ export class CommandBuilder<P extends Program> {
   }
 
   setFlag(name: Args.Flag<P>) {
-    (name as string) = `-${name}`;
     this.args.set(name, { type: "flag", name });
     return this;
   }
@@ -39,20 +38,17 @@ export class CommandBuilder<P extends Program> {
   // TODO
   /** Cannot be reset later. */
   // private addFlag(name: string) {
-  //   name = `-${name}`;
   //   this.args.set(this.nextKey(), { type: "flag", name });
   //   return this;
   // }
 
   setOption(name: Args.Option<P>, value: string | number) {
-    (name as string) = `-${name}`;
     this.args.set(name, { type: "option", name, value: value.toString() });
     return this;
   }
 
   // TODO and maybe set -f with addOption ?
   // private addOption(name: Args.Option<P>, value: string | number) {
-  //   (name as string) = `-${name}`;
   //   this.args.set(this.nextKey(), { type: "option", name, value: value.toString() });
   //   return this;
   // }
@@ -70,9 +66,9 @@ export class CommandBuilder<P extends Program> {
         case "positional":
           return arg.value;
         case "flag":
-          return arg.name;
+          return `-${arg.name}`;
         case "option":
-          return [arg.name, arg.value];
+          return [`-${arg.name}`, arg.value];
       }
     });
   }
