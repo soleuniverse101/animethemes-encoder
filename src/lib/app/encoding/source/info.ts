@@ -1,6 +1,6 @@
 import { intString } from "$lib/utils/zod";
 import z from "zod";
-import { CommandBuilder } from "../command-builder";
+import { CommandBuilder } from "../commands/builder";
 import type { CompilerContext } from "../compilers";
 import { stream } from "./schemas";
 
@@ -33,7 +33,7 @@ export async function parseInfo(context: CompilerContext): Promise<FileInfo> {
   cmd.setFlag("show_streams");
 
   cmd.setOption("output_format", "json");
-  cmd.addPositional(context.file);
+  cmd.setPositional("input", context.file);
   console.log(cmd.compile());
   const result = JSON.parse((await cmd.build().execute()).stdout);
   console.log(result);

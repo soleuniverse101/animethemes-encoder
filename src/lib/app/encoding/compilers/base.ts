@@ -1,6 +1,6 @@
 import { Format } from "$lib/utils/format";
 import type { CompilerContext } from ".";
-import { CommandBuilder } from "../command-builder";
+import { CommandBuilder } from "../commands/builder";
 
 export function base({ file, job }: CompilerContext) {
   const base = new CommandBuilder("ffmpeg");
