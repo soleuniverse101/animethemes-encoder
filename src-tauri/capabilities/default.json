@@ -2,7 +2,7 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
-  "windows": ["main"],
+  "windows": ["main", "runner"],
   "permissions": [
     "core:default",
     "opener:default",
@@ -36,6 +36,18 @@
     "fs:default",
     "fs:allow-applocaldata-write",
     "core:window:allow-hide",
-    "core:window:allow-show"
+    "core:window:allow-show",
+    "core:app:allow-default-window-icon",
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "name": "ffmpeg",
+          "cmd": "ffmpeg",
+          "args": true
+        }
+      ]
+    },
+    "shell:allow-stdin-write"
   ]
 }

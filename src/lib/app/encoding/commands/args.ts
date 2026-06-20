@@ -1,6 +1,8 @@
 // TODO maybe add value to argsDef like for input but to others to allow duplicates with different semantics
 const argsDefinition = {
   ffmpeg: [
+    // Globals
+    { name: "progress", type: "option" },
     // Input
     { name: "ss", type: "option" },
     { name: "to", type: "option" },

@@ -68,3 +68,19 @@ export async function createWebviewWindow(
 
   return webviewWindow;
 }
+
+export function waitForPayload<P>(
+  webviewWindow: WebviewWindow,
+  event: Parameters<WebviewWindow["once"]>[0]
+): Promise<P> {
+  return new Promise((res) => webviewWindow.once<P>(event, ({ payload }) => res(payload)));
+}
+
+// TODO stop using once https://github.com/tauri-apps/plugins-workspace/issues/3461 clears
+export function catchToConsole(callback: () => void) {
+  try {
+    callback();
+  } catch (err) {
+    console.error(err);
+  }
+}
