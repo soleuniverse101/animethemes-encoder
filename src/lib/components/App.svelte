@@ -37,7 +37,8 @@
 
 <footer class="sticky bottom-0 w-full bg-primary-200 px-1 text-text-400">
   <div class="mx-auto flex w-full max-w-4xl justify-between">
-    <span>by <a href="https://soleuniverse.me/">soleuniverse</a></span>
+    <!-- TODO link component or hande on_navigation in lib.rs Builder to prevent viewing external links in the app -->
+    <span>by <a href="https://soleuniverse.me/" target="_blank">soleuniverse</a></span>
     <span>v{version}</span>
   </div>
 </footer>
