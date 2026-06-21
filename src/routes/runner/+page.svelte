@@ -1,72 +1,61 @@
 <script lang="ts">
-  import { CommandBuilder } from "$lib/app/encoding/commands/builder";
-  import { ProgressReader } from "$lib/app/encoding/ffmpeg/progress";
-  import type { RunJobPayload } from "$lib/app/encoding/runner";
-  import JobRunner from "$lib/components/runner/JobRunner.svelte";
-  import { Nullable } from "$lib/utils/math";
-  import { catchToConsole, waitForPayload } from "$lib/utils/tauri";
+  import { JobRunner } from "$lib/app/runner/index.svelte";
+  import type { RunJobPayload } from "$lib/app/runner/schedule";
+  import JobRunnerControls from "$lib/components/runner/JobRunnerControls.svelte";
+  import ConfirmationDialogButton from "$lib/components/ui/ConfirmationDialogButton.svelte";
+  import Dialog from "$lib/components/ui/Dialog.svelte";
+  import { waitForPayload } from "$lib/utils/tauri";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-  import { Child } from "@tauri-apps/plugin-shell";
+  import { onDestroy } from "svelte";
 
-  const runner = getCurrentWebviewWindow();
-  const payload = waitForPayload<RunJobPayload>(runner, "run-job");
-  await runner.emit("runner-ready");
+  const runnerWindow = getCurrentWebviewWindow();
+  const payload = waitForPayload<RunJobPayload>(runnerWindow, "run-job");
+  await runnerWindow.emit("runner-ready");
 
-  const { cmds: cmdsInputs, destination, duration, title } = await payload;
+  const { title, ...runnerInputs } = await payload;
+  const runner = new JobRunner(runnerInputs);
+  await runner.start();
 
-  let time: number | null = $state(null);
-  let progress = $derived(Nullable.div(time, duration));
-  // TODO use createSubscriber ?
-  const progressReader = new ProgressReader(({ out_time_us }) => {
-    if (out_time_us != null) {
-      time = out_time_us / 1000000;
+  let closing = $state(false);
+  let closeDialogOpen = $state(false);
+
+  async function closeWindow() {
+    closing = true;
+    await runner.cancel();
+    await runnerWindow.destroy();
+  }
+
+  const unlisten = await runnerWindow.onCloseRequested(async (event) => {
+    if (runner.cancelled) {
+      closing = true;
+      return await runner.cancel();
+    }
+    event.preventDefault();
+    if (!closing) {
+      closeDialogOpen = true;
     }
   });
 
-  let current: Child;
-  let cancelled = $state(false);
-  let stderr = $state("");
-
-  async function nextCommand() {
-    const next = cmds.pop();
-    if (!next) {
-      return;
-    }
-
-    stderr += next.text;
-    next.cmd.spawn().then((child) => (current = child));
-  }
-
-  const cmds = cmdsInputs.map((input) => {
-    const cmd = CommandBuilder.build(input, { cwd: destination });
-    cmd.stdout.on("data", (line) => catchToConsole(() => progressReader.line(line)));
-    cmd.stderr.on("data", (line) => (stderr += line.includes("\n") ? line : line + "\n"));
-    cmd.on("close", ({ code, signal }) =>
-      catchToConsole(() => {
-        if (code != 0) {
-          throw new Error(
-            // TODO Replace by CommandBuilder.import (or fromJSON) function
-            `Command failed with code ${code}, signal ${signal}:\n${[input.program, ...input.args].join(" ")}`
-          );
-        } else if (cancelled) {
-          console.log("Job cancelled, not proceeding with next command.");
-          return;
-        }
-        nextCommand();
-      })
-    );
-    return { cmd, text: `${input.program} ${input.args.join(" ")}` };
-  });
-
-  async function cancel() {
-    cancelled = true;
-    await current.write("q");
-  }
-
-  nextCommand();
+  // TODO review lifecycle (also lifecycle of all other components/pages)
+  onDestroy(() => unlisten());
 </script>
 
 <main class="w-full grow p-2 flex flex-col">
   <h1 class="text-center mb-2">Job Runner</h1>
-  <JobRunner {title} {cancelled} {cancel} progress={progress ?? 0} {stderr} />
+  <JobRunnerControls
+    {title}
+    cancelled={runner.cancelled}
+    cancel={() => runner.cancel()}
+    progress={runner.progress ?? 0}
+    stderr={runner.stderr}
+  />
+  <ConfirmationDialogButton
+    bind:open={closeDialogOpen}
+    title="Job cancellation confirmation"
+    description="Closing this window will cancel the current job running and cause it to output a shorter file. Are you sure you want to cancel this job ?"
+    action={closeWindow}
+  />
+  <Dialog bind:open={closing} closeable={false}>
+    Closing this window, please wait a few seconds for the current job to be cancelled.
+  </Dialog>
 </main>

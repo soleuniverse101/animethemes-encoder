@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { CompilerContext } from "$lib/app/encoding/compilers";
   import { firstPass, secondPass } from "$lib/app/encoding/compilers/export";
-  import { runJobCommands } from "$lib/app/encoding/runner";
   import { getApp } from "$lib/app/index.svelte";
+  import { runJobCommands } from "$lib/app/runner/schedule";
   import Icon from "@iconify/svelte";
   import { writeText } from "@tauri-apps/plugin-clipboard-manager";
   import Checkbox from "../ui/Checkbox.svelte";

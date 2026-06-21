@@ -28,7 +28,8 @@
 
   [data-menubar-content],
   [data-dropdown-menu-content],
-  [data-dialog-content] {
+  [data-dialog-content],
+  [data-alert-dialog-content] {
     @apply bg-primary-300 py-1;
   }
 
@@ -86,8 +87,14 @@
     @apply bg-[rgb(230,225,240)];
   }
 
-  [data-dialog-overlay] {
-    @apply bg-secondary-700/40;
+  [data-dialog-overlay],
+  [data-alert-dialog-overlay] {
+    @apply fixed inset-0 z-50 bg-secondary-700/40;
+  }
+
+  [data-dialog-content],
+  [data-alert-dialog-content] {
+    @apply fixed top-1/2 left-1/2 z-50 min-w-80 -translate-1/2 p-2;
   }
 
   [data-dialog-close],

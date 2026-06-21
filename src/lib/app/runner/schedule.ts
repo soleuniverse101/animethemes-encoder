@@ -1,8 +1,8 @@
 import { createWebviewWindow } from "$lib/utils/tauri";
 import { basename, dirname } from "@tauri-apps/api/path";
 import { open } from "@tauri-apps/plugin-dialog";
-import type { CommandBuilder, CommandInput } from "./commands/builder";
-import type { CompilerContext } from "./compilers";
+import type { CommandBuilder, CommandInput } from "../encoding/commands/builder";
+import type { CompilerContext } from "../encoding/compilers";
 
 export type RunJobPayload = {
   cmds: [firstPass: CommandInput, secondPass: CommandInput];
