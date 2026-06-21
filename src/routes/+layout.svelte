@@ -1,12 +1,13 @@
 <script lang="ts">
   import hotkeys from "hotkeys-js";
   import { onDestroy } from "svelte";
+  import { on } from "svelte/events";
   import "../style/layout.css";
 
   const { children } = $props();
 
   // Disables focus of buttons after click to prevent accidental trigger with Space
-  document.addEventListener("mouseup", (e) => {
+  const unlisten = on(document, "mouseup", (e) => {
     const target = e.target;
 
     if (!(target instanceof Element)) return;
@@ -23,7 +24,10 @@
     }
   });
 
-  onDestroy(() => hotkeys.unbind("space"));
+  onDestroy(() => {
+    hotkeys.unbind("space");
+    unlisten();
+  });
 </script>
 
 {@render children()}
