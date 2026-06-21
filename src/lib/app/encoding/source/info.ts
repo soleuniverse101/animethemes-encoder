@@ -34,8 +34,6 @@ export async function parseInfo(context: CompilerContext): Promise<FileInfo> {
 
   cmd.setOption("output_format", "json");
   cmd.setPositional("input", context.file);
-  console.log(cmd.compile());
-  const result = JSON.parse((await cmd.build().execute()).stdout);
-  console.log(result);
-  return ffprobeSchema.parse(result);
+
+  return ffprobeSchema.parse(JSON.parse((await cmd.build().execute()).stdout));
 }
