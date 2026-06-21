@@ -1,5 +1,6 @@
 import { intString } from "$lib/utils/zod";
 import z from "zod";
+import type z4 from "zod/v4/core";
 
 const base = z.object({
   index: z.int(),
@@ -7,11 +8,17 @@ const base = z.object({
   codec_long_name: z.string()
 });
 
-export const stream = z.union([
-  z.discriminatedUnion("codec_type", [
-    z.object({
+type StreamType = "video" | "audio" | "subtitle" | "unknown";
+const stream = <T extends StreamType, S extends z4.$ZodLooseShape>(type: T, shape: S) =>
+  z.object(shape).transform((stream) => ({ type, stream }));
+
+// Codec names from https://ffmpeg.org/ffmpeg-codecs.html
+export const Stream = z.union([
+  z.union([
+    stream("video", {
       ...base.shape,
       codec_type: z.literal("video"),
+      codec_name: z.literal(["av1", "hevc"]),
       r_frame_rate: z.templateLiteral([z.int(), "/", z.int()]),
       // TODO check coded_width & coded_height
       width: z.int(),
@@ -24,19 +31,30 @@ export const stream = z.union([
       color_space: z.string(),
       color_transfer: z.string()
     }),
-    z.object({
+    stream("audio", {
       ...base.shape,
       codec_type: z.literal("audio"),
       bit_rate: intString.optional(),
       tags: z.object({ language: z.string() }).partial()
     }),
-    z.object({
+    stream("subtitle", {
       ...base.shape,
       codec_type: z.literal("subtitle"),
       tags: z.object({ language: z.string() }).partial()
+    }),
+    stream("unknown", {
+      // TODO should contain images but not sure, check https://ffmpeg.org/ffmpeg-codecs.html
+      codec_type: z.literal("video"),
+      codec_name: z.literal("mjpeg")
+    }),
+    stream("unknown", {
+      // TODO manage attachments
+      codec_type: z.literal("attachment")
+    }),
+    // TODO other streams
+    stream("unknown", {
+      // https://ffmpeg.org/doxygen/trunk/group__lavu__misc.html#ga9a84bba4713dfced21a1a56163be1f48
+      codec_type: z.literal(["unknown", "data", "nb"])
     })
-  ]),
-  // TODO manage attachments
-  // z.object({ codec_type: z.literal("attachment") }),
-  z.object({}).transform(() => null)
+  ])
 ]);

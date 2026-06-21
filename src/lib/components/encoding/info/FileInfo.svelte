@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { FileInfo, StreamInfo as StreamInfoType } from "$lib/app/encoding/source/info";
+  import type { FileInfo, RawStream } from "$lib/app/encoding/source/info";
   import { assertNonNull } from "$lib/utils/assert";
-  import { audioInfo, generalInfo, subtitleInfo, videoInfo } from "./infoSections";
+  import { generalInfo, streamInfo } from "./infoSections";
   import InfoTable from "./InfoTable.svelte";
 
   interface Props {
@@ -10,14 +10,13 @@
   }
 
   const { info, class: _class }: Props = $props();
-  const streams = $derived(info.streams.filter((stream) => stream != null));
+  const { streams: rawStreams } = $derived(info);
 
-  const streamIndex = new Map<StreamInfoType, number>();
-  // TODO temporary (later blindly print unparsed streams)
+  const streamIndex = new Map<RawStream, number>();
   const streamsByType = $derived.by(() => {
-    const streamsGroups = Object.groupBy(streams, ({ codec_type }) => codec_type);
+    const streamsGroups = Object.groupBy(rawStreams, ({ type }) => type);
     Object.values(streamsGroups).forEach((streams) =>
-      streams.forEach((stream, index) => streamIndex.set(stream, index))
+      streams.forEach((rawStream, index) => streamIndex.set(rawStream, index))
     );
     return streamsGroups;
   });
@@ -27,18 +26,16 @@
   <InfoTable
     sections={[
       generalInfo(info),
-      ...streams.map((info) => {
-        const index =
-          streamsByType[info.codec_type]?.length == 1 ? null : assertNonNull(streamIndex.get(info));
-        switch (info.codec_type) {
-          case "video":
-            return videoInfo(info, index);
-          case "audio":
-            return audioInfo(info, index);
-          case "subtitle":
-            return subtitleInfo(info, index);
-        }
-      })
+      ...rawStreams
+        .map((rawStream) =>
+          streamInfo(
+            rawStream,
+            streamsByType[rawStream.type]?.length == 1
+              ? null
+              : assertNonNull(streamIndex.get(rawStream))
+          )
+        )
+        .filter((info) => info != null)
     ]}
   />
 </div>

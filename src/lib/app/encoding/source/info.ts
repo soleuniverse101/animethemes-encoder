@@ -2,7 +2,7 @@ import { intString } from "$lib/utils/zod";
 import z from "zod";
 import { CommandBuilder } from "../commands/builder";
 import type { CompilerContext } from "../compilers";
-import { stream } from "./schemas";
+import { Stream } from "./schemas";
 
 const ffprobeSchema = z.object({
   format: z.object({
@@ -14,17 +14,16 @@ const ffprobeSchema = z.object({
       })
       .partial()
   }),
-  streams: z.array(stream)
+  streams: z.array(Stream)
 });
 
 export type FileInfo = z.infer<typeof ffprobeSchema>;
-export type FormatInfo = FileInfo["format"];
-export type StreamInfo = NonNullable<FileInfo["streams"][number]>;
-export namespace StreamInfo {
-  export type Video = Extract<StreamInfo, { codec_type: "video" }>;
-  export type Audio = Extract<StreamInfo, { codec_type: "audio" }>;
-  export type Subtitle = Extract<StreamInfo, { codec_type: "subtitle" }>;
-}
+export type RawStream = FileInfo["streams"][number];
+export type StreamType = RawStream["type"];
+export type RawStreamInfo<T extends StreamType> = T extends any
+  ? Extract<RawStream, { type: T }>
+  : never;
+export type StreamInfo<T extends StreamType> = RawStreamInfo<T>["stream"];
 
 export async function parseInfo(context: CompilerContext): Promise<FileInfo> {
   const cmd = new CommandBuilder("ffprobe");
