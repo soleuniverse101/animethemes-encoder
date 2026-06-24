@@ -1,5 +1,16 @@
 # animethemes-encoder
 
+## 0.1.3
+
+### Patch Changes
+
+- 342c57a: Added tray icon. Click to show/hide app
+- 270639d: Fixed error on info for unhandled streams (currently not displaying them)
+- ec5ffe5: Added job runner
+- 00c4a22: Added automated releases for Windows
+- 4c98922: Added jobs manager menu with ability to add/rename/remove jobs
+- 7df2d50: Jobs can be easily cancelled by the user after confirming what it entails in a dialog before closing a runner window
+
 ## 0.1.2
 
 ### Patch Changes
