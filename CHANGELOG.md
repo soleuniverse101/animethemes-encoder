@@ -1,5 +1,11 @@
 # animethemes-encoder
 
+## 0.1.4
+
+### Patch Changes
+
+- 1c29045: No change. Added to test automation of git tagging on version release
+
 ## 0.1.3
 
 ### Patch Changes
