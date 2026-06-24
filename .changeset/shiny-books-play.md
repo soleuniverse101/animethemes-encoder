@@ -2,4 +2,4 @@
 "animethemes-encoder": patch
 ---
 
-Added job runner
+Added automated releases for Windows

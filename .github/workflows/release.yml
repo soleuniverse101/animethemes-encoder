@@ -9,7 +9,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   release:
     name: Release
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
       contents: write
       pull-requests: write
@@ -26,6 +26,23 @@ jobs:
           version: "1.1.0"
 
       - name: Create Release PR
+        id: changesets
         uses: changesets/action@v1
+        env:
+          # TODO https://github.com/changesets/action/issues/147
+          HOME: ${{ github.workspace }}
         with:
           version: pnpm ci:version
+
+      - name: Publish
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        uses: tauri-apps/tauri-action@v0.6.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: v__VERSION__
+          releaseBody: >-
+            See the assets to download this version and install with `animethemes-encoder___VERSION___x64_en-US.msi`.
+            **You need an internet connection** in case the installer needs to download the WebView2 bootstrapper.
+          releaseDraft: true
