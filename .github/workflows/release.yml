@@ -44,5 +44,7 @@ jobs:
           releaseName: v__VERSION__
           releaseBody: >-
             See the assets to download this version and install with `animethemes-encoder___VERSION___x64_en-US.msi`.
+
+
             **You need an internet connection** in case the installer needs to download the WebView2 bootstrapper.
           releaseDraft: true
