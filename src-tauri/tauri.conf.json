@@ -24,6 +24,7 @@
   "bundle": {
     "active": true,
     "targets": "msi",
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -32,5 +33,13 @@
       "icons/icon.ico"
     ],
     "resources": ["lib/**/*"]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVDMjVENzQ1NTgyQzdFNzkKUldSNWZpeFlSZGNsN0t0MmplUmNoWjhMMGhDZ09aUnhxUHd3aUpFTzJHaEZvL29ZQitIMzA2dDkK",
+      "endpoints": [
+        "https://github.com/soleuniverse101/animethemes-encoder/releases/latest/download/latest.json"
+      ]
+    }
   }
 }
