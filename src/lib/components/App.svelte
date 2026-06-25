@@ -10,6 +10,7 @@
   import type { MPVWindowManager } from "$lib/mpv/window";
   import { unlistenAll } from "$lib/utils/tauri";
   import { onDestroy } from "svelte";
+  import Updater from "./menu/Updater.svelte";
 
   interface Props {
     config: Config;
@@ -39,6 +40,9 @@
   <div class="mx-auto flex w-full max-w-4xl justify-between">
     <!-- TODO link component or hande on_navigation in lib.rs Builder to prevent viewing external links in the app -->
     <span>by <a href="https://soleuniverse.me/" target="_blank">soleuniverse</a></span>
-    <span>v{version}</span>
+    <div class="flex items-center gap-1">
+      <span>v{version}</span>
+      <Updater />
+    </div>
   </div>
 </footer>
