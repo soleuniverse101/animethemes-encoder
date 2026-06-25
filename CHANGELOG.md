@@ -1,5 +1,11 @@
 # animethemes-encoder
 
+## 0.1.5
+
+### Patch Changes
+
+- dd8df41: test updater
+
 ## 0.1.4
 
 ### Patch Changes
