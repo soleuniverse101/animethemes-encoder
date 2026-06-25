@@ -2,15 +2,26 @@ name: Prepare environment
 description: Setup Node.js & pnpm. Don't forget to checkout the repository before calling
 
 runs:
-  using: "composite"
+  using: composite
   steps:
+    - name: Cache Rust dependencies
+      uses: actions/cache@v6
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    # Note that a Rust toolchain is installed by default on Github Actions runners.
+
+    - name: Setup pnpm with version set in ~/package.json/packageManager
+      uses: pnpm/action-setup@v6
     - name: Setup Node.js 24
       uses: actions/setup-node@v6
       with:
         node-version: 24
-    - name: Setup pnpm with version set in ~/package.json/packageManager
-      uses: pnpm/action-setup@v6
+        cache: pnpm
     - run: pnpm ci
-      shell: bash
-
-    # Note that a Rust toolchain is installed by default on Github Actions runners.
+      shell: ${{runner.os == 'Windows' && 'pwsh' || 'bash'}}
