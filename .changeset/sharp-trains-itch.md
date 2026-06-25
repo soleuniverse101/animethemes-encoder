@@ -2,4 +2,4 @@
 "animethemes-encoder": patch
 ---
 
-Addded job runner
+Added job runner
