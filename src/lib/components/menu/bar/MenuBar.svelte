@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { commands } from "$lib/app/commands";
+  import { getApp } from "$lib/app/index.svelte";
   import logo from "$lib/assets/logo.svg?raw";
   import { Menubar } from "bits-ui";
   import Menu from "./Menu.svelte";
@@ -8,16 +8,21 @@
 
   let value = $state("");
 
-  $effect(() => {
-    if (value == "") {
-      commands("mpvView").window.show();
-    } else {
-      commands("mpvView").window.hide();
-    }
-  });
+  const app = getApp();
+  const id = $props.id();
+  const setOverlayOpen = app.view.overlayCounter.getOverlaySetter(id);
 </script>
 
-<Menubar.Root bind:value class="flex items-stretch px-2 select-none">
+<Menubar.Root
+  bind:value={
+    () => value,
+    (v) => {
+      value = v;
+      setOverlayOpen(value != "");
+    }
+  }
+  class="flex items-stretch px-2 select-none"
+>
   <div class="h-4 my-auto mr-2 flex">
     <!-- TODO secure ? if not, find alternative -->
     {@html logo}

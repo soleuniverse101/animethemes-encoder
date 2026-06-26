@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getApp } from "$lib/app/index.svelte";
   import Icon from "@iconify/svelte";
   import { Dialog, Separator } from "bits-ui";
   import type { Snippet } from "svelte";
@@ -11,6 +12,13 @@
   }
 
   let { open = $bindable(), title, children, closeable = true }: Props = $props();
+
+  const app = getApp();
+  const id = $props.id();
+  const setOverlayOpen = app.view.overlayCounter.getOverlaySetter(id);
+  $effect(() => {
+    setOverlayOpen(open);
+  });
 </script>
 
 <Dialog.Root bind:open>

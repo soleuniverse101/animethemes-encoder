@@ -1,6 +1,7 @@
 import { createContext } from "svelte";
 import type { Config } from "./config";
 import { Jobs, type Job } from "./encoding/job.svelte";
+import { OverlayCounter } from "./view/overlay-counter.svelte";
 
 export interface App {
   config: Config;
@@ -12,6 +13,7 @@ export interface App {
   view: {
     headerHeight: number;
     footerHeight: number;
+    overlayCounter: OverlayCounter;
   };
 }
 
@@ -25,7 +27,8 @@ export const createApp = (config: Config): App => {
     currentJob: jobs.list[0],
     view: {
       headerHeight: 0,
-      footerHeight: 0
+      footerHeight: 0,
+      overlayCounter: new OverlayCounter()
     }
   };
 };

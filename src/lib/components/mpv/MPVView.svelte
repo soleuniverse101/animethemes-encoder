@@ -40,6 +40,13 @@
     }
     mpvWindow.mpvControls.setLoop(app.currentJob.bounds);
   });
+  $effect(() => {
+    if (app.view.overlayCounter.open) {
+      mpvWindow.window.hide();
+    } else {
+      mpvWindow.window.show();
+    }
+  });
 
   onDestroy(() => unlistenAll(unlistens));
 </script>

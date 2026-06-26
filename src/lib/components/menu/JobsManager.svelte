@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { commands } from "$lib/app/commands";
   import { getApp } from "$lib/app/index.svelte";
   import { assertNonNull } from "$lib/utils/assert";
   import Icon from "@iconify/svelte";
@@ -12,15 +11,6 @@
   }
 
   let { open = $bindable() }: Props = $props();
-
-  // TODO move in dialog ?
-  $effect(() => {
-    if (!open) {
-      commands("mpvView").window.show();
-    } else {
-      commands("mpvView").window.hide();
-    }
-  });
 
   const app = getApp();
   const { jobs } = $derived(app);
