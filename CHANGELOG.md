@@ -1,5 +1,17 @@
 # animethemes-encoder
 
+## 0.1.5
+
+### Patch Changes
+
+- [`5aebcc6`](https://github.com/soleuniverse101/animethemes-encoder/commit/5aebcc6391f8e951172ecbef449b90ebe457ed11) - Fix errors (svg logo loading & header/footer heights for mpv window)
+
+- [`e37a651`](https://github.com/soleuniverse101/animethemes-encoder/commit/e37a65141561dc8625d97f1a9e43fac2ea234f90) - Check available updates on start
+
+- [`5aebcc6`](https://github.com/soleuniverse101/animethemes-encoder/commit/5aebcc6391f8e951172ecbef449b90ebe457ed11) - Accept any codec for video
+
+- [`5aebcc6`](https://github.com/soleuniverse101/animethemes-encoder/commit/5aebcc6391f8e951172ecbef449b90ebe457ed11) - Fix mpv window hiding on overlays open
+
 ## 0.1.4
 
 ### Patch Changes
