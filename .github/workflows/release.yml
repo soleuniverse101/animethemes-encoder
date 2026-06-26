@@ -48,4 +48,3 @@ jobs:
 
 
             **You need an internet connection** in case the installer needs to download the WebView2 bootstrapper.
-          releaseDraft: true
