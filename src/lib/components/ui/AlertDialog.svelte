@@ -22,9 +22,15 @@
     trigger,
     open = $bindable(false)
   }: Pick<AlertDialog.RootProps, "open"> & Props = $props();
+
+  function onOpenChange(open: boolean) {
+    if (!open) {
+      cancel?.();
+    }
+  }
 </script>
 
-<AlertDialog.Root bind:open>
+<AlertDialog.Root bind:open {onOpenChange}>
   {#if trigger}
     <AlertDialog.Trigger>{@render trigger()}</AlertDialog.Trigger>
   {/if}
