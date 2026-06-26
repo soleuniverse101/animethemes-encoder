@@ -47,6 +47,9 @@ pub fn run() {
                     .open_devtools();
             }
         });
+
+        app.get_webview_window("main").unwrap().open_devtools();
+
         Ok(())
     });
 
