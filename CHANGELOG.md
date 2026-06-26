@@ -1,5 +1,11 @@
 # animethemes-encoder
 
+## 0.1.4
+
+### Patch Changes
+
+- 8579517: Added automatic updates sourced from GitHub repository
+
 ## 0.1.3
 
 ### Patch Changes
