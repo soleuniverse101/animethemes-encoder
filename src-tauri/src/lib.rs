@@ -41,10 +41,14 @@ pub fn run() {
                 label: String,
             }
             if let Ok(WebviewCreatedPayload { label }) = serde_json::from_str(event.payload()) {
-                app_handle
-                    .get_webview_window(&label)
-                    .unwrap()
-                    .open_devtools();
+                match label.as_str() {
+                    // TODO make this configurable ?
+                    "mpv" => (),
+                    _ => app_handle
+                        .get_webview_window(&label)
+                        .unwrap()
+                        .open_devtools(),
+                }
             }
         });
 
