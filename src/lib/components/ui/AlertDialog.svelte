@@ -7,7 +7,9 @@
     description: string;
     action: () => void;
     cancel?: () => void;
-    children?: Snippet;
+    actionText?: string;
+    cancelText?: string;
+    trigger?: Snippet;
   }
 
   let {
@@ -15,13 +17,17 @@
     description,
     action,
     cancel,
-    children,
+    actionText,
+    cancelText,
+    trigger,
     open = $bindable(false)
   }: Pick<AlertDialog.RootProps, "open"> & Props = $props();
 </script>
 
 <AlertDialog.Root bind:open>
-  <AlertDialog.Trigger>{children?.()}</AlertDialog.Trigger>
+  {#if trigger}
+    <AlertDialog.Trigger>{@render trigger()}</AlertDialog.Trigger>
+  {/if}
   <AlertDialog.Portal>
     <AlertDialog.Overlay />
     <AlertDialog.Content>
@@ -29,14 +35,14 @@
       <AlertDialog.Description>{description}</AlertDialog.Description>
       <div class="mt-4 flex justify-end gap-2">
         <AlertDialog.Cancel onclick={cancel} class="p-1 border-2 border-primary-400"
-          >Cancel</AlertDialog.Cancel
+          >{cancelText ?? "Cancel"}</AlertDialog.Cancel
         >
         <AlertDialog.Action
           onclick={() => {
             action();
             open = false;
           }}
-          class="p-1 font-bold bg-primary-400">Confirm</AlertDialog.Action
+          class="p-1 font-bold bg-primary-400">{actionText ?? "Confirm"}</AlertDialog.Action
         >
       </div>
     </AlertDialog.Content>

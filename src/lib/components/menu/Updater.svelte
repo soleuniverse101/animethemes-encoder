@@ -2,18 +2,19 @@
   import { assertNonNull } from "$lib/utils/assert";
   import Icon from "@iconify/svelte";
   import { check, Update } from "@tauri-apps/plugin-updater";
+  import AlertDialog from "../ui/AlertDialog.svelte";
   import Dialog from "../ui/Dialog.svelte";
   import SpinningIcon from "../ui/SpinningIcon.svelte";
 
-  let current = $state<"" | "checking" | "updating">("");
+  let current = $state<"" | "checking" | "suggesting" | "updating">("");
 
+  let update: Update | null = $state(null);
   let downloaded = $state(0);
   let contentLength = $state(0);
   const progress = $derived(downloaded / contentLength);
 
   async function checkUpdates() {
     current = "checking";
-    let update: Update | null = null;
     // TODO better error handling
     try {
       update = await check();
@@ -23,8 +24,13 @@
       return;
     }
 
+    current = "suggesting";
+  }
+
+  async function startUpdate() {
     current = "updating";
-    await update.downloadAndInstall((event) => {
+
+    await assertNonNull(update).downloadAndInstall((event) => {
       switch (event.event) {
         case "Started":
           contentLength = assertNonNull(event.data.contentLength);
@@ -37,6 +43,13 @@
 
     // TODO if handling other than Windows : await relaunch();
   }
+
+  function removeUpdate() {
+    update = null;
+    current = "";
+  }
+
+  checkUpdates();
 </script>
 
 <button
@@ -51,6 +64,16 @@
     <Icon icon="mdi:reload" class="text-lg" />
   {/if}
 </button>
+
+<AlertDialog
+  open={current == "suggesting"}
+  title="Update available"
+  description="Would you like to update the app ?"
+  action={startUpdate}
+  cancel={removeUpdate}
+  actionText="Yes, update"
+  cancelText="No"
+/>
 
 <Dialog
   open={current == "updating"}

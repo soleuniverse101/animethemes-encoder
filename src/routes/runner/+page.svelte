@@ -2,7 +2,7 @@
   import { JobRunner } from "$lib/app/runner/index.svelte";
   import type { RunJobPayload } from "$lib/app/runner/schedule";
   import JobRunnerControls from "$lib/components/runner/JobRunnerControls.svelte";
-  import ConfirmationDialogButton from "$lib/components/ui/ConfirmationDialogButton.svelte";
+  import AlertDialog from "$lib/components/ui/AlertDialog.svelte";
   import Dialog from "$lib/components/ui/Dialog.svelte";
   import { waitForPayload } from "$lib/utils/tauri";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
@@ -49,7 +49,7 @@
     progress={runner.progress ?? 0}
     stderr={runner.stderr}
   />
-  <ConfirmationDialogButton
+  <AlertDialog
     bind:open={closeDialogOpen}
     title="Job cancellation confirmation"
     description="Closing this window will cancel the current job running and cause it to output a shorter file. Are you sure you want to cancel this job ?"
