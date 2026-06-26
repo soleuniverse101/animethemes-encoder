@@ -15,10 +15,15 @@ const stream = <T extends StreamType, S extends z4.$ZodLooseShape>(type: T, shap
 // Codec names from https://ffmpeg.org/ffmpeg-codecs.html
 export const Stream = z.union([
   z.union([
+    stream("unknown", {
+      // TODO should contain images but not sure, check https://ffmpeg.org/ffmpeg-codecs.html
+      codec_type: z.literal("video"),
+      codec_name: z.literal("mjpeg")
+    }),
     stream("video", {
       ...base.shape,
       codec_type: z.literal("video"),
-      codec_name: z.literal(["av1", "hevc"]),
+      codec_name: z.string(),
       r_frame_rate: z.templateLiteral([z.int(), "/", z.int()]),
       // TODO check coded_width & coded_height
       width: z.int(),
@@ -41,11 +46,6 @@ export const Stream = z.union([
       ...base.shape,
       codec_type: z.literal("subtitle"),
       tags: z.object({ language: z.string() }).partial()
-    }),
-    stream("unknown", {
-      // TODO should contain images but not sure, check https://ffmpeg.org/ffmpeg-codecs.html
-      codec_type: z.literal("video"),
-      codec_name: z.literal("mjpeg")
     }),
     stream("unknown", {
       // TODO manage attachments
