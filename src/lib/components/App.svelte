@@ -25,9 +25,16 @@
   const unlistens = [registerConfigHandler({ config: app.config }), registerJobsHandler({ app })];
 
   onDestroy(() => unlistenAll(unlistens));
+
+  let header: HTMLElement;
+  let footer: HTMLElement;
+  $effect(() => {
+    app.view.headerHeight = header.clientHeight;
+    app.view.footerHeight = footer.clientHeight;
+  });
 </script>
 
-<header class="sticky top-0 z-10 w-full max-w-4xl bg-background">
+<header bind:this={header} class="sticky top-0 z-10 w-full max-w-4xl bg-background">
   <MenuBar />
 </header>
 
@@ -36,7 +43,7 @@
   <EncodingSection />
 </main>
 
-<footer class="sticky bottom-0 w-full bg-primary-200 px-1 text-text-400">
+<footer bind:this={footer} class="sticky bottom-0 w-full bg-primary-200 px-1 text-text-400">
   <div class="mx-auto flex w-full max-w-4xl justify-between">
     <!-- TODO link component or hande on_navigation in lib.rs Builder to prevent viewing external links in the app -->
     <span>by <a href="https://soleuniverse.me/" target="_blank">soleuniverse</a></span>

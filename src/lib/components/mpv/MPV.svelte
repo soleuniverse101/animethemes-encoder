@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getApp } from "$lib/app/index.svelte";
   import type { MPVWindowControls } from "$lib/mpv/window";
   import { Positions, Sizes } from "$lib/utils/dpi";
   import { type UnlistenFn } from "@tauri-apps/api/event";
@@ -12,8 +13,9 @@
 
   let mpvDiv: HTMLDivElement;
 
-  let headerHeight = $state(0);
-  let footerHeight = $state(0);
+  const {
+    view: { headerHeight, footerHeight }
+  } = $derived(getApp());
   const viewport = $derived({
     x: 0,
     y: headerHeight,
@@ -29,8 +31,6 @@
   }
 
   onMount(() => {
-    headerHeight = document.body.getElementsByTagName("header").item(0)!.clientHeight;
-    footerHeight = document.body.getElementsByTagName("footer").item(0)!.clientHeight;
     alignPlayer();
   });
 

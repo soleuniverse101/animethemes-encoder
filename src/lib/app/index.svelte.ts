@@ -7,6 +7,12 @@ export interface App {
   file?: string;
   jobs: Jobs;
   currentJob: Job;
+  /** Client UI information for manual rendering by child components. */
+  // TODO turn into viewport if introducing side sections
+  view: {
+    headerHeight: number;
+    footerHeight: number;
+  };
 }
 
 /** Not reactive by default. **IMPORTANT**: config must be set manually. */
@@ -16,7 +22,11 @@ export const createApp = (config: Config): App => {
     config,
     // TODO configurable default jobs ?
     jobs,
-    currentJob: jobs.list[0]
+    currentJob: jobs.list[0],
+    view: {
+      headerHeight: 0,
+      footerHeight: 0
+    }
   };
 };
 
