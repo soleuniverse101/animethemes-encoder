@@ -12,10 +12,10 @@ runs:
 
     - name: Setup pnpm with version set in ~/package.json/packageManager
       uses: pnpm/action-setup@v6
-    - name: Setup Node.js 24
+    - name: Setup Node.js 26
       uses: actions/setup-node@v6
       with:
-        node-version: 24
+        node-version: 26
         cache: pnpm
     - run: pnpm ci
       shell: ${{runner.os == 'Windows' && 'pwsh' || 'bash'}}
