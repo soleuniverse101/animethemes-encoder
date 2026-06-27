@@ -33,4 +33,19 @@ export const createApp = (config: Config): App => {
   };
 };
 
-export const [getApp, setApp] = createContext<App>();
+// TODO change once https://github.com/sveltejs/svelte/issues/18471 clears
+const [getApp, _setApp] = createContext<App>();
+const [_getOverlayCounter, setOverlayCounter] = createContext<OverlayCounter>();
+const setApp = (app: App) => {
+  const _app = _setApp(app);
+  setOverlayCounter(app.view.overlayCounter);
+  return _app;
+};
+const getOverlayCounter = () => {
+  try {
+    return _getOverlayCounter();
+  } catch {
+    return null;
+  }
+};
+export { setApp, getApp, getOverlayCounter };

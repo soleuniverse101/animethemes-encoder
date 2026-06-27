@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getApp } from "$lib/app/index.svelte";
+  import { getOverlayCounter } from "$lib/app/index.svelte";
   import { AlertDialog } from "bits-ui";
   import type { Snippet } from "svelte";
 
@@ -24,11 +24,10 @@
     open = $bindable(false)
   }: Pick<AlertDialog.RootProps, "open"> & Props = $props();
 
-  const app = getApp();
   const id = $props.id();
-  const setOverlayOpen = app.view.overlayCounter.getOverlaySetter(id);
+  const setOverlayOpen = getOverlayCounter()?.getOverlaySetter(id);
   $effect(() => {
-    setOverlayOpen(open);
+    setOverlayOpen?.(open);
   });
 
   function onOpenChange(open: boolean) {

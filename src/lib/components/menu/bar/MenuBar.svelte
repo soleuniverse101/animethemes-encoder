@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { getApp } from "$lib/app/index.svelte";
+  import { getOverlayCounter } from "$lib/app/index.svelte";
   import logo from "$lib/assets/logo.svg?raw";
+  import { assertNonNull } from "$lib/utils/assert";
   import { Menubar } from "bits-ui";
   import Menu from "./Menu.svelte";
   import MenuItem from "./MenuItem.svelte";
@@ -8,9 +9,8 @@
 
   let value = $state("");
 
-  const app = getApp();
   const id = $props.id();
-  const setOverlayOpen = app.view.overlayCounter.getOverlaySetter(id);
+  const setOverlayOpen = assertNonNull(getOverlayCounter()).getOverlaySetter(id);
 </script>
 
 <Menubar.Root
