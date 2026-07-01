@@ -36,7 +36,6 @@
     "bits-ui": "^2.18.1",
     "hotkeys-js": "^4.0.4",
     "pretty-ms": "^9.3.0",
-    "svelteplot": "^0.14.2",
     "tauri-plugin-libmpv-api": "^0.3.2",
     "zod": "^4.4.3"
   },

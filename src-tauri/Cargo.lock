@@ -45,7 +45,6 @@ dependencies = [
 name = "animethemes-encoder"
 version = "0.1.4"
 dependencies = [
- "raw-window-handle",
  "serde",
  "serde_json",
  "tauri",
